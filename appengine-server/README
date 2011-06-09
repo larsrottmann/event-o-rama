@@ -1,2 +1,5 @@
 Server part of event-o-rama application, to be deployed to Google AppEngine.
 
+Consists of:
+- GWT web interface to collect essential app data
+- Amazon EC2 interface to trigger app creation and receive finish notification

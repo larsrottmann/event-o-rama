@@ -1,0 +1,9 @@
+
+ToDos:
+- entry point page
+- GWT web interface to collect essential app data
+- server-side user login check
+- data model
+- Amazon EC2 interface to trigger app creation
+- Amazon EC2 interface to receive finish notification
+- GWT client async update when app creation completed
