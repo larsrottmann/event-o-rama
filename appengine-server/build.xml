@@ -1,4 +1,4 @@
-<project name="slim3-blank" default="gen-controller" basedir=".">
+<project name="event-o-rama" default="gen-controller" basedir=".">
     <property file="build.properties" />
 
     <path id="classpath">
@@ -63,8 +63,8 @@
             <fileset dir="target"/>
         </delete>
         <mkdir dir="target"/>
-        <zip zipfile="target/slim3-blank-${ver}.zip">
-            <zipfileset prefix="slim3-blank" dir=".">
+        <zip zipfile="target/event-o-rams-${ver}.zip">
+            <zipfileset prefix="event-o-rama" dir=".">
                 <exclude name="target/**"/>
                 <exclude name="war/WEB-INF/classes/**"/>
             </zipfileset>
