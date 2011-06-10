@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
@@ -29,7 +30,9 @@ import org.eclipse.jetty.io.ByteArrayBuffer;
  * 
  */
 class AppMaker implements Runnable {
-	
+
+	private static final Logger log = Logger.getLogger(AppMaker.class);
+
 	private final static String KEY_STORE_PATH_PROP = "key.store";
 	private final static String KEY_STORE_ALIAS_PROP = "key.alias";
 	private final static String KEY_STORE_PASSWORD_PROP = "key.store.password";
@@ -37,7 +40,6 @@ class AppMaker implements Runnable {
 	private final static String DEFAULT_ACTIVITY_NAME = "ACTIVITY_ENTRY_NAME";
 	private final static String LIBRARY_ACTIVITY_NAME = "com.eventorama.HelloWorldActivity";
 	private final static String BUILD_PROPERTIES_FILE = "build.properties";
-
 
 	private final AppRequest request;
 	private final AppUploader uploader;
@@ -51,17 +53,35 @@ class AppMaker implements Runnable {
 
 	@Override
 	public void run() {
+		File appDir = null;
 		try {
-			File appDir = makeApp();
+			appDir = makeApp();
 			verifyApp(appDir);
 			addReferenceToLibraryProject(appDir);
 			addCustomContent(appDir);
 			addReferenceToKeyStore(appDir);
 			buildApk(appDir);
 			URL url = storeApp(appDir);
+			log.info("App was uploaded and is accessbile at: " + url.toString());
 			callCallback(true, url, null);
 		} catch (IllegalStateException e) {
+			log.info("Error creating APP ", e);
 			callCallback(false, null, e);
+		} finally {
+			removeTemporaryFiles(appDir);
+		}
+	}
+
+	private void removeTemporaryFiles(File appDir) {
+		if (appDir != null && appDir.exists()) {
+			for (File file : appDir.listFiles()) {
+				if (file.isDirectory()) {
+					removeTemporaryFiles(file);
+				} else {
+					file.delete();
+				}
+			}
+			appDir.delete();
 		}
 	}
 
@@ -72,6 +92,8 @@ class AppMaker implements Runnable {
 	}
 
 	private void callCallback(boolean success, URL url, Exception error) throws IllegalStateException {
+		log.info("Notifying: " + request.getCallback());
+
 		final ContentExchange exchange = new ContentExchange(true);
 		exchange.setURL(request.getCallback());
 		exchange.setMethod(HttpMethods.POST);
@@ -86,7 +108,8 @@ class AppMaker implements Runnable {
 			exchange.waitForDone();
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
-		} catch (InterruptedException ignore) {}
+		} catch (InterruptedException ignore) {
+		}
 	}
 
 	private static AbstractBuffer buildJSONResponse(boolean success, URL appURL, Exception error) throws UnsupportedEncodingException {
@@ -105,7 +128,8 @@ class AppMaker implements Runnable {
 	private void buildApk(File appDir) {
 		File buildFile = new File(appDir.getAbsolutePath() + "/build.xml");
 		Project p = new Project();
-//		System.setProperty("java.home", "/usr/lib/jvm/java-6-sun-1.6.0.25/bin/");
+		// System.setProperty("java.home",
+		// "/usr/lib/jvm/java-6-sun-1.6.0.25/bin/");
 		try {
 			p.setUserProperty("ant.file", buildFile.getAbsolutePath());
 			p.init();

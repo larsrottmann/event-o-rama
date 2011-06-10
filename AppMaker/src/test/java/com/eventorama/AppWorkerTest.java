@@ -60,6 +60,7 @@ public class AppWorkerTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		ConfigurationParameters.loadPropertiesFromFile();
 		entryPoint = new EntryPoint();
 		System.out.println("starting local server for testing");
 		final Thread serverThread = new Thread() {
