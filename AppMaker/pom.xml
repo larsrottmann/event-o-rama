@@ -15,6 +15,21 @@
 	</properties>
 	<dependencies>
 		<dependency>
+		    <groupId>com.google</groupId>
+		    <artifactId>sdklib</artifactId>
+		    <version>1</version>
+		    <scope>system</scope>
+		    <systemPath>${project.basedir}/libs/sdklib.jar</systemPath>
+		</dependency>
+		<dependency>
+		    <groupId>com.google</groupId>
+		    <artifactId>sdkmanagaer</artifactId>
+		    <version>1</version>
+		    <scope>system</scope>
+		    <systemPath>${project.basedir}/libs/sdkmanager.jar</systemPath>
+		</dependency>
+
+		<dependency>
 			<groupId>org.apache.ant</groupId>
 			<artifactId>ant</artifactId>
 			<version>1.8.2</version>
