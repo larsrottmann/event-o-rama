@@ -62,7 +62,6 @@ class AppMaker implements Runnable {
 			addReferenceToKeyStore(appDir);
 			buildApk(appDir);
 			URL url = storeApp(appDir);
-			log.info("App was uploaded and is accessbile at: " + url.toString());
 			callCallback(true, url, null);
 		} catch (IllegalStateException e) {
 			log.info("Error creating APP ", e);
@@ -88,7 +87,9 @@ class AppMaker implements Runnable {
 	private URL storeApp(File appDir) throws IllegalStateException {
 		Date expiration = new Date(request.getEndDate());
 		File apkFile = new File(appDir, "bin/" + request.getAppName() + "-release.apk");
-		return uploader.upload(apkFile, request.getPackage() + "." + request.getAppName(), expiration);
+		URL result = uploader.upload(apkFile, request.getPackage() + "." + request.getAppName(), expiration);
+		log.info("App was uploaded and is accessbile at: " + result);
+		return result;
 	}
 
 	private void callCallback(boolean success, URL url, Exception error) throws IllegalStateException {
@@ -105,10 +106,9 @@ class AppMaker implements Runnable {
 		}
 		try {
 			client.send(exchange);
-			exchange.waitForDone();
+			//exchange.waitForDone();
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
-		} catch (InterruptedException ignore) {
 		}
 	}
 
