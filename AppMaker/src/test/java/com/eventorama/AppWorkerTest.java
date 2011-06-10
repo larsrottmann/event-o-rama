@@ -100,7 +100,7 @@ public class AppWorkerTest {
 		sb.append("&").append(AppRequest.Parameter.PACKAGE_NAME).append("=").append(packageName);
 		sb.append("&").append(AppRequest.Parameter.START_DATE).append("=").append(startDate);
 		sb.append("&").append(AppRequest.Parameter.END_DATE).append("=").append(endDate);
-		sb.append("&").append(AppRequest.Parameter.SDK_VERSION).append("=").append(8);
+		sb.append("&").append(AppRequest.Parameter.SDK_VERSION).append("=").append(20);
 		AbstractBuffer content = new ByteArrayBuffer(sb.toString().getBytes("UTF-8"));
 		return content;
 	}
