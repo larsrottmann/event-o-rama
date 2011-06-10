@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class LoginInfo implements Serializable {
 
+    private static final long serialVersionUID = -4674660233605398072L;
+
     private boolean loggedIn = false;
     private String loginUrl;
     private String logoutUrl;
