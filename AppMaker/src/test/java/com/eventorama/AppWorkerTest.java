@@ -2,6 +2,7 @@ package com.eventorama;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +30,7 @@ public class AppWorkerTest {
 	protected static Server server;
 	protected static HttpClient client;
 	protected static EntryPoint entryPoint;
-	private final static long TWO_WEEKS = 1000 * 60 * 60 * 60 * 24 * 14;
+	private final static long TWO_WEEKS = 1000 * 60 * 60 * 24 * 14;
 
 	private static final Object lock = new Object();
 
@@ -94,6 +95,9 @@ public class AppWorkerTest {
 		long startDate = System.currentTimeMillis();
 		long endDate = startDate + TWO_WEEKS;
 
+		System.out.println(new Date(startDate));
+		System.out.println(new Date(endDate));
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append(AppRequest.Parameter.CALLBACK).append("=").append(callbackEndPoint);
 		sb.append("&").append(AppRequest.Parameter.APP_NAME).append("=").append(appName);

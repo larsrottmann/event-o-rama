@@ -87,7 +87,7 @@ class AppMaker implements Runnable {
 	private URL storeApp(File appDir) throws IllegalStateException {
 		Date expiration = new Date(request.getEndDate());
 		File apkFile = new File(appDir, "bin/" + request.getAppName() + "-release.apk");
-		URL result = uploader.upload(apkFile, request.getPackage() + "." + request.getAppName(), expiration);
+		URL result = uploader.upload(apkFile, request.getPackage() + "." + request.getAppName()+".apk", expiration);
 		log.info("App was uploaded and is accessbile at: " + result);
 		return result;
 	}

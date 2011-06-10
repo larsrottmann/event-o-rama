@@ -31,7 +31,7 @@
 		</dependency>
 		<dependency>
 		    <groupId>com.google</groupId>
-		    <artifactId>common</artifactId>
+		    <artifactId>common-bla</artifactId>
 		    <version>1</version>
 		    <scope>system</scope>
 		    <systemPath>${android.sdk.lib}/common.jar</systemPath>
