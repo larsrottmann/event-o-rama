@@ -247,7 +247,7 @@ class AppMaker implements Runnable {
 	}
 
 	private File makeApp() throws IllegalStateException {
-		return SDKUtils.createProject(request.getAppName(), request.getPackage(), request.getSdkVersion());
+		return SDKUtils.createProject(request.getAppName(), request.getPackage());
 	}
 
 	private void verifyApp(File app) throws IllegalStateException {

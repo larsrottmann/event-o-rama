@@ -9,7 +9,7 @@
 	<properties>
 		<jettyVersion>7.2.0.v20101020</jettyVersion>
 		<java.version>1.6</java.version>
-		<android.sdk>/opt/app-maker</android.sdk>
+		<android.sdk.lib>/opt/app-maker</android.sdk.lib>
 		<!-- set encoding to UTF-8 in any configuration possible -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -27,14 +27,14 @@
 		    <artifactId>sdklib</artifactId>
 		    <version>1</version>
 		    <scope>system</scope>
-		    <systemPath>${android.sdk}/sdklib.jar</systemPath>
+		    <systemPath>${android.sdk.lib}/sdklib.jar</systemPath>
 		</dependency>
 		<dependency>
 		    <groupId>com.google</groupId>
 		    <artifactId>sdkmanager</artifactId>
 		    <version>1</version>
 		    <scope>system</scope>
-		    <systemPath>${android.sdk}/sdkmanager.jar</systemPath>
+		    <systemPath>${android.sdk.lib}/sdkmanager.jar</systemPath>
 		</dependency>
 
 		<dependency>

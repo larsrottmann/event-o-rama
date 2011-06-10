@@ -25,13 +25,13 @@ public class AppRequest {
 		public final static String SDK_VERSION = "sdk-version";
 	}
 
-	private final int MAX_SDK_VERSION = 11;
+//	private final int MAX_SDK_VERSION = 11;
 	private final String pkg;
 	private final String callback;
 	private final String appName;
 	private final long startDate;
 	private final long endDate;
-	private final int sdkVersion;
+//	private final int sdkVersion;
 
 	public String getCallback() {
 		return callback;
@@ -57,9 +57,9 @@ public class AppRequest {
 		return pkg;
 	}
 
-	public int getSdkVersion() {
-		return sdkVersion;
-	}
+//	public int getSdkVersion() {
+//		return sdkVersion;
+//	}
 
 	AppRequest(HttpServletRequest request) throws IllegalArgumentException {
 		String tmpString;
@@ -80,19 +80,19 @@ public class AppRequest {
 					+ ProjectCreator.CHARS_PACKAGE_NAME);
 		}
 
-		tmpString = request.getParameter(Parameter.SDK_VERSION);
-		if (null == tmpString) {
-			throw new IllegalArgumentException(Parameter.SDK_VERSION + " must be set.");
-		} else {
-			try {
-				sdkVersion = Integer.parseInt(tmpString);
-			} catch (NumberFormatException e) {
-				throw new IllegalArgumentException(e);
-			}
-		}
-		if (sdkVersion < 4 || sdkVersion > MAX_SDK_VERSION) {
-			throw new IllegalArgumentException(Parameter.SDK_VERSION + " is not in [4," + MAX_SDK_VERSION + "]");
-		}
+//		tmpString = request.getParameter(Parameter.SDK_VERSION);
+//		if (null == tmpString) {
+//			throw new IllegalArgumentException(Parameter.SDK_VERSION + " must be set.");
+//		} else {
+//			try {
+//				sdkVersion = Integer.parseInt(tmpString);
+//			} catch (NumberFormatException e) {
+//				throw new IllegalArgumentException(e);
+//			}
+//		}
+//		if (sdkVersion < 4 || sdkVersion > MAX_SDK_VERSION) {
+//			throw new IllegalArgumentException(Parameter.SDK_VERSION + " is not in [4," + MAX_SDK_VERSION + "]");
+//		}
 
 		tmpString = request.getParameter(Parameter.CALLBACK);
 		if (null == tmpString) {

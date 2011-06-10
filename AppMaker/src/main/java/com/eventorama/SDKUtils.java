@@ -39,22 +39,23 @@ public class SDKUtils {
 	}
 	
 	
-	private static IAndroidTarget getAndroidTarget(IAndroidTarget[] targets, int target) throws IllegalStateException{
-		for (IAndroidTarget androidTarget : targets) {
-			if (androidTarget.getVersion().getApiLevel()==target){
-				return androidTarget;
-			}
-		}
-		throw new IllegalStateException();
+	private static IAndroidTarget getAndroidTarget(IAndroidTarget[] targets) throws IllegalStateException{
+		return targets[targets.length];
+//		for (IAndroidTarget androidTarget : targets) {
+//			if (androidTarget.getVersion().getApiLevel()==target){
+//				return androidTarget;
+//			}
+//		}
+//		throw new IllegalStateException();
 	}
 	
 	/**
 	 * creates a new android project. 
 	 * assumes sanitized input
 	 */
-	public static File createProject(final String appName, final String packageName, final int target) throws IllegalStateException{
+	public static File createProject(final String appName, final String packageName) throws IllegalStateException{
 		IAndroidTarget[] targets = mSdkManager.getTargets();
-		IAndroidTarget androidtarget = getAndroidTarget(targets, target);
+		IAndroidTarget androidtarget = getAndroidTarget(targets);
 		String appDir = buildProjectDirectoryName(appName, packageName, androidtarget);
 		
 		mProjectCreator.createProject(appDir,
