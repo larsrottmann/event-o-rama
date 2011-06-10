@@ -31,6 +31,13 @@
 		</dependency>
 		<dependency>
 		    <groupId>com.google</groupId>
+		    <artifactId>common</artifactId>
+		    <version>1</version>
+		    <scope>system</scope>
+		    <systemPath>${android.sdk.lib}/common.jar</systemPath>
+		</dependency>
+		<dependency>
+		    <groupId>com.google</groupId>
 		    <artifactId>sdkmanager</artifactId>
 		    <version>1</version>
 		    <scope>system</scope>

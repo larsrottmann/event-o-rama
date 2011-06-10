@@ -11,7 +11,6 @@ import com.android.sdklib.IAndroidTarget;
 import com.android.sdklib.SdkManager;
 import com.android.sdklib.internal.project.ProjectCreator;
 import com.android.sdklib.internal.project.ProjectCreator.OutputLevel;
-
 /***
  * wrapper for SDK functions
  * @author renard
@@ -40,7 +39,7 @@ public class SDKUtils {
 	
 	
 	private static IAndroidTarget getAndroidTarget(IAndroidTarget[] targets) throws IllegalStateException{
-		return targets[targets.length];
+		return targets[targets.length-1];
 //		for (IAndroidTarget androidTarget : targets) {
 //			if (androidTarget.getVersion().getApiLevel()==target){
 //				return androidTarget;
