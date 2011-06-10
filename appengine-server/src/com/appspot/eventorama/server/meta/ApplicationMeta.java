@@ -1,8 +1,11 @@
 package com.appspot.eventorama.server.meta;
 
-//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-06-10 12:59:07")
+//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-06-10 18:37:17")
 /** */
 public final class ApplicationMeta extends org.slim3.datastore.ModelMeta<com.appspot.eventorama.shared.model.Application> {
+
+    /** */
+    public final org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.Application, java.lang.Boolean> active = new org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.Application, java.lang.Boolean>(this, "active", "active", boolean.class);
 
     /** */
     public final org.slim3.datastore.StringAttributeMeta<com.appspot.eventorama.shared.model.Application> downloadUrl = new org.slim3.datastore.StringAttributeMeta<com.appspot.eventorama.shared.model.Application>(this, "downloadUrl", "downloadUrl");
@@ -45,6 +48,7 @@ public final class ApplicationMeta extends org.slim3.datastore.ModelMeta<com.app
     @Override
     public com.appspot.eventorama.shared.model.Application entityToModel(com.google.appengine.api.datastore.Entity entity) {
         com.appspot.eventorama.shared.model.Application model = new com.appspot.eventorama.shared.model.Application();
+        model.setActive(booleanToPrimitiveBoolean((java.lang.Boolean) entity.getProperty("active")));
         model.setDownloadUrl((java.lang.String) entity.getProperty("downloadUrl"));
         model.setExpirationDate((java.util.Date) entity.getProperty("expirationDate"));
         model.setKey(entity.getKey());
@@ -65,6 +69,7 @@ public final class ApplicationMeta extends org.slim3.datastore.ModelMeta<com.app
         } else {
             entity = new com.google.appengine.api.datastore.Entity(kind);
         }
+        entity.setProperty("active", m.isActive());
         entity.setProperty("downloadUrl", m.getDownloadUrl());
         entity.setProperty("expirationDate", m.getExpirationDate());
         entity.setProperty("packageName", m.getPackageName());
@@ -130,6 +135,8 @@ public final class ApplicationMeta extends org.slim3.datastore.ModelMeta<com.app
         com.appspot.eventorama.shared.model.Application m = (com.appspot.eventorama.shared.model.Application) model;
         writer.beginObject();
         org.slim3.datastore.json.Default encoder0 = new org.slim3.datastore.json.Default();
+        writer.setNextPropertyName("active");
+        encoder0.encode(writer, m.isActive());
         if(m.getDownloadUrl() != null){
             writer.setNextPropertyName("downloadUrl");
             encoder0.encode(writer, m.getDownloadUrl());
@@ -170,6 +177,8 @@ public final class ApplicationMeta extends org.slim3.datastore.ModelMeta<com.app
         com.appspot.eventorama.shared.model.Application m = new com.appspot.eventorama.shared.model.Application();
         org.slim3.datastore.json.JsonReader reader = null;
         org.slim3.datastore.json.Default decoder0 = new org.slim3.datastore.json.Default();
+        reader = rootReader.newObjectReader("active");
+        m.setActive(decoder0.decode(reader, m.isActive()));
         reader = rootReader.newObjectReader("downloadUrl");
         m.setDownloadUrl(decoder0.decode(reader, m.getDownloadUrl()));
         reader = rootReader.newObjectReader("expirationDate");

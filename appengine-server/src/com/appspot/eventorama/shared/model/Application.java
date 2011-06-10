@@ -22,10 +22,10 @@ public class Application implements Serializable {
 
     private User user;
     private String title;
+    private boolean active;
     private String packageName;
     private Date startDate;
     private Date expirationDate;
-    // private String androidVersion;
     private String downloadUrl;
     
     
@@ -150,5 +150,15 @@ public class Application implements Serializable {
 
     public User getUser() {
         return user;
+    }
+
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+
+    public boolean isActive() {
+        return active;
     }
 }
