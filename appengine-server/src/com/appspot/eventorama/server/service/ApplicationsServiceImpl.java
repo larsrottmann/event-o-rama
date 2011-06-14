@@ -50,6 +50,17 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         Datastore.put(app);
     }
 
+    public void delete(Key appKey) throws NotLoggedInException {
+        checkLoggedIn();
+        
+        log.info("Deleting application with key=" + appKey);
+        
+        Datastore.delete(appKey);
+    }
+
+
+
+    
     private void checkLoggedIn() throws NotLoggedInException {
         if (getUser() == null) {
             log.warning("Not logged in.");
@@ -61,14 +72,5 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         UserService userService = UserServiceFactory.getUserService();
         return userService.getCurrentUser();
     }
-
-    public void delete(Key appKey) throws NotLoggedInException {
-        checkLoggedIn();
-        
-        log.info("Deleting application with key=" + appKey);
-        
-        Datastore.delete(appKey);
-    }
-
 
 }
