@@ -1,0 +1,14 @@
+In order to use this library project, please follow these instructions:
+
+- Create an android project which references this project as library, means your new project contains an entry in the default properties like:
+android.library.reference.1=../android-lib
+where it points to this project
+
+- Copy the file build-custom.xml to the root of your project
+- run "ant -f build-custom.xml -Dnew.package.name=com.eventorama.mobi.whatever" 
+Where you pass the package name of your project as parameter
+
+Then build normally like
+ant clean install
+
+Have fun!
