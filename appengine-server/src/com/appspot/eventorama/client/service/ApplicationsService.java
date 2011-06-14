@@ -1,5 +1,6 @@
 package com.appspot.eventorama.client.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.appspot.eventorama.shared.model.Application;
@@ -10,4 +11,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface ApplicationsService extends RemoteService {
 
     public List<Application> getList() throws NotLoggedInException;
+    
+    public void create(String title, Date startDate, Date expirationDate) throws NotLoggedInException;
 }

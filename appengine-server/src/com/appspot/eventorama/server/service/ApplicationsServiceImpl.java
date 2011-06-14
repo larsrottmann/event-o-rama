@@ -1,5 +1,6 @@
 package com.appspot.eventorama.server.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +27,8 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         log.info("Logged in. Querying list of apps.");
         
         ApplicationMeta meta = ApplicationMeta.get();
-        List<Application> apps = Datastore.query(meta).filter(meta.user.equal(getUser())).asList();
+        List<Application> apps = new ArrayList<Application>(); 
+//        apps = Datastore.query(meta).filter(meta.user.equal(getUser())).asList();
         
         Application app1 = new Application();
         app1.setTitle("app1");
@@ -42,6 +44,20 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         return apps;
     }
 
+    public void create(String title, Date startDate, Date expirationDate) throws NotLoggedInException {
+        checkLoggedIn();
+        
+        log.info("Creating new application.");
+        
+        Application app = new Application();
+        app.setTitle(title);
+        app.setStartDate(startDate);
+        app.setExpirationDate(expirationDate);
+        app.setUser(getUser());
+        
+        Datastore.put(app);
+    }
+
     private void checkLoggedIn() throws NotLoggedInException {
         if (getUser() == null) {
             log.warning("Not logged in.");
@@ -53,5 +69,6 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         UserService userService = UserServiceFactory.getUserService();
         return userService.getCurrentUser();
     }
+
 
 }

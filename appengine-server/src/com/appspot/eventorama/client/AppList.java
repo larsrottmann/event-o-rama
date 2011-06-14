@@ -9,7 +9,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -20,9 +19,9 @@ import com.google.gwt.user.client.ui.FlexTable;
 
 public class AppList extends Composite {
 
-    private final ApplicationsServiceAsync applicationsService = GWT.create(ApplicationsService.class);
+    
     private VerticalPanel mainPanel;
-    private FlexTable appsFlexTable;
+    private static FlexTable appsFlexTable;
     private Button btnCreate;
     
 
@@ -49,9 +48,7 @@ public class AppList extends Composite {
                 
                 popup.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
                     public void setPosition(int offsetWidth, int offsetHeight) {
-                      int left = (Window.getClientWidth() - offsetWidth) / 3;
-                      int top = (Window.getClientHeight() - offsetHeight) / 3;
-                      popup.setPopupPosition(left, top);
+                        popup.center();
                     }
                   });
 
@@ -61,12 +58,12 @@ public class AppList extends Composite {
     }
 
 
-    private void loadApps() {
+    public static void loadApps() {
+        final ApplicationsServiceAsync applicationsService = GWT.create(ApplicationsService.class);
         applicationsService.getList(new AsyncCallback<List<Application>>() {
 
             public void onFailure(Throwable caught) {
-                // TODO Auto-generated method stub
-
+                Window.alert(caught.toString());
             }
 
             public void onSuccess(List<Application> result) {
@@ -74,8 +71,8 @@ public class AppList extends Composite {
                 {
                     final int row = appsFlexTable.getRowCount();
                     appsFlexTable.setText(row, 0, app.getTitle());
-                    appsFlexTable.setText(row, 1, DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(app.getStartDate()));
-                    appsFlexTable.setText(row, 2, DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(app.getExpirationDate()));
+                    appsFlexTable.setText(row, 1, DateTimeFormat.getFormat("dd.MM.yyyy").format(app.getStartDate()));
+                    appsFlexTable.setText(row, 2, DateTimeFormat.getFormat("dd.MM.yyyy").format(app.getExpirationDate()));
                     appsFlexTable.setText(row, 3, Boolean.toString(app.isActive()));
 
                     // Add a button to remove this stock from the table.
