@@ -1,5 +1,7 @@
 package com.appspot.eventorama.client;
 
+import java.util.Date;
+
 import com.appspot.eventorama.client.service.ApplicationsService;
 import com.appspot.eventorama.client.service.ApplicationsServiceAsync;
 import com.google.gwt.user.client.Window;
@@ -37,6 +39,7 @@ public class CreateApp extends PopupPanel {
         grid.setWidget(0, 0, lblEvent);
         
         final TextBox textBox = new TextBox();
+        textBox.setFocus(true);
         grid.setWidget(0, 1, textBox);
         
         Label label = new Label("Start");
@@ -59,7 +62,39 @@ public class CreateApp extends PopupPanel {
         Button btnCreate = new Button("Create");
         btnCreate.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                applicationsService.create(textBox.getValue(), dateBox_1.getValue(), dateBox.getValue(), new AsyncCallback<Void>() {
+                final String title = textBox.getText().trim();
+                if (!title.matches("^[0-9a-zA-Z\\.\\-]{3,11}$"))
+                {
+                    Window.alert("'" + title + "' is not a valid application title, allowed characters are 0-9, a-z, dot and dash (3 up to 11 characters).");
+                    textBox.selectAll();
+                    return;
+                }
+                
+                final Date startDate = dateBox_1.getValue();
+                if (startDate == null)
+                {
+                    Window.alert("Please select a valid application start date.");
+                    return;
+                }
+
+                final Date expirationDate = dateBox.getValue();
+                if (expirationDate == null)
+                {
+                    Window.alert("Please select a valid application expiration date.");
+                    return;
+                }
+                else if (expirationDate.before(new Date(System.currentTimeMillis())))
+                {
+                    Window.alert("'" + expirationDate + "' is not a valid application expiration date.");
+                    return;
+                }
+                else if (expirationDate.before(startDate))
+                {
+                    Window.alert("Expiration date cannot be before the application start date.");
+                    return;
+                }
+                
+                applicationsService.create(title, startDate, expirationDate, new AsyncCallback<Void>() {
                     public void onFailure(Throwable caught) {
                         Window.alert(caught.getMessage());
                     }
