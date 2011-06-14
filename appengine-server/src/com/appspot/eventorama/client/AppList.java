@@ -5,6 +5,7 @@ import java.util.List;
 import com.appspot.eventorama.client.service.ApplicationsService;
 import com.appspot.eventorama.client.service.ApplicationsServiceAsync;
 import com.appspot.eventorama.shared.model.Application;
+import com.google.appengine.api.datastore.Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -70,6 +71,8 @@ public class AppList extends Composite {
                 for (Application app : result)
                 {
                     final int row = appsFlexTable.getRowCount();
+                    final Key appKey = app.getKey();
+                    
                     appsFlexTable.setText(row, 0, app.getTitle());
                     appsFlexTable.setText(row, 1, DateTimeFormat.getFormat("dd.MM.yyyy").format(app.getStartDate()));
                     appsFlexTable.setText(row, 2, DateTimeFormat.getFormat("dd.MM.yyyy").format(app.getExpirationDate()));
@@ -80,8 +83,15 @@ public class AppList extends Composite {
                     removeAppButton.addStyleDependentName("remove");
                     removeAppButton.addClickHandler(new ClickHandler() {
                         public void onClick(ClickEvent event) {
-                            // TODO
-                            appsFlexTable.removeRow(row);
+                            applicationsService.delete(appKey, new AsyncCallback<Void>() {
+                                public void onFailure(Throwable caught) {
+                                    Window.alert(caught.toString());
+                                }
+
+                                public void onSuccess(Void result) {
+                                    appsFlexTable.removeRow(row);
+                                }
+                            });
                         }
                     });
                     appsFlexTable.setWidget(row, 4, removeAppButton);
@@ -92,4 +102,5 @@ public class AppList extends Composite {
         });
     }
 
+    
 }
