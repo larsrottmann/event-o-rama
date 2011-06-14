@@ -16,11 +16,9 @@ public class Logout extends Composite {
 
     @UiField
     Anchor link;
-    
-    
+
     public Logout(String logoutUrl) {
         initWidget(uiBinder.createAndBindUi(this));
         link.setHref(logoutUrl);
     }
-
 }

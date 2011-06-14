@@ -16,11 +16,9 @@ public class Login extends Composite {
 
     @UiField
     Anchor link;
-    
-    
+
     public Login(String loginUrl) {
         initWidget(uiBinder.createAndBindUi(this));
         link.setHref(loginUrl);
     }
-
 }
