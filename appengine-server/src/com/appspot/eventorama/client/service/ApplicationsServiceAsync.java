@@ -15,4 +15,6 @@ public interface ApplicationsServiceAsync {
 
     void delete(Key appKey, AsyncCallback<Void> callback);
 
+    void show(Key appKey, AsyncCallback<Application> callback);
+
 }

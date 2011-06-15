@@ -28,7 +28,7 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         ApplicationMeta meta = ApplicationMeta.get();
         List<Application> apps = Datastore.query(meta).filter(meta.user.equal(getUser())).asList();
 
-        // XXX workaround for strange issue with serializing GAE user object
+        // XXX workaround because serializing GAE user object throws an exception
         for (Application app : apps) {
             app.setUser(null);
         }
@@ -58,6 +58,18 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         Datastore.delete(appKey);
     }
 
+    public Application show(Key appKey) throws NotLoggedInException {
+        checkLoggedIn();
+        
+        log.info("Logged in. Querying app.");
+        
+        Application app = Datastore.get(ApplicationMeta.get(), appKey);
+
+        // XXX workaround because serializing GAE user object throws an exception
+        app.setUser(null);
+        
+        return app;
+    }
 
 
     
@@ -72,5 +84,6 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         UserService userService = UserServiceFactory.getUserService();
         return userService.getCurrentUser();
     }
+
 
 }
