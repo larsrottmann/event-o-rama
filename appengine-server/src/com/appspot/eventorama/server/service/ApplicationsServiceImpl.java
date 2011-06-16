@@ -1,7 +1,13 @@
 package com.appspot.eventorama.server.service;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.slim3.datastore.Datastore;
@@ -14,6 +20,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.utils.SystemProperty;
 
 public class ApplicationsServiceImpl implements ApplicationsService {
 
@@ -48,6 +55,40 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         app.setUser(getUser());
         
         Datastore.put(app);
+
+        log.info("Wrote application to data store: " + app);
+        
+        try {
+            URL url = new URL(System.getProperty("com.appspot.eventorama.appmaker.url"));
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("content-type", "application/json; charset=utf-8");
+
+            String hostName = "localhost:8888";
+            if (SystemProperty.environment.value() ==
+                SystemProperty.Environment.Value.Production) {
+                // The app is running on App Engine...
+                hostName = "eventorama.appspot.com";
+            }
+            connection.setRequestProperty("x-eventorama-callback", "http://" + hostName + "/notify/" + app.getKey().getId());
+
+            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+            writer.write(ApplicationMeta.get().modelToJson(app));
+            writer.close();
+    
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                // OK
+                log.info("Successfully send trigger to app-maker service for app " + app);
+            } else {
+                // Server returned HTTP error code.
+                log.log(Level.WARNING, "Error calling app-maker service. Server returned response code " + connection.getResponseCode());
+            }
+        } catch (MalformedURLException e) {
+            log.log(Level.WARNING, "Error in app-maker URL.", e);
+        } catch (IOException e) {
+            log.log(Level.WARNING, "Error calling app-maker service.", e);
+        }
     }
 
     public void delete(Key appKey) throws NotLoggedInException {
