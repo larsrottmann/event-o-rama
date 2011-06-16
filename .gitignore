@@ -3,3 +3,4 @@
 bin/
 target/
 local.properties
+gen/
