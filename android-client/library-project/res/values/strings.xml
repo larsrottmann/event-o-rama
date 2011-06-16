@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">newBlah</string>
+    <string name="signup_googleaccount">choosing your google account</string>
+    <string name="signup_headline">Welcome! Join the party by</string>
+    <string name="signup_button_text">Join!</string>
 </resources>

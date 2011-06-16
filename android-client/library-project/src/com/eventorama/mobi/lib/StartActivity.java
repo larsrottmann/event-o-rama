@@ -27,7 +27,7 @@ public class StartActivity extends Activity
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent();
-				i.setClass(getApplicationContext(), NextActivity.class);
+				i.setClass(getApplicationContext(), SignUpActivity.class);
 				startActivity(i);
 			}
 		});
