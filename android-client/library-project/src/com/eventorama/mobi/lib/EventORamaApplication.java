@@ -4,6 +4,6 @@ import android.app.Application;
 
 public class EventORamaApplication extends Application {
 	
-	public static final String ERVER_URL = "";
+	public static final String SERVER_URL = "";
 
 }
