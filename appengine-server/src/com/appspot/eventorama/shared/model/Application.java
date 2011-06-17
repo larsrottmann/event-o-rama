@@ -161,4 +161,32 @@ public class Application implements Serializable {
     public boolean isActive() {
         return active;
     }
+
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Application [key=");
+        builder.append(key);
+        builder.append(", version=");
+        builder.append(version);
+        builder.append(", user=");
+        builder.append(user);
+        builder.append(", title=");
+        builder.append(title);
+        builder.append(", active=");
+        builder.append(active);
+        builder.append(", packageName=");
+        builder.append(packageName);
+        builder.append(", startDate=");
+        builder.append(startDate);
+        builder.append(", expirationDate=");
+        builder.append(expirationDate);
+        builder.append(", downloadUrl=");
+        builder.append(downloadUrl);
+        builder.append("]");
+        return builder.toString();
+    }
+    
+    
 }

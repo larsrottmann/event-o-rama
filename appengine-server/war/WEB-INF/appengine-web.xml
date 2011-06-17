@@ -13,6 +13,8 @@
         <property name="slim3.uploadFileSizeMax" value="100000"/>
         -->
 	    <property name="java.util.logging.config.file" value="WEB-INF/classes/logging.properties"/>
+	    
+	    <property name="com.appspot.eventorama.appmaker.url" value="http://127.0.0.1:9000"/>
 	</system-properties>
 	<sessions-enabled>false</sessions-enabled>
 	<threadsafe>true</threadsafe>

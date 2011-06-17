@@ -123,8 +123,8 @@ public class AppList extends Composite {
 
     private void addApp() {
         final String title = eventTextBox.getText().trim();
-        if (!title.matches("^[0-9a-zA-Z\\.\\-]{3,11}$")) {
-            Window.alert("'" + title + "' is not a valid application title, allowed characters are 0-9, a-z, dot and dash (3 up to 11 characters).");
+        if (!title.matches("^[0-9a-zA-Z\\.\\-\\s]{3,20}$")) {
+            Window.alert("'" + title + "' is not a valid application title, allowed characters are 0-9, a-z, space, dot and dash (3 up to 20 characters).");
             eventTextBox.selectAll();
             return;
         }
