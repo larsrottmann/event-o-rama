@@ -5,15 +5,17 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
     <TextView android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_width="match_parent" android:layout_gravity="center_horizontal" android:layout_margin="@dimen/margins_default" android:text="@string/signup_headline" android:id="@+id/signup_textview_headline"></TextView>
-    
-    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:layout_margin="@dimen/margins_default" android:text="@string/signup_googleaccount" android:id="@+id/signup_textview_account"></TextView>
-    <RadioGroup android:layout_margin="@dimen/margins_default" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/signup_radiogroup">        
-    </RadioGroup>
-    <FrameLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:background="@drawable/line_blue" android:id="@+id/singup_devider"></FrameLayout>
+
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:id="@+id/signup_textview_username" android:text="@string/signup_username" android:layout_margin="@dimen/margins_default" android:layout_marginTop="15dip"></TextView>
     
     <EditText android:layout_height="wrap_content" android:layout_width="match_parent" android:inputType="textPersonName" android:layout_margin="@dimen/margins_default" android:id="@+id/signup_edittext_username">
         <requestFocus></requestFocus>
     </EditText>
     <Button android:layout_height="wrap_content" android:layout_margin="@dimen/margins_default" android:id="@+id/signup_button_ok" android:text="@string/signup_button_text" android:layout_width="150dip"></Button>
+    
+    <FrameLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:background="@drawable/line_blue" android:id="@+id/singup_devider"></FrameLayout>
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:layout_margin="@dimen/margins_default" android:text="@string/signup_googleaccount" android:id="@+id/signup_textview_account"></TextView>
+    <RadioGroup android:layout_margin="@dimen/margins_default" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/signup_radiogroup">        
+    </RadioGroup>
     
 </LinearLayout>

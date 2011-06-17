@@ -4,4 +4,7 @@
     <string name="signup_googleaccount">choosing your google account</string>
     <string name="signup_headline">Welcome! Join the party by</string>
     <string name="signup_button_text">Join!</string>
+    <string name="signup_username">providing your nickname</string>
+    <string name="signup_login_header">Sign-Up</string>
+    <string name="signup_login_text">Joining the party...</string>
 </resources>
