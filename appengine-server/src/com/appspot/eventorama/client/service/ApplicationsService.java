@@ -17,5 +17,5 @@ public interface ApplicationsService extends RemoteService {
     
     public void delete(Key appKey) throws NotLoggedInException;
     
-    public Application show(Key appKey) throws NotLoggedInException;
+    public Application get(Key appKey) throws NotLoggedInException;
 }

@@ -79,7 +79,7 @@ public class ApplicationsServiceImpl implements ApplicationsService {
     
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 // OK
-                log.info("Successfully send trigger to app-maker service for app " + app);
+                log.info("Successfully sent trigger to app-maker service for app " + app);
             } else {
                 // Server returned HTTP error code.
                 log.log(Level.WARNING, "Error calling app-maker service. Server returned response code " + connection.getResponseCode());
@@ -99,7 +99,7 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         Datastore.delete(appKey);
     }
 
-    public Application show(Key appKey) throws NotLoggedInException {
+    public Application get(Key appKey) throws NotLoggedInException {
         checkLoggedIn();
         
         log.info("Logged in. Querying app.");
