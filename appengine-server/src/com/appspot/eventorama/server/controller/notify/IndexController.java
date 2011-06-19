@@ -1,6 +1,8 @@
 package com.appspot.eventorama.server.controller.notify;
 
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.logging.Logger;
 
 import org.slim3.controller.Controller;
@@ -25,7 +27,7 @@ public class IndexController extends Controller {
         v.add("id", v.required(), v.longType());
         v.add("url", v.required());
         
-        if (!v.validate()) {
+        if (! (v.validate() && validUrl(asString("url")))) {
             Errors errors = v.getErrors();
             log.warning(String.format("Got an invalid set of input parameters: id=%s (%s), url=%s (%s)", asString("id"), errors.get("id"), asString("url"), errors.get("url")));
             response.setStatus(HttpURLConnection.HTTP_BAD_REQUEST);
@@ -51,5 +53,16 @@ public class IndexController extends Controller {
         }
         
         return null;
+    }
+    
+    protected boolean validUrl(String url)
+    {
+        try {
+            new URL(url);
+        } catch (MalformedURLException e) {
+            return false;
+        }
+        
+        return true;
     }
 }

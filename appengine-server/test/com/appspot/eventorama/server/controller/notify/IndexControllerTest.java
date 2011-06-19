@@ -20,7 +20,7 @@ public class IndexControllerTest extends ControllerTestCase {
         
         try
         {
-            final String downloadUrl = "some_apk_download_url";
+            final String downloadUrl = "http://127.0.0.1/download/apk";
             tester.param("url", downloadUrl);
             tester.start("/notify/" + app.getKey().getId());
             IndexController controller = tester.getController();
@@ -40,7 +40,7 @@ public class IndexControllerTest extends ControllerTestCase {
 
     @Test
     public void testNotifyNonExistentAppId() throws Exception {
-        tester.param("url", "some_apk_download_url");
+        tester.param("url", "http://127.0.0.1/download/apk");
         tester.start("/notify/-666");
         IndexController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
@@ -49,7 +49,7 @@ public class IndexControllerTest extends ControllerTestCase {
     
     @Test
     public void testNotifyInvalidAppId() throws Exception {
-        tester.param("url", "some_apk_download_url");
+        tester.param("url", "http://127.0.0.1/download/apk");
         tester.start("/notify/invalid");
         IndexController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
@@ -74,5 +74,23 @@ public class IndexControllerTest extends ControllerTestCase {
         }
     }
     
+    @Test
+    public void testNotifyInvalidDownloadUrl() throws Exception {
+        Application app = new Application();
+        Datastore.put(app);
+        
+        try
+        {
+            tester.param("url", "invalid_apk_url");
+            tester.start("/notify/" + app.getKey().getId());
+            IndexController controller = tester.getController();
+            assertThat(controller, is(notNullValue()));
+            assertThat(tester.response.getStatus(), is(400));
+        }
+        finally
+        {
+            Datastore.delete(app.getKey());
+        }
+    }
 
 }
