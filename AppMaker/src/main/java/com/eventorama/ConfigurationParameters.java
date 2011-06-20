@@ -15,8 +15,8 @@ public class ConfigurationParameters {
 	 */
 	public static String SDK_DIR = "/home/renard/event-o-rama-devel/android-sdk-linux_x86";
 	public static String WORKING_DIR = "/home/renard/event-o-rama-devel/apps-tmp/";
-	public static String LIB_DIR = "../libProject"; // absolute path names don't
-													// work for some reason
+	public static String LIB_DIR = "../libProject"; // absolute path names don't work for some reason
+	public static String LIB_DIR_ABS = "/libProject"; // absolute path names don't work for some reason
 
 	/**
 	 * Keystore parameters
@@ -56,6 +56,7 @@ public class ConfigurationParameters {
 		log.info("SDK_DIR="+ SDK_DIR);
 		log.info("WORKING_DIR="+ WORKING_DIR);
 		log.info("LIB_DIR="+ LIB_DIR);
+		log.info("LIB_DIR_ABS="+ LIB_DIR_ABS);
 		log.info("KEY_STORE_PATH="+ KEY_STORE_PATH);
 		log.info("KEY_STORE_ALIAS="+ KEY_STORE_ALIAS);
 		log.info("KEY_STORE_PASSWORD="+ KEY_STORE_PASSWORD);
@@ -72,6 +73,7 @@ public class ConfigurationParameters {
 		SDK_DIR = props.getProperty("SDK_DIR", SDK_DIR);
 		WORKING_DIR = props.getProperty("WORKING_DIR", WORKING_DIR);
 		LIB_DIR = props.getProperty("LIB_DIR", LIB_DIR);
+		LIB_DIR_ABS = props.getProperty("LIB_DIR_ABS", LIB_DIR_ABS);
 		KEY_STORE_PATH = props.getProperty("KEY_STORE_PATH", KEY_STORE_PATH);
 		KEY_STORE_ALIAS = props.getProperty("KEY_STORE_ALIAS", KEY_STORE_ALIAS);
 		KEY_STORE_PASSWORD = props.getProperty("KEY_STORE_PASSWORD", KEY_STORE_PASSWORD);
