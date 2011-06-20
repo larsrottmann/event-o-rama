@@ -17,7 +17,7 @@
     <property file="default.properties" />
 
 	<target name="prepareManifest" depends="" description="prepares the Android manifest file">
-		<copy file="${android.library.reference.1}/AndroidManifest.template" toFile="AndroidManifest.xml"/>
+		<copy file="${android.library.reference.1}/AndroidManifest.template" toFile="AndroidManifest.xml" overwrite="true" failonerror="true" verbose="true"/>
 		<replace file="AndroidManifest.xml" token="_TARGET_PACKAGE_" value="${new.package.name}"/>
 	</target>
 
