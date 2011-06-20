@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="eventclient_main" default="prepareManifest">
+	
+	<!-- 
+		Custom build file, should be copied from the lib project to the new master
+		copies the templated Android Manifest file and replaces everything with
+		the new package name which you have to set via new.package.name
+	 -->
+
+
+    <property file="build.properties" />
+
+    <!-- The default.properties file is created and updated by the 'android'
+         tool, as well as ADT.
+         This file is an integral part of the build system for your
+         application and should be checked into Version Control Systems. -->
+    <property file="default.properties" />
+
+	<fail unless="new.package.name">Computer says no. You forgot to set -Dnew.package.name=something !</fail>
+	<fail unless="android.library.reference.1">Computer says no. You forgot to set android.library.reference.1 in your default.properties !</fail>
+	
+	<target name="prepareManifest" depends="" description="prepares the Android manifest file">
+		<copy file="${android.library.reference.1}/AndroidManifest.template" toFile="AndroidManifest.xml" overwrite="true" failonerror="true" verbose="true"/>
+		<replace file="AndroidManifest.xml" token="_TARGET_PACKAGE_" value="${new.package.name}"/>
+	</target>
+
+</project>

@@ -1,7 +1,11 @@
 package com.eventorama;
 
+import static com.eventorama.ConfigurationParameters.KEY_STORE_ALIAS;
+import static com.eventorama.ConfigurationParameters.KEY_STORE_ALIAS_PASSWORD;
+import static com.eventorama.ConfigurationParameters.KEY_STORE_PASSWORD;
+import static com.eventorama.ConfigurationParameters.KEY_STORE_PATH;
+
 import java.io.BufferedInputStream;
-import static com.eventorama.ConfigurationParameters.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,6 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.channels.FileChannel;
 import java.util.Date;
 import java.util.Properties;
 
@@ -58,7 +63,7 @@ class AppMaker implements Runnable {
 			appDir = makeApp();
 			verifyApp(appDir);
 			addReferenceToLibraryProject(appDir);
-			addCustomContent(appDir);
+			addCustomContent(appDir, request.getPackage());
 			addReferenceToKeyStore(appDir);
 			buildApk(appDir);
 			URL url = storeApp(appDir);
@@ -87,7 +92,7 @@ class AppMaker implements Runnable {
 	private URL storeApp(File appDir) throws IllegalStateException {
 		Date expiration = new Date(request.getEndDate());
 		File apkFile = new File(appDir, "bin/" + request.getAppName() + "-release.apk");
-		URL result = uploader.upload(apkFile, request.getPackage() + "." + request.getAppName()+".apk", expiration);
+		URL result = uploader.upload(apkFile, request.getPackage() + "." + request.getAppName() + ".apk", expiration);
 		log.info("App was uploaded and is accessbile at: " + result);
 		return result;
 	}
@@ -106,7 +111,7 @@ class AppMaker implements Runnable {
 		}
 		try {
 			client.send(exchange);
-			//exchange.waitForDone();
+			// exchange.waitForDone();
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
@@ -185,31 +190,31 @@ class AppMaker implements Runnable {
 
 	}
 
-	private void changeStringResources(File appDir) throws IOException {
-		File values = new File(appDir, "res/values/strings.xml");
-		String valuesString = readFileAsString(values);
-
-		String newEntry = "<string name=\"app_text\">" + request.getAppName() + "</string>";
-
-		valuesString = valuesString.replace("</resources>", newEntry + "\n</resources>");
-		valuesString = valuesString.replace(DEFAULT_ACTIVITY_NAME, request.getAppName());
-
-		FileWriter writer = new FileWriter(values);
-		writer.write(valuesString);
-		writer.close();
-	}
+//	private void changeStringResources(File appDir) throws IOException {
+//		File values = new File(appDir, "res/values/strings.xml");
+//		String valuesString = readFileAsString(values);
+//
+//		String newEntry = "<string name=\"app_text\">" + request.getAppName() + "</string>";
+//
+//		valuesString = valuesString.replace("</resources>", newEntry + "\n</resources>");
+//		valuesString = valuesString.replace(DEFAULT_ACTIVITY_NAME, request.getAppName());
+//
+//		FileWriter writer = new FileWriter(values);
+//		writer.write(valuesString);
+//		writer.close();
+//	}
 
 	// put com.eventorama.HelloWorldActivity into Androidmanifest.xml
-	private void importLibraryActivityIntoManifest(File appDir) throws IOException {
-		File manifest = new File(appDir, "AndroidManifest.xml");
-		String manifestString = readFileAsString(manifest);
-
-		manifestString = manifestString.replace(DEFAULT_ACTIVITY_NAME, LIBRARY_ACTIVITY_NAME);
-
-		FileWriter writer = new FileWriter(manifest);
-		writer.write(manifestString);
-		writer.close();
-	}
+//	private void importLibraryActivityIntoManifest(File appDir) throws IOException {
+//		File manifest = new File(appDir, "AndroidManifest.xml");
+//		String manifestString = readFileAsString(manifest);
+//
+//		manifestString = manifestString.replace(DEFAULT_ACTIVITY_NAME, LIBRARY_ACTIVITY_NAME);
+//
+//		FileWriter writer = new FileWriter(manifest);
+//		writer.write(manifestString);
+//		writer.close();
+//	}
 
 	private static String readFileAsString(File file) throws java.io.IOException {
 		byte[] buffer = new byte[(int) file.length()];
@@ -227,25 +232,77 @@ class AppMaker implements Runnable {
 		return new String(buffer);
 	}
 
-	private void addCustomContent(File appDir) throws IllegalStateException {
-		deleteAllLayoutFiles(appDir);
+	private static void copyCustomBuildXML(File appDir) throws IllegalStateException {
+		File sourceFile = new File(ConfigurationParameters.LIB_DIR_ABS, "build-custom.xml");
+		File destFile = new File(appDir, "build-custom.xml");
 		try {
-			changeStringResources(appDir);
+			destFile.createNewFile();
 		} catch (IOException e) {
-			throw new IllegalStateException("could not update values.xml");
+			throw new IllegalStateException(e);
 		}
+		FileChannel source = null;
+		FileChannel destination = null;
+		try {
+			source = new FileInputStream(sourceFile).getChannel();
+			destination = new FileOutputStream(destFile).getChannel();
+			destination.transferFrom(source, 0, source.size());
+		} catch (FileNotFoundException e) {
+			throw new IllegalStateException(e);
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		} finally {
+			if (source != null) {
+				try {
+					source.close();
+				} catch (IOException ignore) {}
+			}
+			if (destination != null) {
+				try {
+					destination.close();
+				} catch (IOException ignore) {}
+			}
+		}
+	}
+
+	private void addCustomContent(File appDir, String packageName) throws IllegalStateException {
+		deleteAllLayoutFiles(appDir);
+//		try {
+//			changeStringResources(appDir);
+//		} catch (IOException e) {
+//			throw new IllegalStateException("could not update values.xml");
+//		}
 		try {
 			changeAppNameInBuildXml(appDir);
 		} catch (IOException e) {
 			throw new IllegalStateException("could not update values.xml");
 		}
-		try {
-			importLibraryActivityIntoManifest(appDir);
-		} catch (IOException e) {
-			throw new IllegalStateException("could not update AndroidManifest.xml");
-		}
+//		try {
+//			importLibraryActivityIntoManifest(appDir);
+//		} catch (IOException e) {
+//			throw new IllegalStateException("could not update AndroidManifest.xml");
+//		}
+		
+		copyCustomBuildXML(appDir);
+		doCustomAntBuild(appDir,packageName);
 	}
 
+	private void doCustomAntBuild(File appDir, String packageName){
+			File buildFile = new File(appDir,"build-custom.xml");
+			Project p = new Project();
+			try {
+				p.setUserProperty("ant.file", buildFile.getAbsolutePath());
+				p.init();
+				p.setBasedir(appDir.getAbsolutePath());
+				ProjectHelper helper = ProjectHelper.getProjectHelper();
+				p.addReference("ant.projectHelper", helper);
+				helper.parse(p, buildFile);
+				p.setProperty("new.package.name",packageName);
+				p.executeTarget("prepareManifest");
+			} catch (BuildException e) {
+				throw new IllegalStateException("build error during ", e);
+			}
+	}
+	
 	private File makeApp() throws IllegalStateException {
 		return SDKUtils.createProject(request.getAppName(), request.getPackage());
 	}

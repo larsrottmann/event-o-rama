@@ -2,7 +2,6 @@ package com.eventorama;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,31 +18,39 @@ import org.eclipse.jetty.io.ByteArrayBuffer;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class AppWorkerTest {
 
-	protected static final String endPoint = "http://localhost:8080/";
-	protected static final String callbackEndPoint = "http://localhost:8080/callback";
+	protected static final String ENDPOINT = "http://localhost:8080/appmaker/";
+	protected static final String CALLBACK_ENDPOINT = "http://localhost:8080/appmaker/callback/";
 	protected static Server server;
 	protected static HttpClient client;
 	protected static EntryPoint entryPoint;
 	private final static long TWO_WEEKS = 1000 * 60 * 60 * 24 * 14;
+	private static boolean success = false;
 
 	private static final Object lock = new Object();
 
 	private static class TestHandler extends AbstractHandler {
 
 		@Override
-		public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-			if (target.equals("/callback")) {
-				response.setStatus(HttpServletResponse.SC_ACCEPTED);
-				baseRequest.setHandled(true);
+		public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response)
+				throws IOException, ServletException {
+
+			response.setStatus(HttpServletResponse.SC_ACCEPTED);
+			baseRequest.setHandled(true);
+
+			if (target.endsWith("callback/")) {
 				synchronized (lock) {
+					success = true;
 					lock.notify();
 				}
+
 			} else {
 				entryPoint.handle(target, baseRequest, request, response);
 			}
@@ -62,6 +69,7 @@ public class AppWorkerTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		ConfigurationParameters.loadPropertiesFromFile();
+		success = false;
 		entryPoint = new EntryPoint();
 		System.out.println("starting local server for testing");
 		final Thread serverThread = new Thread() {
@@ -69,8 +77,11 @@ public class AppWorkerTest {
 			@Override
 			public void run() {
 				server = new Server(8080);
-				server.setHandler(new TestHandler());
-
+				ContextHandler context = new ContextHandler();
+				context.setContextPath("/appmaker");
+				context.setClassLoader(Thread.currentThread().getContextClassLoader());
+				server.setHandler(context);
+				context.setHandler(new TestHandler());
 				try {
 					server.start();
 					synchronized (lock) {
@@ -81,6 +92,7 @@ public class AppWorkerTest {
 				}
 			}
 		};
+
 		serverThread.start();
 		synchronized (lock) {
 			lock.wait();
@@ -89,32 +101,30 @@ public class AppWorkerTest {
 		client.start();
 	}
 
+	@SuppressWarnings("unchecked")
 	private static AbstractBuffer makeContent() throws UnsupportedEncodingException {
 		String appName = "helloWorld";
 		String packageName = "com.eventorama.t" + Math.round(Math.random() * Integer.MAX_VALUE);
 		long startDate = System.currentTimeMillis();
 		long endDate = startDate + TWO_WEEKS;
 
-		System.out.println(new Date(startDate));
-		System.out.println(new Date(endDate));
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append(AppRequest.Parameter.CALLBACK).append("=").append(callbackEndPoint);
-		sb.append("&").append(AppRequest.Parameter.APP_NAME).append("=").append(appName);
-		sb.append("&").append(AppRequest.Parameter.PACKAGE_NAME).append("=").append(packageName);
-		sb.append("&").append(AppRequest.Parameter.START_DATE).append("=").append(startDate);
-		sb.append("&").append(AppRequest.Parameter.END_DATE).append("=").append(endDate);
-		sb.append("&").append(AppRequest.Parameter.SDK_VERSION).append("=").append(20);
-		AbstractBuffer content = new ByteArrayBuffer(sb.toString().getBytes("UTF-8"));
+		JSONObject o = new JSONObject();
+		o.put(AppRequest.Parameter.APP_NAME, appName);
+		o.put(AppRequest.Parameter.PACKAGE_NAME, packageName);
+		o.put(AppRequest.Parameter.START_DATE, startDate);
+		o.put(AppRequest.Parameter.END_DATE, endDate);
+
+		AbstractBuffer content = new ByteArrayBuffer(o.toJSONString().getBytes("UTF-8"));
 		return content;
 	}
 
 	@Test
 	public void testCreateProject() throws IOException, InterruptedException {
 		final ContentExchange exchange = new ContentExchange(true);
-		exchange.setURL(endPoint);
+		exchange.setURL(ENDPOINT);
 		exchange.setMethod(HttpMethods.POST);
-		exchange.setRequestContentType("application/x-www-form-urlencoded;charset=utf-8");
+		exchange.addRequestHeader(AppRequest.Parameter.CALLBACK, CALLBACK_ENDPOINT);
+		// exchange.setRequestContentType("application/json;charset=utf-8");
 		exchange.setRequestContent(makeContent());
 		client.send(exchange);
 		final int exchangeState = exchange.waitForDone();
@@ -124,13 +134,13 @@ public class AppWorkerTest {
 
 			exchange.getResponseContentBytes();
 		} else {
-			throw new IllegalStateException("Error requesting \"" + endPoint + "\" - state: " + exchangeState);
+			throw new IllegalStateException("Error requesting \"" + ENDPOINT + "\" - state: " + exchangeState);
 		}
 		// now wait for callback
 		synchronized (lock) {
 			lock.wait();
 		}
-
+		Assert.assertTrue(success);
 	}
 
 }
