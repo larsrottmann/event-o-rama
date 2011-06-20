@@ -296,7 +296,7 @@ class AppMaker implements Runnable {
 				ProjectHelper helper = ProjectHelper.getProjectHelper();
 				p.addReference("ant.projectHelper", helper);
 				helper.parse(p, buildFile);
-				p.setProperty("Dnew.package.name",packageName);
+				p.setProperty("new.package.name",packageName);
 				p.executeTarget("prepareManifest");
 			} catch (BuildException e) {
 				throw new IllegalStateException("build error during ", e);
