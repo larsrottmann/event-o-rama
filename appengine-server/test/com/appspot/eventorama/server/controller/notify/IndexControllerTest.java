@@ -1,5 +1,8 @@
 package com.appspot.eventorama.server.controller.notify;
 
+import java.io.BufferedReader;
+import java.io.StringReader;
+
 import org.slim3.datastore.Datastore;
 import org.slim3.tester.ControllerTestCase;
 import org.junit.Test;
@@ -21,7 +24,7 @@ public class IndexControllerTest extends ControllerTestCase {
         try
         {
             final String downloadUrl = "http://127.0.0.1/download/apk";
-            tester.param("url", downloadUrl);
+            tester.request.setReader(new BufferedReader(new StringReader("{\"success\": true, \"app-url\": \"" + downloadUrl + "\"}")));
             tester.start("/notify/" + app.getKey().getId());
             IndexController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
@@ -40,7 +43,7 @@ public class IndexControllerTest extends ControllerTestCase {
 
     @Test
     public void testNotifyNonExistentAppId() throws Exception {
-        tester.param("url", "http://127.0.0.1/download/apk");
+        tester.request.setReader(new BufferedReader(new StringReader("{\"success\": true, \"app-url\": \"http://127.0.0.1/download/apk\"}")));
         tester.start("/notify/-666");
         IndexController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
@@ -49,7 +52,7 @@ public class IndexControllerTest extends ControllerTestCase {
     
     @Test
     public void testNotifyInvalidAppId() throws Exception {
-        tester.param("url", "http://127.0.0.1/download/apk");
+        tester.request.setReader(new BufferedReader(new StringReader("{\"success\": true, \"app-url\": \"http://127.0.0.1/download/apk\"}")));
         tester.start("/notify/invalid");
         IndexController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
@@ -63,6 +66,7 @@ public class IndexControllerTest extends ControllerTestCase {
         
         try
         {
+            tester.request.setReader(new BufferedReader(new StringReader("")));
             tester.start("/notify/" + app.getKey().getId());
             IndexController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
@@ -81,7 +85,7 @@ public class IndexControllerTest extends ControllerTestCase {
         
         try
         {
-            tester.param("url", "invalid_apk_url");
+            tester.request.setReader(new BufferedReader(new StringReader("{\"success\": true, \"app-url\": \"invalid_apk_url\"}")));
             tester.start("/notify/" + app.getKey().getId());
             IndexController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
