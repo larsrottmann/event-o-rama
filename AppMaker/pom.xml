@@ -84,6 +84,14 @@
 					<version>${jettyVersion}</version>
 				</plugin>
 				<plugin>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<environmentVariables>
+							<APP_MAKER_PROPERTIES>/opt/app-maker/default.properties</APP_MAKER_PROPERTIES>
+						</environmentVariables>
+					</configuration>
+				</plugin>				
+				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
 					<version>1.1</version>
@@ -96,6 +104,9 @@
 					</executions>
 					<configuration>
 						<mainClass>com.eventorama.EntryPoint</mainClass>
+						<environmentVariables>
+							<APP_MAKER_PROPERTIES>/opt/app-maker/default.properties</APP_MAKER_PROPERTIES>
+						</environmentVariables>
 					</configuration>
 				</plugin>
 				<plugin>
