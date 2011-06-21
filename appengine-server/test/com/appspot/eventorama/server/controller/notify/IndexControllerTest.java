@@ -2,6 +2,7 @@ package com.appspot.eventorama.server.controller.notify;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.net.HttpURLConnection;
 
 import org.slim3.datastore.Datastore;
 import org.slim3.tester.ControllerTestCase;
@@ -29,7 +30,7 @@ public class IndexControllerTest extends ControllerTestCase {
             IndexController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.asLong("id"), is(app.getKey().getId()));
-            assertThat(tester.response.getStatus(), is(200));
+            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
 
             app = Datastore.get(ApplicationMeta.get(), app.getKey());
             assertThat(app.getDownloadUrl(), is(notNullValue()));
@@ -47,7 +48,7 @@ public class IndexControllerTest extends ControllerTestCase {
         tester.start("/notify/-666");
         IndexController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
-        assertThat(tester.response.getStatus(), is(404));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_FOUND));
     }
     
     @Test
@@ -56,7 +57,7 @@ public class IndexControllerTest extends ControllerTestCase {
         tester.start("/notify/invalid");
         IndexController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
-        assertThat(tester.response.getStatus(), is(400));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
     }
 
     @Test
@@ -70,7 +71,7 @@ public class IndexControllerTest extends ControllerTestCase {
             tester.start("/notify/" + app.getKey().getId());
             IndexController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(400));
+            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
         }
         finally
         {
@@ -89,7 +90,7 @@ public class IndexControllerTest extends ControllerTestCase {
             tester.start("/notify/" + app.getKey().getId());
             IndexController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(400));
+            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
         }
         finally
         {

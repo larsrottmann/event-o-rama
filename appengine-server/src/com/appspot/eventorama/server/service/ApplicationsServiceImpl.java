@@ -65,11 +65,11 @@ public class ApplicationsServiceImpl implements ApplicationsService {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("content-type", "application/json; charset=utf-8");
 
-            String hostName = "localhost:8888";
+            String hostName = "eventorama.appspot.com";
             if (SystemProperty.environment.value() ==
-                SystemProperty.Environment.Value.Production) {
-                // The app is running on App Engine...
-                hostName = "eventorama.appspot.com";
+                SystemProperty.Environment.Value.Development) {
+                // The app is not running on App Engine...
+                hostName = "localhost:8888";
             }
             connection.setRequestProperty("x-eventorama-callback", "http://" + hostName + "/notify/" + app.getKey().getId());
 
