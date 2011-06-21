@@ -16,6 +16,9 @@
          application and should be checked into Version Control Systems. -->
     <property file="default.properties" />
 
+	<fail unless="new.package.name">Computer says no. You forgot to set -Dnew.package.name=something !</fail>
+	<fail unless="android.library.reference.1">Computer says no. You forgot to set android.library.reference.1 in your default.properties !</fail>
+	
 	<target name="prepareManifest" depends="" description="prepares the Android manifest file">
 		<copy file="${android.library.reference.1}/AndroidManifest.template" toFile="AndroidManifest.xml" overwrite="true" failonerror="true" verbose="true"/>
 		<replace file="AndroidManifest.xml" token="_TARGET_PACKAGE_" value="${new.package.name}"/>
