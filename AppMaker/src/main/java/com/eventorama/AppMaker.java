@@ -122,12 +122,11 @@ class AppMaker implements Runnable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{\"success\" : ").append(success);
 		if (success) {
-			sb.append(",\"app-url\":").append(appURL.toString()).append("}");
+			sb.append(",\"app-url\":\"").append(appURL.toString()).append("\"}");
 		} else {
-			sb.append(",\"reason\":").append(error.getMessage()).append("}");
+			sb.append(",\"reason\":\"").append(error.getMessage()).append("\"}");
 		}
-		AbstractBuffer content = new ByteArrayBuffer(sb.toString().getBytes("UTF-8"));
-		return content;
+		return new ByteArrayBuffer(sb.toString().getBytes("UTF-8"));
 	}
 
 	private void buildApk(File appDir) {
@@ -295,8 +294,8 @@ class AppMaker implements Runnable {
 				p.setBasedir(appDir.getAbsolutePath());
 				ProjectHelper helper = ProjectHelper.getProjectHelper();
 				p.addReference("ant.projectHelper", helper);
-				helper.parse(p, buildFile);
 				p.setProperty("new.package.name",packageName);
+				helper.parse(p, buildFile);
 				p.executeTarget("prepareManifest");
 			} catch (BuildException e) {
 				throw new IllegalStateException("build error during ", e);
