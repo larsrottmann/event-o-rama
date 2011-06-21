@@ -49,7 +49,7 @@ public class ConfigurationParameters {
 											// before rejecting requests
 
 	private final static String DEFAULT_PROPERTY_FILE_NAME = "/opt/app-maker/default.properties";
-	private final static String PROPERTY_FILE_PROPERTY = "APP-MAKER-PROPERTIES";
+	private final static String PROPERTY_FILE_PROPERTY = "APP_MAKER_PROPERTIES";
 
 	private static void logCurrentConfig() {
 		log.info("Current configuration is: ");
@@ -99,7 +99,6 @@ public class ConfigurationParameters {
 			in = new FileInputStream(propertiesPath);
 		} catch (FileNotFoundException e) {
 			log.error("Could not open properties file at: " + propertiesPath, e);
-			logCurrentConfig();
 			return;
 		}
 		Properties props = new Properties();
