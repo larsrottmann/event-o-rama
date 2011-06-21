@@ -122,12 +122,11 @@ class AppMaker implements Runnable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{\"success\" : ").append(success);
 		if (success) {
-			sb.append(",\"app-url\":").append(appURL.toString()).append("}");
+			sb.append(",\"app-url\":\"").append(appURL.toString()).append("\"}");
 		} else {
-			sb.append(",\"reason\":").append(error.getMessage()).append("}");
+			sb.append(",\"reason\":\"").append(error.getMessage()).append("\"}");
 		}
-		AbstractBuffer content = new ByteArrayBuffer(sb.toString().getBytes("UTF-8"));
-		return content;
+		return new ByteArrayBuffer(sb.toString().getBytes("UTF-8"));
 	}
 
 	private void buildApk(File appDir) {
