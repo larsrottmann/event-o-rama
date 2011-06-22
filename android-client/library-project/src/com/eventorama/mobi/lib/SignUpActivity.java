@@ -90,6 +90,21 @@ public class SignUpActivity extends Activity{
 		dialog = ProgressDialog.show(mContext, null ,getText(R.string.signup_login_text), true);		
 	}
 	
+	private String capitalizeString(String input)
+	{
+		StringBuilder capitalizedString = new StringBuilder();
+		String[] words = input.split("\\s");
+		for (int i = 0; i < words.length; i++) {
+			String word = words[i];
+			if(word.length() > 0)
+				word = word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
+			capitalizedString.append(word);
+			if(i < words.length-1)
+				capitalizedString.append(' ');
+		}
+		return capitalizedString.toString();
+	}
+	
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {		
@@ -146,6 +161,7 @@ public class SignUpActivity extends Activity{
 		EditText et = (EditText) findViewById(R.id.signup_edittext_username);
 		String uname = rb.getText().toString();
 		uname = uname.substring(0, uname.indexOf('@')).replaceAll("\\.", " ");
+		uname = capitalizeString(uname);
 		et.setText(uname);
 	}
 

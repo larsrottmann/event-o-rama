@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.users.User;
+import com.google.appengine.api.utils.SystemProperty;
 
 import org.slim3.datastore.Attribute;
 import org.slim3.datastore.Model;
@@ -140,6 +142,16 @@ public class Application implements Serializable {
 
     public String getDownloadUrl() {
         return downloadUrl;
+    }
+    
+    public String getLocalDownloadUrl() {
+        String hostName = "eventorama.appspot.com";
+        if (SystemProperty.environment.value() ==
+            SystemProperty.Environment.Value.Development) {
+            // The app is not running on App Engine...
+            hostName = "localhost:8888";
+        }
+        return "http://" + hostName + "/download/" + KeyFactory.keyToString(getKey());
     }
 
 
