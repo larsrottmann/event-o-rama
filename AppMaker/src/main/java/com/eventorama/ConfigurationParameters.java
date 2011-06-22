@@ -89,6 +89,11 @@ public class ConfigurationParameters {
 	public static void loadPropertiesFromFile() {
 		String propertiesPath = System.getenv(PROPERTY_FILE_PROPERTY);
 
+		if (propertiesPath==null){
+			log.warn("Environment property \"" + PROPERTY_FILE_PROPERTY + "\" is not set!");
+			propertiesPath = System.getProperty(PROPERTY_FILE_PROPERTY);
+		}
+		
 		if (propertiesPath == null) {
 			log.warn("System property \"" + PROPERTY_FILE_PROPERTY + "\" is not set!");
 			propertiesPath = DEFAULT_PROPERTY_FILE_NAME;
