@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -21,6 +22,9 @@ import com.android.sdklib.internal.project.ProjectCreator;
  * 
  */
 public class AppRequest {
+	
+	private static final Logger log = Logger.getLogger(AppRequest.class);
+
 	static class Parameter {
 		public final static String CALLBACK = "x-eventorama-callback";
 		public final static String APP_NAME = "title";
@@ -78,6 +82,8 @@ public class AppRequest {
 
 		try {
 			JSONObject o = (JSONObject) JSONValue.parse(request.getReader());
+			log.info(o.toJSONString());
+			
 			appName = (String) o.get(Parameter.APP_NAME);
 			if (null == appName) {
 				throw new IllegalArgumentException(Parameter.APP_NAME + " must be set.");
@@ -86,10 +92,11 @@ public class AppRequest {
 				throw new IllegalArgumentException(Parameter.APP_NAME + " containts invalid characters. Only " + ProjectCreator.CHARS_PROJECT_NAME
 						+ " allowed.");
 			}
-			pkg = (String) o.get(Parameter.PACKAGE_NAME);
-			if (null == pkg) {
+			tmpString = (String) o.get(Parameter.PACKAGE_NAME);
+			if (null == tmpString) {
 				throw new IllegalArgumentException(Parameter.PACKAGE_NAME + " must be set.");
 			}
+			pkg = "com.appspot.eventorama.app" + tmpString;
 			if (!ProjectCreator.RE_PACKAGE_NAME.matcher(pkg).matches()) {
 				throw new IllegalArgumentException("Package name " + pkg + " contains invalid characters.\n"
 						+ "A package name must be constitued of two Java identifiers.\n" + "Each identifier allowed characters are: "
