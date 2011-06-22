@@ -9,11 +9,11 @@
 	<properties>
 		<jettyVersion>7.2.0.v20101020</jettyVersion>
 		<java.version>1.6</java.version>
-		<android.sdk.lib>/opt/app-maker</android.sdk.lib>
+		<android.sdk.lib>/ebs/android-sdk-linux_x86/tools/lib</android.sdk.lib>
 		<!-- set encoding to UTF-8 in any configuration possible -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<appmaker.properties.location>bla</appmaker.properties.location>
+		<appmaker.properties.location>/ebs/conf/default.properties</appmaker.properties.location>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -87,7 +87,7 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
 						<environmentVariables>
-							<APP_MAKER_PROPERTIES>/opt/app-maker/default.properties</APP_MAKER_PROPERTIES>
+							<APP_MAKER_PROPERTIES>${appmaker.properties.location}</APP_MAKER_PROPERTIES>
 						</environmentVariables>
 					</configuration>
 				</plugin>				
@@ -105,11 +105,11 @@
 					<configuration>
 						<mainClass>com.eventorama.EntryPoint</mainClass>
 						<systemProperties>
-				            <systemProperty>
-              				<key>APP_MAKER_PROPERTIES</key>
-              				<value>/opt/app-maker/default.properties</value>
-				            </systemProperty>
-				        </systemProperties>
+						  <systemProperty>
+						    <key>APP_MAKER_PROPERTIES</key>
+						    <value>${appmaker.properties.location}</value>
+						  </systemProperty>
+						</systemProperties>
 					</configuration>
 				</plugin>
 				<plugin>
