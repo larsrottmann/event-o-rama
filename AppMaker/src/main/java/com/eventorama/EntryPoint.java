@@ -6,6 +6,8 @@ import static com.eventorama.ConfigurationParameters.MAX_POOL_SIZE;
 import static com.eventorama.ConfigurationParameters.MAX_QUEUE_SIZE;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -17,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.io.AbstractBuffer;
+import org.eclipse.jetty.io.ByteArrayBuffer;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -53,12 +57,22 @@ public class EntryPoint extends AbstractHandler {
 			response.setStatus(HttpServletResponse.SC_ACCEPTED);
 		} catch (AppRequestException e) {
 			log.error(e);
-			response.setStatus(e.getHttpResponseCode());
+			response.setStatus(e.getHttpResponseCode());	
+			response.getWriter().write("{\"reason\":\""+e.getMessage()+"\"}");
+			response.getWriter().close();
 		} finally {			
 			baseRequest.setHandled(true);
 		}
 
 	}
+	
+	private static AbstractBuffer buildJSONResponse(String message) throws UnsupportedEncodingException {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("{\"reason\":\"").append(message).append("\"}");
+		return new ByteArrayBuffer(sb.toString().getBytes("UTF-8"));
+	}
+
 	
 	public void startToMakeApp(HttpServletRequest request) throws AppRequestException {
 		try {
