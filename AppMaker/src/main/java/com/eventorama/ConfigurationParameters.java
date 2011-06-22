@@ -90,6 +90,7 @@ public class ConfigurationParameters {
 		String propertiesPath = System.getenv(PROPERTY_FILE_PROPERTY);
 
 		if (propertiesPath==null){
+			log.warn("Environment property \"" + PROPERTY_FILE_PROPERTY + "\" is not set!");
 			propertiesPath = System.getProperty(PROPERTY_FILE_PROPERTY);
 		}
 		
