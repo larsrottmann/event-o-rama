@@ -1,6 +1,6 @@
 package com.appspot.eventorama.server.meta;
 
-//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-06-21 20:10:11")
+//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-06-22 11:22:05")
 /** */
 public final class ApplicationMeta extends org.slim3.datastore.ModelMeta<com.appspot.eventorama.shared.model.Application> {
 
@@ -149,6 +149,10 @@ public final class ApplicationMeta extends org.slim3.datastore.ModelMeta<com.app
             writer.setNextPropertyName("key");
             encoder0.encode(writer, m.getKey());
         }
+        if(m.getLocalDownloadUrl() != null){
+            writer.setNextPropertyName("localDownloadUrl");
+            encoder0.encode(writer, m.getLocalDownloadUrl());
+        }
         if(m.getPackageName() != null){
             writer.setNextPropertyName("packageName");
             encoder0.encode(writer, m.getPackageName());
@@ -185,6 +189,8 @@ public final class ApplicationMeta extends org.slim3.datastore.ModelMeta<com.app
         m.setExpirationDate(decoder0.decode(reader, m.getExpirationDate()));
         reader = rootReader.newObjectReader("key");
         m.setKey(decoder0.decode(reader, m.getKey()));
+        reader = rootReader.newObjectReader("localDownloadUrl");
+        m.setLocalDownloadUrl(decoder0.decode(reader, m.getLocalDownloadUrl()));
         reader = rootReader.newObjectReader("packageName");
         m.setPackageName(decoder0.decode(reader, m.getPackageName()));
         reader = rootReader.newObjectReader("startDate");
