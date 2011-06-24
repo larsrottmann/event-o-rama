@@ -61,8 +61,10 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         log.info("Wrote application to data store: " + app);
         
         try {
-            URL url = new URL(System.getProperty("com.appspot.eventorama.appmaker.url"));
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            final URL appMakerUrl = (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development)
+                ? new URL(System.getProperty("com.appspot.eventorama.appmaker.url.development"))
+                : new URL(System.getProperty("com.appspot.eventorama.appmaker.url.production"));
+            HttpURLConnection connection = (HttpURLConnection) appMakerUrl.openConnection();
             connection.setDoOutput(true);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("content-type", "application/json; charset=utf-8");
@@ -76,15 +78,17 @@ public class ApplicationsServiceImpl implements ApplicationsService {
             connection.setRequestProperty("x-eventorama-callback", "http://" + hostName + "/notify/" + app.getKey().getId());
 
             OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+            log.info("Sending app-maker payload: " + ApplicationMeta.get().modelToJson(app));
             writer.write(ApplicationMeta.get().modelToJson(app));
             writer.close();
     
-            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_ACCEPTED) {
                 // OK
                 log.info("Successfully sent trigger to app-maker service for app " + app);
             } else {
                 // Server returned HTTP error code.
                 log.log(Level.WARNING, "Error calling app-maker service. Server returned response code " + connection.getResponseCode());
+                Datastore.delete(app.getKey());
             }
         } catch (MalformedURLException e) {
             log.log(Level.WARNING, "Error in app-maker URL.", e);

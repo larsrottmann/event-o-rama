@@ -95,6 +95,7 @@ public class IndexController extends Controller {
             return null;
         }
         
+        log.info(String.format("App creation notification: id=%s, success=%s, url=%s, reason=%s", asString("id"), asBoolean("success"), asString("url"), asString("reason")));
         
         try {
             Application app = Datastore.get(ApplicationMeta.get(), Datastore.createKey(ApplicationMeta.get(), asLong("id")));
@@ -110,6 +111,7 @@ public class IndexController extends Controller {
         }
         catch (EntityNotFoundRuntimeException e)
         {
+            log.warning("App not found: " + asLong("id"));
             response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
         }
         catch (NumberFormatException e)

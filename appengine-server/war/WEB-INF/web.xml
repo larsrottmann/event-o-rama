@@ -31,11 +31,13 @@
         <filter-class>com.appspot.eventorama.server.filter.AuthFilter</filter-class>
     </filter>
 
+<!-- 
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
         <url-pattern>/notify/*</url-pattern>
     </filter-mapping>
-    <filter-mapping>
+ -->
+     <filter-mapping>
         <filter-name>HotReloadingFilter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
