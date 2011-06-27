@@ -6,8 +6,10 @@ import java.util.List;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.LauncherActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -76,7 +78,7 @@ public class SignUpActivity extends Activity{
 		//check
 		if(et.length() < 1 || et.length() > USERNAME_MAX_LENGTH)
 		{
-			et.setError("TEST!");
+//			et.setError(getText(R.));
 			return;
 		}
 		
@@ -190,7 +192,9 @@ public class SignUpActivity extends Activity{
 				//forward to next Activity
 				if(dialog != null)
 					dialog.dismiss();
-				
+				Intent i = new Intent();
+				i.setClass(getApplicationContext(), EventStreamActivity.class);
+				startActivity(i);
 				break;
 
 			default:
