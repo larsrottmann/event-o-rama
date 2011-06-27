@@ -28,6 +28,9 @@
 		<activity
 			android:name="com.eventorama.mobi.lib.EventStreamActivity"></activity>
 
+		<provider android:name="EventStreamContentProvider" android:authorities="com.eventorama.mobi.lib" android:exported="false" />
+		<provider android:name="PeopleContentProvider" android:authorities="com.eventorama.mobi.lib" android:exported="false" />
+
 
 
 		<!-- Only C2DM servers can send messages for the app. If permission is 

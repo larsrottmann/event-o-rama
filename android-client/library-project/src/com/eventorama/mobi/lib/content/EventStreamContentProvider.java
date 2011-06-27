@@ -38,7 +38,7 @@ public class EventStreamContentProvider extends ContentProvider {
 
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sUriMatcher.addURI(AUTHORITY, "event/#", EVENTS);
+        sUriMatcher.addURI(AUTHORITY, "event/#", EVENT);
         sUriMatcher.addURI(AUTHORITY, "events", EVENTS);
     }
 	
@@ -51,9 +51,9 @@ public class EventStreamContentProvider extends ContentProvider {
         
         private static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME + " (" +
         Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-        Columns.CREATED + " LONG, " +
+        Columns.CREATED + " INTEGEr, " +
         Columns.TYPE + " INTEGER, " +
-        Columns.TITLE+ " TEXT ";
+        Columns.TITLE+ " TEXT);";
         
         DBHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
