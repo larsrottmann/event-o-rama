@@ -5,12 +5,13 @@ import java.util.Date;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.users.User;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 import org.slim3.datastore.Attribute;
 import org.slim3.datastore.Model;
 
 @Model(schemaVersion = 1)
-public class Application implements Serializable {
+public class Application implements Serializable, IsSerializable {
 
     private static final long serialVersionUID = 1L;
 
