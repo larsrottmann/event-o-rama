@@ -6,7 +6,8 @@
 	android:versionName="1.0">
 	<application
 		android:label="@string/app_name"
-		android:icon="@drawable/icon">
+		android:icon="@drawable/icon"
+		android:name="com.eventorama.mobi.lib.EventORamaApplication">
 		<activity
 			android:label="@string/app_name"
 			android:name="com.eventorama.mobi.lib.StartActivity">
@@ -20,6 +21,10 @@
 
 		<activity
 			android:name="com.eventorama.mobi.lib.SignUpActivity"></activity>
+
+		<activity
+			android:name="com.eventorama.mobi.lib.EventStreamActivity"></activity>
+
 
 
 		<!-- Only C2DM servers can send messages for the app. If permission is 

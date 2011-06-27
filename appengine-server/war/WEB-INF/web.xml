@@ -54,6 +54,10 @@
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
     
+    <listener>
+        <listener-class>com.appspot.eventorama.server.ServerConfigListener</listener-class>
+    </listener>
+
     <servlet>
         <servlet-name>GlobalTransactionServlet</servlet-name>
         <servlet-class>org.slim3.datastore.GlobalTransactionServlet</servlet-class>

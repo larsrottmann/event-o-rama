@@ -27,6 +27,7 @@ import org.junit.Test;
 public class AppWorkerTest {
 
 	protected static final String ENDPOINT = "http://localhost:8080/appmaker/";
+	//protected static final String ENDPOINT = "http://ec2-184-73-49-245.compute-1.amazonaws.com:8080/appmaker/";
 	protected static final String CALLBACK_ENDPOINT = "http://localhost:8080/appmaker/callback/";
 	protected static Server server;
 	protected static HttpClient client;
@@ -113,9 +114,12 @@ public class AppWorkerTest {
 		o.put(AppRequest.Parameter.PACKAGE_NAME, packageName);
 		o.put(AppRequest.Parameter.START_DATE, startDate);
 		o.put(AppRequest.Parameter.END_DATE, endDate);
+		
+		//String tmp = "{\"active\":false,\"expirationDate\":1309903200000,\"key\":\"a.gxldmVudC1vLXJhbWFyEgsSC0FwcGxpY2F0aW9uGMMDDA\",\"startDate\":1306706400000,\"title\":\"testing\",\"user\":{\"authDomain\":\"gmail.com\",\"email\":\"test@example.com\",\"userId\":\"18580476422013912411\"},\"version\":1}\"";
 
 		AbstractBuffer content = new ByteArrayBuffer(o.toJSONString().getBytes("UTF-8"));
 		return content;
+		//return new ByteArrayBuffer(tmp.getBytes("UTF-8"));
 	}
 
 	@Test

@@ -1,7 +1,6 @@
 package com.appspot.eventorama.server.filter;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -12,13 +11,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.appspot.eventorama.server.ServerConfig;
 import com.google.appengine.repackaged.com.google.common.util.Base64;
 import com.google.appengine.repackaged.com.google.common.util.Base64DecoderException;
 
 public class AuthFilter implements Filter {
 
-    private static final Logger log = Logger.getLogger(AuthFilter.class.getName());
-    
     private FilterConfig filterConfig;
 
     public void destroy() {
@@ -44,7 +42,8 @@ public class AuthFilter implements Filter {
             }
             String user_arg = user_pass_parts[0];
             String pass_arg = user_pass_parts[1];
-            if (!(user_arg.equals(System.getProperty("com.appspot.eventorama.auth.user")) && pass_arg.equals(System.getProperty("com.appspot.eventorama.auth.password")))) {
+            
+            if (!(user_arg.equals(ServerConfig.getInstance().getProperty("auth.user")) && pass_arg.equals(ServerConfig.getInstance().getProperty("auth.password")))) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setHeader("WWW-Authenticate", "Basic realm=\"Secure Area\"");
             } else {

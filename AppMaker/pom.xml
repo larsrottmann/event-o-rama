@@ -13,41 +13,41 @@
 		<!-- set encoding to UTF-8 in any configuration possible -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<appmaker.properties.location>bla</appmaker.properties.location>
+		<appmaker.properties.location>/opt/app-maker/default.properties</appmaker.properties.location>
 	</properties>
 	<dependencies>
 		<dependency>
-		    <groupId>sun</groupId>
-		    <artifactId>tools</artifactId>
-		    <version>1</version>
-		    <scope>system</scope>
-		    <systemPath>/usr/lib/jvm/java-6-sun/lib/tools.jar</systemPath>
+			<groupId>sun</groupId>
+			<artifactId>tools</artifactId>
+			<version>1</version>
+			<scope>system</scope>
+			<systemPath>/usr/lib/jvm/java-6-sun/lib/tools.jar</systemPath>
 		</dependency>
 		<dependency>
-		    <groupId>com.google</groupId>
-		    <artifactId>sdklib</artifactId>
-		    <version>1</version>
-		    <scope>system</scope>
-		    <systemPath>${android.sdk.lib}/sdklib.jar</systemPath>
+			<groupId>com.google</groupId>
+			<artifactId>sdklib</artifactId>
+			<version>1</version>
+			<scope>system</scope>
+			<systemPath>${android.sdk.lib}/sdklib.jar</systemPath>
 		</dependency>
 		<dependency>
-		    <groupId>com.google</groupId>
-		    <artifactId>common-bla</artifactId>
-		    <version>1</version>
-		    <scope>system</scope>
-		    <systemPath>${android.sdk.lib}/common.jar</systemPath>
+			<groupId>com.google</groupId>
+			<artifactId>common-bla</artifactId>
+			<version>1</version>
+			<scope>system</scope>
+			<systemPath>${android.sdk.lib}/common.jar</systemPath>
 		</dependency>
 		<dependency>
-		    <groupId>com.google</groupId>
-		    <artifactId>sdkmanager</artifactId>
-		    <version>1</version>
-		    <scope>system</scope>
-		    <systemPath>${android.sdk.lib}/sdkmanager.jar</systemPath>
+			<groupId>com.google</groupId>
+			<artifactId>sdkmanager</artifactId>
+			<version>1</version>
+			<scope>system</scope>
+			<systemPath>${android.sdk.lib}/sdkmanager.jar</systemPath>
 		</dependency>
 		<dependency>
-    		<groupId>com.googlecode.json-simple</groupId>
-    		<artifactId>json-simple</artifactId>
-    		<version>1.1</version>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.ant</groupId>
@@ -70,9 +70,9 @@
 			<version>4.8.2</version>
 		</dependency>
 		<dependency>
-		    <groupId>com.amazonaws</groupId>
-    		<artifactId>aws-java-sdk</artifactId>
-    		<version>1.0.002</version>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>1.0.002</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -87,14 +87,14 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
 						<environmentVariables>
-							<APP_MAKER_PROPERTIES>/opt/app-maker/default.properties</APP_MAKER_PROPERTIES>
+							<APP_MAKER_PROPERTIES>${appmaker.properties.location}</APP_MAKER_PROPERTIES>
 						</environmentVariables>
 					</configuration>
-				</plugin>				
+				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
-					<version>1.1</version>
+					<version>1.2</version>
 					<executions>
 						<execution>
 							<goals>
@@ -103,10 +103,15 @@
 						</execution>
 					</executions>
 					<configuration>
+						<includePluginDependencies>true</includePluginDependencies>
+						<classpathScope>compile</classpathScope>
 						<mainClass>com.eventorama.EntryPoint</mainClass>
-						<environmentVariables>
-							<APP_MAKER_PROPERTIES>/opt/app-maker/default.properties</APP_MAKER_PROPERTIES>
-						</environmentVariables>
+						<systemProperties>
+							<systemProperty>
+								<key>APP_MAKER_PROPERTIES</key>
+								<value>${appmaker.properties.location}</value>
+							</systemProperty>
+						</systemProperties>
 					</configuration>
 				</plugin>
 				<plugin>

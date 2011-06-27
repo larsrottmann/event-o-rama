@@ -2,7 +2,9 @@ package com.appspot.eventorama.client;
 
 import java.io.Serializable;
 
-public class LoginInfo implements Serializable {
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class LoginInfo implements Serializable, IsSerializable {
 
     private static final long serialVersionUID = -4674660233605398072L;
 

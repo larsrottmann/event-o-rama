@@ -4,15 +4,14 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.users.User;
-import com.google.appengine.api.utils.SystemProperty;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 import org.slim3.datastore.Attribute;
 import org.slim3.datastore.Model;
 
 @Model(schemaVersion = 1)
-public class Application implements Serializable {
+public class Application implements Serializable, IsSerializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,7 +28,8 @@ public class Application implements Serializable {
     private Date startDate;
     private Date expirationDate;
     private String downloadUrl;
-    
+    @Attribute(persistent = false)
+    private String localDownloadUrl;
     
     /**
      * Returns the key.
@@ -145,13 +145,12 @@ public class Application implements Serializable {
     }
     
     public String getLocalDownloadUrl() {
-        String hostName = "eventorama.appspot.com";
-        if (SystemProperty.environment.value() ==
-            SystemProperty.Environment.Value.Development) {
-            // The app is not running on App Engine...
-            hostName = "localhost:8888";
-        }
-        return "http://" + hostName + "/download/" + KeyFactory.keyToString(getKey());
+        return localDownloadUrl;
+    }
+
+
+    public void setLocalDownloadUrl(String localDownloadUrl) {
+        this.localDownloadUrl = localDownloadUrl;
     }
 
 

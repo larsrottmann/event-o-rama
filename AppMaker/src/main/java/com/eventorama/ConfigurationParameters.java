@@ -31,6 +31,14 @@ public class ConfigurationParameters {
 	 */
 	public static String BUCKET_NAME = "event-o-rama-apps";
 	public static String S3_CREDENTIALS_FILE = "/opt/app-maker/AwsCredentials.properties";
+	
+	/**
+	 * Basic Auth config for callbacks
+	 */
+	public static String BASIC_AUTH_USER = "appmaker";
+	public static String BASIC_AUTH_CREDENTIALS = "s3cr3t";
+	public static String BASIC_AUTH_REALM = "Secure Area";
+	
 
 	/**
 	 * Thread pool parameters
@@ -67,6 +75,9 @@ public class ConfigurationParameters {
 		log.info("MAX_POOL_SIZE="+ String.valueOf(MAX_POOL_SIZE));
 		log.info("KEEP_ALIVE_TIME="+ String.valueOf(KEEP_ALIVE_TIME));
 		log.info("MAX_QUEUE_SIZE="+ String.valueOf(MAX_QUEUE_SIZE));				
+		log.info("BASIC_AUTH_USER="+ String.valueOf(BASIC_AUTH_USER));				
+		log.info("BASIC_AUTH_CREDENTIALS="+ String.valueOf(BASIC_AUTH_CREDENTIALS));				
+		log.info("BASIC_AUTH_REALM="+ String.valueOf(BASIC_AUTH_REALM));				
 	}
 	
 	private static void loadProperties(Properties props) {
@@ -84,11 +95,19 @@ public class ConfigurationParameters {
 		MAX_POOL_SIZE = Integer.parseInt(props.getProperty("MAX_POOL_SIZE", String.valueOf(MAX_POOL_SIZE)));
 		KEEP_ALIVE_TIME = Integer.parseInt(props.getProperty("KEEP_ALIVE_TIME", String.valueOf(KEEP_ALIVE_TIME)));
 		MAX_QUEUE_SIZE = Integer.parseInt(props.getProperty("MAX_QUEUE_SIZE", String.valueOf(MAX_QUEUE_SIZE)));				
+		BASIC_AUTH_USER = props.getProperty("BASIC_AUTH_USER", BASIC_AUTH_USER);
+		BASIC_AUTH_CREDENTIALS = props.getProperty("BASIC_AUTH_CREDENTIALS", BASIC_AUTH_CREDENTIALS);
+		BASIC_AUTH_REALM = props.getProperty("BASIC_AUTH_REALM", BASIC_AUTH_REALM);
 	}
 
 	public static void loadPropertiesFromFile() {
 		String propertiesPath = System.getenv(PROPERTY_FILE_PROPERTY);
 
+		if (propertiesPath==null){
+			log.warn("Environment property \"" + PROPERTY_FILE_PROPERTY + "\" is not set!");
+			propertiesPath = System.getProperty(PROPERTY_FILE_PROPERTY);
+		}
+		
 		if (propertiesPath == null) {
 			log.warn("System property \"" + PROPERTY_FILE_PROPERTY + "\" is not set!");
 			propertiesPath = DEFAULT_PROPERTY_FILE_NAME;
