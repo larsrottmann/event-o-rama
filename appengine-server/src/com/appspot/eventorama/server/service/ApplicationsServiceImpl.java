@@ -83,11 +83,16 @@ public class ApplicationsServiceImpl implements ApplicationsService {
                 // Server returned HTTP error code.
                 log.log(Level.WARNING, "Error calling app-maker service. Server returned response code " + connection.getResponseCode());
                 Datastore.delete(app.getKey());
+                return null;
             }
         } catch (MalformedURLException e) {
             log.log(Level.WARNING, "Error in app-maker URL.", e);
+            Datastore.delete(app.getKey());
+            return null;
         } catch (IOException e) {
             log.log(Level.WARNING, "Error calling app-maker service.", e);
+            Datastore.delete(app.getKey());
+            return null;
         }
 
         return key;

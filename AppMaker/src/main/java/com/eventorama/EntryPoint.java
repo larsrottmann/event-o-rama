@@ -7,7 +7,6 @@ import static com.eventorama.ConfigurationParameters.MAX_QUEUE_SIZE;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -19,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.io.AbstractBuffer;
-import org.eclipse.jetty.io.ByteArrayBuffer;
+import org.eclipse.jetty.client.security.Realm;
+import org.eclipse.jetty.client.security.SimpleRealmResolver;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -44,6 +43,18 @@ public class EntryPoint extends AbstractHandler {
 		executor = new ThreadPoolExecutor(CORE_POOL_SIZE, MAX_POOL_SIZE, KEEP_ALIVE_TIME, TimeUnit.MINUTES, workQueue);
 		uploader = new S3Uploader();
 		client = new HttpClient();
+		client.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
+		client.setRealmResolver(new SimpleRealmResolver(new Realm() {
+		  public String getId() {
+		    return ConfigurationParameters.BASIC_AUTH_REALM;
+		  }
+		  public String getPrincipal() {
+		    return ConfigurationParameters.BASIC_AUTH_USER;
+		  }
+		  public String getCredentials() {
+		    return ConfigurationParameters.BASIC_AUTH_CREDENTIALS;
+		  }
+		}));
 		client.start();
 	}
 	
