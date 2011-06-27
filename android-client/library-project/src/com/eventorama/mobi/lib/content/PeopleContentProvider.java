@@ -28,6 +28,7 @@ public class PeopleContentProvider extends ContentProvider {
 		public static final String CREATED = "created";// timestamp
 		public static final String UPDATED = "updated";
 		public static final String NAME = "name";
+		public static final String LAST_STATUS_ID = "last_status_id";
 		public static final String LAT = "lat";
 		public static final String LONG = "long";
 		public static final String PROFILE_PIC = "profile_pic";
@@ -57,7 +58,8 @@ public class PeopleContentProvider extends ContentProvider {
 			Columns.UPDATED + " INTEGER, " + 
 			Columns.LAT + " TEXT, " + 
 			Columns.LONG + " TEXT, " + 
-			Columns.PROFILE_PIC + " TEXT, "+ 
+			Columns.PROFILE_PIC + " TEXT, " +
+			Columns.LAST_STATUS_ID + " INTEGER DEFAULT -1 NOT NULL, " + 
 			Columns.NAME + " TEXT ";
 
 		DBHelper(Context context) {
@@ -125,13 +127,16 @@ public class PeopleContentProvider extends ContentProvider {
 
 		// Get the database and run the query
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		
 		Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, orderBy, limit);
+			
 
 		// Tell the cursor what uri to watch, so it knows when its source data
 		// changes
 		c.setNotificationUri(getContext().getContentResolver(), uri);
 		return c;
 	}
+	
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {

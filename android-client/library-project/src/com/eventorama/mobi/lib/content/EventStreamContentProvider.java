@@ -29,6 +29,8 @@ public class EventStreamContentProvider extends ContentProvider {
 		public static final String CREATED = "created";//timestamp
 		public static final String TITLE = "title";
 		public static final String TYPE = "type";
+		public static final String TEXT = "text";
+		public static final String PEOPLE_ID ="people_id";
 	}
 	
 	
@@ -45,7 +47,7 @@ public class EventStreamContentProvider extends ContentProvider {
     private static class DBHelper extends SQLiteOpenHelper {
 
         private static final String TABLE_NAME = "eventstream";
-        private static final int DATABASE_VERSION = 1;
+        private static final int DATABASE_VERSION = 2;
         
         private static final String DATABASE_NAME = "eventorama";
         
@@ -53,6 +55,8 @@ public class EventStreamContentProvider extends ContentProvider {
         Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
         Columns.CREATED + " INTEGER, " +
         Columns.TYPE + " INTEGER, " +
+        Columns.PEOPLE_ID + " INTEGER, " +
+        Columns.TEXT + " TEXT, " +
         Columns.TITLE+ " TEXT);";
         
         DBHelper(Context context) {

@@ -15,6 +15,7 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.eventorama.mobi.lib.content.EventStreamContentProvider;
 import com.eventorama.mobi.lib.content.PeopleContentProvider;
 
 
@@ -26,6 +27,20 @@ public class PeopleAdapter extends CursorAdapter {
 		private TextView mNameTextView;
 		private TextView mStatusTextView;
 		private ImageView mImageView;
+		
+		private String getLastStatusText(Cursor c, Context context) {
+			String result =  null;
+			int index = c.getColumnIndex(PeopleContentProvider.Columns.LAST_STATUS_ID);
+			int lastId = c.getInt(index);
+			if (lastId>0) {
+				Uri feedUri = Uri.withAppendedPath(EventStreamContentProvider.CONTENT_URI, String.valueOf(lastId));
+				Cursor feedCursor = context.getContentResolver().query(feedUri, new String[]{EventStreamContentProvider.Columns.TEXT, EventStreamContentProvider.Columns.TITLE}, null, null, null);
+				index = feedCursor.getColumnIndex(EventStreamContentProvider.Columns.TEXT);
+				result = feedCursor.getString(index);								
+				feedCursor.close();
+			} 
+			return result;
+		}
 		
 		PeopleViewHolder(View v) {
 			mNameTextView = (TextView) v.findViewById(R.id.name);
@@ -55,7 +70,8 @@ public class PeopleAdapter extends CursorAdapter {
 				}
 			}
 
-			//TODO get status
+			String status = getLastStatusText(c, context);
+			mStatusTextView.setText(status);
 			
 			if (uriString != null) {
 				Bitmap thumb = getImageThumbnail(Uri.parse(uriString), context);
