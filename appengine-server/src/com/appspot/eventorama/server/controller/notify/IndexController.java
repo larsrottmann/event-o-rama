@@ -63,6 +63,8 @@ public class IndexController extends Controller {
     
     @Override
     public Navigation run() throws Exception {
+        log.info("Got AppMaker notification for id " + requestScope("id"));
+        
         Validators v = new Validators(request);
         v.add("id", v.required(), v.longType());
         v.add("success", v.required());
