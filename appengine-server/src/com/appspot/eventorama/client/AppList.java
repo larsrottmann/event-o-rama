@@ -167,8 +167,10 @@ public class AppList extends Composite {
                 eventTextBox.setText(null);
                 startDateBox.setValue(null);
                 expirationDateBox.setValue(null);
-                app.setKey(result);
-                updateTableRow(app, row);
+                if (result != null) {
+                    app.setKey(result);
+                    updateTableRow(app, row);
+                }
             }
         });
     }
