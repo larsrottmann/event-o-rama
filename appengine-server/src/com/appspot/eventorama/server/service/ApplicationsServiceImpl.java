@@ -5,7 +5,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,18 +44,13 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         return apps;
     }
 
-    public void create(String title, Date startDate, Date expirationDate) throws NotLoggedInException {
+    public Key create(Application app) throws NotLoggedInException {
         checkLoggedIn();
         
         log.info("Creating new application.");
-        
-        Application app = new Application();
-        app.setTitle(title);
-        app.setStartDate(startDate);
-        app.setExpirationDate(expirationDate);
+
         app.setUser(getUser());
-        
-        Datastore.put(app);
+        Key key = Datastore.put(app);
 
         log.info("Wrote application to data store: " + app);
         
@@ -69,7 +63,7 @@ public class ApplicationsServiceImpl implements ApplicationsService {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("content-type", "application/json; charset=utf-8");
 
-            String hostName = "eventorama.appspot.com";
+            String hostName = "event-o-rama.appspot.com";
             if (SystemProperty.environment.value() ==
                 SystemProperty.Environment.Value.Development) {
                 // The app is not running on App Engine...
@@ -89,12 +83,19 @@ public class ApplicationsServiceImpl implements ApplicationsService {
                 // Server returned HTTP error code.
                 log.log(Level.WARNING, "Error calling app-maker service. Server returned response code " + connection.getResponseCode());
                 Datastore.delete(app.getKey());
+                return null;
             }
         } catch (MalformedURLException e) {
             log.log(Level.WARNING, "Error in app-maker URL.", e);
+            Datastore.delete(app.getKey());
+            return null;
         } catch (IOException e) {
             log.log(Level.WARNING, "Error calling app-maker service.", e);
+            Datastore.delete(app.getKey());
+            return null;
         }
+
+        return key;
     }
 
     public void delete(Key appKey) throws NotLoggedInException {

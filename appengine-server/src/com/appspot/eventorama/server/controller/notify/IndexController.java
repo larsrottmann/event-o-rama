@@ -3,7 +3,6 @@ package com.appspot.eventorama.server.controller.notify;
 import java.net.HttpURLConnection;
 import java.util.logging.Logger;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.slim3.controller.Controller;
@@ -64,6 +63,8 @@ public class IndexController extends Controller {
     
     @Override
     public Navigation run() throws Exception {
+        log.info("Got AppMaker notification for id " + requestScope("id"));
+        
         Validators v = new Validators(request);
         v.add("id", v.required(), v.longType());
         v.add("success", v.required());
@@ -82,7 +83,7 @@ public class IndexController extends Controller {
                 requestScope("reason", json.getString("reason"));
             }
         }
-        catch (JSONException e)
+        catch (Exception e)
         {
             log.warning("Cannot parse JSON payload: " + e.getMessage());
         }

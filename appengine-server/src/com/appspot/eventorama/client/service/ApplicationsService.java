@@ -1,6 +1,5 @@
 package com.appspot.eventorama.client.service;
 
-import java.util.Date;
 import java.util.List;
 
 import com.appspot.eventorama.shared.model.Application;
@@ -13,7 +12,7 @@ public interface ApplicationsService extends RemoteService {
 
     public List<Application> getList() throws NotLoggedInException;
     
-    public void create(String title, Date startDate, Date expirationDate) throws NotLoggedInException;
+    public Key create(Application app) throws NotLoggedInException;
     
     public void delete(Key appKey) throws NotLoggedInException;
     

@@ -13,14 +13,17 @@
         <property name="slim3.uploadFileSizeMax" value="100000"/>
         -->
 	    <property name="java.util.logging.config.file" value="WEB-INF/classes/logging.properties"/>
+	    <property name="com.appspot.eventorama.server.config" value="WEB-INF/service.properties"/>
 	    
 	    <property name="com.appspot.eventorama.appmaker.url.development" 
 	              value="http://127.0.0.1:8080/appmaker/"/>
 	    <property name="com.appspot.eventorama.appmaker.url.production" 
 	              value="http://ec2-184-73-49-245.compute-1.amazonaws.com:8080/appmaker/"/>
-	    <property name="com.appspot.eventorama.auth.user" value="appmaker"/>
-	    <property name="com.appspot.eventorama.auth.password" value="s3cr3t"/>
 	</system-properties>
+	<resource-files>
+	    <include path="/**.xml" />
+	    <include path="/**.properties" />
+	</resource-files>
 	<sessions-enabled>false</sessions-enabled>
 	<threadsafe>true</threadsafe>
 </appengine-web-app>
