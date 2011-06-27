@@ -3,7 +3,6 @@ package com.appspot.eventorama.server.controller.notify;
 import java.net.HttpURLConnection;
 import java.util.logging.Logger;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.slim3.controller.Controller;
@@ -82,7 +81,7 @@ public class IndexController extends Controller {
                 requestScope("reason", json.getString("reason"));
             }
         }
-        catch (JSONException e)
+        catch (Exception e)
         {
             log.warning("Cannot parse JSON payload: " + e.getMessage());
         }
