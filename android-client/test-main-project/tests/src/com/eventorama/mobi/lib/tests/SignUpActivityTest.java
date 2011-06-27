@@ -1,9 +1,10 @@
 package com.eventorama.mobi.lib.tests;
 
+import org.cirrus.mobi.tests.tools.PrivateAccessor;
+
 import junit.framework.Assert;
 
 import com.eventorama.mobi.lib.SignUpActivity;
-import com.eventorama.mobi.lib.tests.util.PrivateAccessor;
 
 import android.test.ActivityInstrumentationTestCase2;
 
