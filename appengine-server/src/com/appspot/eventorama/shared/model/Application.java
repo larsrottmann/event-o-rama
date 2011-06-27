@@ -27,7 +27,8 @@ public class Application implements Serializable {
     private Date startDate;
     private Date expirationDate;
     private String downloadUrl;
-    
+    @Attribute(persistent = false)
+    private String localDownloadUrl;
     
     /**
      * Returns the key.
@@ -140,6 +141,15 @@ public class Application implements Serializable {
 
     public String getDownloadUrl() {
         return downloadUrl;
+    }
+    
+    public String getLocalDownloadUrl() {
+        return localDownloadUrl;
+    }
+
+
+    public void setLocalDownloadUrl(String localDownloadUrl) {
+        this.localDownloadUrl = localDownloadUrl;
     }
 
 
