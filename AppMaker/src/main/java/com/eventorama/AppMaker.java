@@ -43,7 +43,6 @@ class AppMaker implements Runnable {
 	private final static String KEY_STORE_PASSWORD_PROP = "key.store.password";
 	private final static String KEY_STORE_ALIAS_PASSWORD_PROP = "key.alias.password";
 	private final static String DEFAULT_ACTIVITY_NAME = "ACTIVITY_ENTRY_NAME";
-	private final static String LIBRARY_ACTIVITY_NAME = "com.eventorama.HelloWorldActivity";
 	private final static String BUILD_PROPERTIES_FILE = "build.properties";
 
 	private final AppRequest request;
@@ -122,12 +121,11 @@ class AppMaker implements Runnable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{\"success\" : ").append(success);
 		if (success) {
-			sb.append(",\"app-url\":").append(appURL.toString()).append("}");
+			sb.append(",\"app-url\":\"").append(appURL.toString()).append("\"}");
 		} else {
-			sb.append(",\"reason\":").append(error.getMessage()).append("}");
+			sb.append(",\"reason\":\"").append(error.getMessage()).append("\"}");
 		}
-		AbstractBuffer content = new ByteArrayBuffer(sb.toString().getBytes("UTF-8"));
-		return content;
+		return new ByteArrayBuffer(sb.toString().getBytes("UTF-8"));
 	}
 
 	private void buildApk(File appDir) {
@@ -295,8 +293,8 @@ class AppMaker implements Runnable {
 				p.setBasedir(appDir.getAbsolutePath());
 				ProjectHelper helper = ProjectHelper.getProjectHelper();
 				p.addReference("ant.projectHelper", helper);
+				p.setProperty("new.package.name",packageName);
 				helper.parse(p, buildFile);
-				p.setProperty("Dnew.package.name",packageName);
 				p.executeTarget("prepareManifest");
 			} catch (BuildException e) {
 				throw new IllegalStateException("build error during ", e);
@@ -304,7 +302,7 @@ class AppMaker implements Runnable {
 	}
 	
 	private File makeApp() throws IllegalStateException {
-		return SDKUtils.createProject(request.getAppName(), request.getPackage());
+		return SDKUtils.createProject(request.getProjectName(), request.getPackage());
 	}
 
 	private void verifyApp(File app) throws IllegalStateException {

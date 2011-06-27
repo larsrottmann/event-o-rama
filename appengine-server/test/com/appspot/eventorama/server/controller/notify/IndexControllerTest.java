@@ -1,5 +1,9 @@
 package com.appspot.eventorama.server.controller.notify;
 
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
+
 import org.slim3.datastore.Datastore;
 import org.slim3.tester.ControllerTestCase;
 import org.junit.Test;
@@ -20,13 +24,13 @@ public class IndexControllerTest extends ControllerTestCase {
         
         try
         {
-            final String downloadUrl = "some_apk_download_url";
-            tester.param("url", downloadUrl);
+            final String downloadUrl = "http://127.0.0.1/download/apk";
+            tester.request.setReader(new BufferedReader(new StringReader("{\"success\": true, \"app-url\": \"" + downloadUrl + "\"}")));
             tester.start("/notify/" + app.getKey().getId());
             IndexController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.asLong("id"), is(app.getKey().getId()));
-            assertThat(tester.response.getStatus(), is(200));
+            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
 
             app = Datastore.get(ApplicationMeta.get(), app.getKey());
             assertThat(app.getDownloadUrl(), is(notNullValue()));
@@ -40,20 +44,20 @@ public class IndexControllerTest extends ControllerTestCase {
 
     @Test
     public void testNotifyNonExistentAppId() throws Exception {
-        tester.param("url", "some_apk_download_url");
+        tester.request.setReader(new BufferedReader(new StringReader("{\"success\": true, \"app-url\": \"http://127.0.0.1/download/apk\"}")));
         tester.start("/notify/-666");
         IndexController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
-        assertThat(tester.response.getStatus(), is(404));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_FOUND));
     }
     
     @Test
     public void testNotifyInvalidAppId() throws Exception {
-        tester.param("url", "some_apk_download_url");
+        tester.request.setReader(new BufferedReader(new StringReader("{\"success\": true, \"app-url\": \"http://127.0.0.1/download/apk\"}")));
         tester.start("/notify/invalid");
         IndexController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
-        assertThat(tester.response.getStatus(), is(400));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
     }
 
     @Test
@@ -63,10 +67,11 @@ public class IndexControllerTest extends ControllerTestCase {
         
         try
         {
+            tester.request.setReader(new BufferedReader(new StringReader("")));
             tester.start("/notify/" + app.getKey().getId());
             IndexController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(400));
+            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
         }
         finally
         {
@@ -74,5 +79,23 @@ public class IndexControllerTest extends ControllerTestCase {
         }
     }
     
+    @Test
+    public void testNotifyInvalidDownloadUrl() throws Exception {
+        Application app = new Application();
+        Datastore.put(app);
+        
+        try
+        {
+            tester.request.setReader(new BufferedReader(new StringReader("{\"success\": true, \"app-url\": \"invalid_apk_url\"}")));
+            tester.start("/notify/" + app.getKey().getId());
+            IndexController controller = tester.getController();
+            assertThat(controller, is(notNullValue()));
+            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
+        }
+        finally
+        {
+            Datastore.delete(app.getKey());
+        }
+    }
 
 }

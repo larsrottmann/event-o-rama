@@ -6,8 +6,10 @@ import java.util.List;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.LauncherActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -76,7 +78,7 @@ public class SignUpActivity extends Activity{
 		//check
 		if(et.length() < 1 || et.length() > USERNAME_MAX_LENGTH)
 		{
-			et.setError("TEST!");
+//			et.setError(getText(R.));
 			return;
 		}
 		
@@ -88,6 +90,21 @@ public class SignUpActivity extends Activity{
 
 	private void showProgressDialog() {
 		dialog = ProgressDialog.show(mContext, null ,getText(R.string.signup_login_text), true);		
+	}
+	
+	private String capitalizeString(String input)
+	{
+		StringBuilder capitalizedString = new StringBuilder();
+		String[] words = input.split("\\s");
+		for (int i = 0; i < words.length; i++) {
+			String word = words[i];
+			if(word.length() > 0)
+				word = word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
+			capitalizedString.append(word);
+			if(i < words.length-1)
+				capitalizedString.append(' ');
+		}
+		return capitalizedString.toString();
 	}
 	
 
@@ -146,6 +163,7 @@ public class SignUpActivity extends Activity{
 		EditText et = (EditText) findViewById(R.id.signup_edittext_username);
 		String uname = rb.getText().toString();
 		uname = uname.substring(0, uname.indexOf('@')).replaceAll("\\.", " ");
+		uname = capitalizeString(uname);
 		et.setText(uname);
 	}
 
@@ -190,7 +208,9 @@ public class SignUpActivity extends Activity{
 				//forward to next Activity
 				if(dialog != null)
 					dialog.dismiss();
-				
+				Intent i = new Intent();
+				i.setClass(getApplicationContext(), EventStreamActivity.class);
+				startActivity(i);
 				break;
 
 			default:

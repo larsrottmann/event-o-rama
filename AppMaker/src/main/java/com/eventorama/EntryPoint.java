@@ -6,6 +6,8 @@ import static com.eventorama.ConfigurationParameters.MAX_POOL_SIZE;
 import static com.eventorama.ConfigurationParameters.MAX_QUEUE_SIZE;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -17,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.io.AbstractBuffer;
+import org.eclipse.jetty.io.ByteArrayBuffer;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -43,6 +47,15 @@ public class EntryPoint extends AbstractHandler {
 		client.start();
 	}
 	
+	private static String buildJSONResponse(Exception error) throws UnsupportedEncodingException {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("{\"success\" : ").append(false);
+		sb.append(",\"reason\":\"").append(error.getMessage()).append("\"}");
+		return sb.toString();
+	}
+
+	
 	public void handle(String target, Request baseRequest,
 			HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -53,8 +66,12 @@ public class EntryPoint extends AbstractHandler {
 			response.setStatus(HttpServletResponse.SC_ACCEPTED);
 		} catch (AppRequestException e) {
 			log.error(e);
-			response.setStatus(e.getHttpResponseCode());
-		} finally {			
+			response.setStatus(e.getHttpResponseCode());	
+			response.getWriter().write(buildJSONResponse(e));
+			response.getWriter().close();
+		} catch(RuntimeException e) {
+			log.info(e);
+		}finally {		
 			baseRequest.setHandled(true);
 		}
 

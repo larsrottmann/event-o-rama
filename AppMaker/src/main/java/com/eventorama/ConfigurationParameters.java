@@ -49,7 +49,7 @@ public class ConfigurationParameters {
 											// before rejecting requests
 
 	private final static String DEFAULT_PROPERTY_FILE_NAME = "/opt/app-maker/default.properties";
-	private final static String PROPERTY_FILE_PROPERTY = "APP-MAKER-PROPERTIES";
+	private final static String PROPERTY_FILE_PROPERTY = "APP_MAKER_PROPERTIES";
 
 	private static void logCurrentConfig() {
 		log.info("Current configuration is: ");
@@ -87,8 +87,13 @@ public class ConfigurationParameters {
 	}
 
 	public static void loadPropertiesFromFile() {
-		String propertiesPath = System.getProperty(PROPERTY_FILE_PROPERTY);
+		String propertiesPath = System.getenv(PROPERTY_FILE_PROPERTY);
 
+		if (propertiesPath==null){
+			log.warn("Environment property \"" + PROPERTY_FILE_PROPERTY + "\" is not set!");
+			propertiesPath = System.getProperty(PROPERTY_FILE_PROPERTY);
+		}
+		
 		if (propertiesPath == null) {
 			log.warn("System property \"" + PROPERTY_FILE_PROPERTY + "\" is not set!");
 			propertiesPath = DEFAULT_PROPERTY_FILE_NAME;
@@ -99,7 +104,6 @@ public class ConfigurationParameters {
 			in = new FileInputStream(propertiesPath);
 		} catch (FileNotFoundException e) {
 			log.error("Could not open properties file at: " + propertiesPath, e);
-			logCurrentConfig();
 			return;
 		}
 		Properties props = new Properties();

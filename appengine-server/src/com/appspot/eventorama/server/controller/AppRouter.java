@@ -8,5 +8,8 @@ public class AppRouter extends RouterImpl {
         addRouting(
             "/notify/{id}",
             "/notify/index?id={id}");
+        addRouting(
+            "/download/{id}",
+            "/download/index?id={id}");
     }
 }
