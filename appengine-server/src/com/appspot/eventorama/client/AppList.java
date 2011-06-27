@@ -90,35 +90,40 @@ public class AppList extends Composite {
     }
 
     private void updateTable(List<Application> result) {
-        appsFlexTable.clear();
-        for (int i = 0; i < result.size(); i++) {
-            final Application app = result.get(i);
-            final Key appKey = app.getKey();
-            final int row = i;
-
-            appsFlexTable.setText(row, 0, app.getTitle());
-            appsFlexTable.setText(row, 1, DateTimeFormat.getFormat("dd.MM.yyyy").format(app.getStartDate()));
-            appsFlexTable.setText(row, 2, DateTimeFormat.getFormat("dd.MM.yyyy").format(app.getExpirationDate()));
-            appsFlexTable.setText(row, 3, Boolean.toString(app.isActive()));
-
-            // Add a button to remove this stock from the table.
-            Button removeAppButton = new Button("x");
-            removeAppButton.addStyleDependentName("remove");
-            removeAppButton.addClickHandler(new ClickHandler() {
-                public void onClick(ClickEvent event) {
-                    applicationsService.delete(appKey, new AsyncCallback<Void>() {
-                        public void onFailure(Throwable caught) {
-                            Window.alert(caught.getMessage());
-                        }
-
-                        public void onSuccess(Void result) {
-                            appsFlexTable.removeRow(row);
-                        }
-                    });
-                }
-            });
-            appsFlexTable.setWidget(row, 4, removeAppButton);
+        for (int i = 1; i < appsFlexTable.getRowCount(); i++) {
+            appsFlexTable.removeRow(i);
         }
+
+        for (int i = 0; i < result.size(); i++) {
+            updateTableRow(result.get(i), i+1);
+        }
+    }
+
+    private void updateTableRow(final Application app, final int row) {
+        final Key appKey = app.getKey();
+
+        appsFlexTable.setText(row, 0, app.getTitle());
+        appsFlexTable.setText(row, 1, DateTimeFormat.getFormat("dd.MM.yyyy").format(app.getStartDate()));
+        appsFlexTable.setText(row, 2, DateTimeFormat.getFormat("dd.MM.yyyy").format(app.getExpirationDate()));
+        appsFlexTable.setText(row, 3, Boolean.toString(app.isActive()));
+
+        // Add a button to remove this stock from the table.
+        Button removeAppButton = new Button("x");
+        removeAppButton.addStyleDependentName("remove");
+        removeAppButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                applicationsService.delete(appKey, new AsyncCallback<Void>() {
+                    public void onFailure(Throwable caught) {
+                        Window.alert(caught.getMessage());
+                    }
+
+                    public void onSuccess(Void result) {
+                        refreshApps();
+                    }
+                });
+            }
+        });
+        appsFlexTable.setWidget(row, 4, removeAppButton);
     }
 
     private void addApp() {
@@ -147,16 +152,23 @@ public class AppList extends Composite {
             return;
         }
 
-        applicationsService.create(title, startDate, expirationDate, new AsyncCallback<Void>() {
+        final Application app = new Application();
+        app.setTitle(title);
+        app.setStartDate(startDate);
+        app.setExpirationDate(expirationDate);
+        final int row = appsFlexTable.getRowCount() + 1;
+
+        applicationsService.create(app, new AsyncCallback<Key>() {
             public void onFailure(Throwable caught) {
                 Window.alert(caught.getMessage());
             }
 
-            public void onSuccess(Void result) {
+            public void onSuccess(Key result) {
                 eventTextBox.setText(null);
                 startDateBox.setValue(null);
                 expirationDateBox.setValue(null);
-                refreshApps();
+                app.setKey(result);
+                updateTableRow(app, row);
             }
         });
     }
