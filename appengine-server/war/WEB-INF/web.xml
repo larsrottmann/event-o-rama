@@ -31,13 +31,11 @@
         <filter-class>com.appspot.eventorama.server.filter.AuthFilter</filter-class>
     </filter>
 
-<!-- 
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
         <url-pattern>/notify/*</url-pattern>
     </filter-mapping>
- -->
-     <filter-mapping>
+    <filter-mapping>
         <filter-name>HotReloadingFilter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
@@ -56,6 +54,10 @@
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
     
+    <listener>
+        <listener-class>com.appspot.eventorama.server.ServerConfigListener</listener-class>
+    </listener>
+
     <servlet>
         <servlet-name>GlobalTransactionServlet</servlet-name>
         <servlet-class>org.slim3.datastore.GlobalTransactionServlet</servlet-class>
