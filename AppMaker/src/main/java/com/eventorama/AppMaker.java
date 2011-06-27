@@ -43,7 +43,6 @@ class AppMaker implements Runnable {
 	private final static String KEY_STORE_PASSWORD_PROP = "key.store.password";
 	private final static String KEY_STORE_ALIAS_PASSWORD_PROP = "key.alias.password";
 	private final static String DEFAULT_ACTIVITY_NAME = "ACTIVITY_ENTRY_NAME";
-	private final static String LIBRARY_ACTIVITY_NAME = "com.eventorama.HelloWorldActivity";
 	private final static String BUILD_PROPERTIES_FILE = "build.properties";
 
 	private final AppRequest request;
@@ -303,7 +302,7 @@ class AppMaker implements Runnable {
 	}
 	
 	private File makeApp() throws IllegalStateException {
-		return SDKUtils.createProject(request.getAppName(), request.getPackage());
+		return SDKUtils.createProject(request.getProjectName(), request.getPackage());
 	}
 
 	private void verifyApp(File app) throws IllegalStateException {

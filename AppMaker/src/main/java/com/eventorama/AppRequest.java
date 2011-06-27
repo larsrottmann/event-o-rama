@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,6 +25,7 @@ import com.android.sdklib.internal.project.ProjectCreator;
 public class AppRequest {
 	
 	private static final Logger log = Logger.getLogger(AppRequest.class);
+	private static Pattern RE_APP_NAME = Pattern.compile("^[0-9a-zA-Z\\.\\-\\s]{3,20}$");
 
 	static class Parameter {
 		public final static String CALLBACK = "x-eventorama-callback";
@@ -39,6 +42,7 @@ public class AppRequest {
 	private final String appName;
 	private final long startDate;
 	private final long endDate;
+	private final String projectName = "EVENTORAMA";
 
 	// private final int sdkVersion;
 
@@ -87,9 +91,8 @@ public class AppRequest {
 			if (null == appName) {
 				throw new IllegalArgumentException(Parameter.APP_NAME + " must be set.");
 			}
-			if (!ProjectCreator.RE_PROJECT_NAME.matcher(appName).matches()) {
-				throw new IllegalArgumentException(Parameter.APP_NAME + " containts invalid characters. Only " + ProjectCreator.CHARS_PROJECT_NAME
-						+ " allowed.");
+			if (!RE_APP_NAME.matcher(appName).matches()) {
+				throw new IllegalArgumentException(Parameter.APP_NAME + " invalid");
 			}
 			tmpString = (String) o.get(Parameter.PACKAGE_NAME);
 			if (null == tmpString) {
@@ -110,6 +113,10 @@ public class AppRequest {
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+
+	public String getProjectName() {
+		return projectName;
 	}
 
 }
