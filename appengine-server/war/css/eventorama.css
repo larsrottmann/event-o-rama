@@ -1,5 +1,9 @@
 @CHARSET "utf-8";
 
+body {
+  padding: 8px;
+}
+
 #messagePanelContainer {
     position: fixed;
     top: 0;
