@@ -168,6 +168,7 @@ public class AppList extends Composite {
                 startDateBox.setValue(null);
                 expirationDateBox.setValue(null);
                 if (result != null) {
+                    Main.showMessage("App added", true);
                     app.setKey(result);
                     updateTableRow(app, row);
                 }
