@@ -98,7 +98,7 @@ public class AppRequest {
 			if (null == tmpString) {
 				throw new IllegalArgumentException(Parameter.PACKAGE_NAME + " must be set.");
 			}
-			pkg = "com.appspot.eventorama.app" + tmpString;
+			pkg = "com.eventorama.mobi.app" + tmpString;
 			if (!ProjectCreator.RE_PACKAGE_NAME.matcher(pkg).matches()) {
 				throw new IllegalArgumentException("Package name " + pkg + " contains invalid characters.\n"
 						+ "A package name must be constitued of two Java identifiers.\n" + "Each identifier allowed characters are: "

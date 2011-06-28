@@ -6,7 +6,6 @@ import java.util.List;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.LauncherActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -34,7 +33,7 @@ public class SignUpActivity extends Activity{
 	
 	private Context mContext = this;
 	private int mSelected = 0;
-	private ProgressDialog dialog;
+	private ProgressDialog mDialog;
 	private SignUpTask mSignupTask;
 	
 	
@@ -78,7 +77,7 @@ public class SignUpActivity extends Activity{
 		//check
 		if(et.length() < 1 || et.length() > USERNAME_MAX_LENGTH)
 		{
-//			et.setError(getText(R.));
+			et.setError(getText(R.string.signup_username_length_error));
 			return;
 		}
 		
@@ -89,7 +88,7 @@ public class SignUpActivity extends Activity{
 	}
 
 	private void showProgressDialog() {
-		dialog = ProgressDialog.show(mContext, null ,getText(R.string.signup_login_text), true);		
+		mDialog = ProgressDialog.show(mContext, null ,getText(R.string.signup_login_text), true);		
 	}
 	
 	private String capitalizeString(String input)
@@ -206,13 +205,19 @@ public class SignUpActivity extends Activity{
 			switch (result) {
 			case RESULT_SUCCESS:
 				//forward to next Activity
-				if(dialog != null)
-					dialog.dismiss();
+				if(mDialog != null)
+					mDialog.dismiss();
 				Intent i = new Intent();
 				i.setClass(getApplicationContext(), EventStreamActivity.class);
 				startActivity(i);
 				break;
-
+			case RESULT_TAKEN:
+				//show error
+				if(mDialog != null)
+					mDialog.dismiss();
+				EditText et = (EditText) findViewById(R.id.signup_edittext_username);
+				et.setError(getText(R.string.signup_username_taken_error));
+				break;
 			default:
 				break;
 			}
