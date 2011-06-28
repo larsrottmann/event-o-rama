@@ -10,6 +10,7 @@
 		android:name="com.eventorama.mobi.lib.EventORamaApplication">
 		<activity
 			android:label="@string/app_name"
+			android:noHistory="true"
 			android:name="com.eventorama.mobi.lib.StartActivity">
 			<intent-filter>
 				<action
@@ -22,7 +23,7 @@
 		<activity
 			android:name="com.eventorama.mobi.lib.PeopleUpActivity"></activity>
 
-		<activity
+		<activity android:noHistory="true"
 			android:name="com.eventorama.mobi.lib.SignUpActivity"></activity>
 
 		<activity
