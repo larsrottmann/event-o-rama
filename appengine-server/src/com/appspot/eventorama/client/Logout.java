@@ -1,6 +1,7 @@
 package com.appspot.eventorama.client;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Anchor;
@@ -16,9 +17,13 @@ public class Logout extends Composite {
 
     @UiField
     Anchor link;
+    @UiField 
+    SpanElement nameSpan;
 
-    public Logout(String logoutUrl) {
+
+    public Logout(LoginInfo loginInfo) {
         initWidget(uiBinder.createAndBindUi(this));
-        link.setHref(logoutUrl);
+        link.setHref(loginInfo.getLogoutUrl());
+        nameSpan.setInnerText(loginInfo.getNickname());
     }
 }

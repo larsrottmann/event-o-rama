@@ -34,7 +34,7 @@ public class Main implements EntryPoint {
                     hideMessage();
                     loginInfo = result;
                     if (loginInfo.isLoggedIn()) {
-                        RootPanel.get("header_account").add(new Logout(loginInfo.getLogoutUrl()));
+                        RootPanel.get("header_account").add(new Logout(loginInfo));
                         RootPanel.get("appList").add(new AppList());
                     } else {
                         RootPanel.get("header_account").getElement().removeFromParent();
