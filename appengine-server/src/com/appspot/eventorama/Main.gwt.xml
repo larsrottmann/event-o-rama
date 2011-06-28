@@ -6,4 +6,9 @@
 	<entry-point class="com.appspot.eventorama.client.Main"/>
 	<source path="client"/>
 	<source path="shared"/>
+
+	<!-- Set this property to true to turn on UiBinder's new SafeHtmlTemplates 
+		integration. The default value will be true in future releases of GWT -->
+	<set-configuration-property name="UiBinder.useSafeHtmlTemplates"
+		value="true" />
 </module>
