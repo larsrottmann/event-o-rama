@@ -8,4 +8,5 @@
     <string name="signup_login_header">Sign-Up</string>
     <string name="signup_login_text">Joining the party...</string>
     <string name="signup_username_length_error">too short / long!</string>
+    <string name="signup_username_taken_error">This name is already taken.</string>
 </resources>
