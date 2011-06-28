@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.eventorama.mobi.whatever"
+	package="com.eventorama.mobi.sowhatevernew"
 	android:versionCode="1"
 	android:versionName="1.0">
 	<application
@@ -20,10 +20,16 @@
 		</activity>
 
 		<activity
+			android:name="com.eventorama.mobi.lib.PeopleUpActivity"></activity>
+
+		<activity
 			android:name="com.eventorama.mobi.lib.SignUpActivity"></activity>
 
 		<activity
 			android:name="com.eventorama.mobi.lib.EventStreamActivity"></activity>
+
+		<provider android:name="com.eventorama.mobi.lib.content.EventStreamContentProvider" android:authorities="com.eventorama.mobi.sowhatevernew" android:exported="false" />
+		<provider android:name="com.eventorama.mobi.lib.content.PeopleContentProvider" android:authorities="com.eventorama.mobi.sowhatevernew" android:exported="false" />
 
 
 
@@ -43,14 +49,14 @@
 				<action
 					android:name="com.google.android.c2dm.intent.RECEIVE" />
 				<category
-					android:name="com.eventorama.mobi.whatever" />
+					android:name="com.eventorama.mobi.sowhatevernew" />
 			</intent-filter>
 			<!-- Receive the registration id -->
 			<intent-filter>
 				<action
 					android:name="com.google.android.c2dm.intent.REGISTRATION" />
 				<category
-					android:name="com.eventorama.mobi.whatever" />
+					android:name="com.eventorama.mobi.sowhatevernew" />
 			</intent-filter>
 		</receiver>
 
@@ -58,11 +64,11 @@
 	
 		<!-- Only this application can receive the messages and registration result -->
 		<permission
-			android:name="com.eventorama.mobi.whatever.permission.C2D_MESSAGE"
+			android:name="com.eventorama.mobi.sowhatevernew.permission.C2D_MESSAGE"
 			android:protectionLevel="signature" />
 
 		<uses-permission
-			android:name="com.eventorama.mobi.whatever.permission.C2D_MESSAGE" />
+			android:name="com.eventorama.mobi.sowhatevernew.permission.C2D_MESSAGE" />
 	
 	<uses-permission
 		android:name="android.permission.GET_ACCOUNTS" />
