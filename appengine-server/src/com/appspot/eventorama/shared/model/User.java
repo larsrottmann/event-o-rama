@@ -1,7 +1,9 @@
 package com.appspot.eventorama.shared.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.datastore.Key;
 
 import org.slim3.datastore.Attribute;
@@ -19,10 +21,11 @@ public class User implements Serializable {
     @Attribute(version = true)
     private Long version;
 
+    private ModelRef<Application> applicationRef = new ModelRef<Application>(Application.class);;
     private String name;
     private String deviceId;
-    private ModelRef<Application> applicationRef = new ModelRef<Application>(Application.class);;
-    
+    private GeoPt location;
+    private Date locationUpdated;
     
     
     /**
@@ -100,8 +103,34 @@ public class User implements Serializable {
         return applicationRef;
     }
 
-    
-    
+    /**
+     * @return the location
+     */
+    public GeoPt getLocation() {
+        return location;
+    }
+
+    /**
+     * @param location the location to set
+     */
+    public void setLocation(GeoPt location) {
+        this.location = location;
+    }
+
+    /**
+     * @return the locationUpdated
+     */
+    public Date getLocationUpdated() {
+        return locationUpdated;
+    }
+
+    /**
+     * @param locationUpdated the locationUpdated to set
+     */
+    public void setLocationUpdated(Date locationUpdated) {
+        this.locationUpdated = locationUpdated;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

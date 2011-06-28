@@ -1,6 +1,6 @@
 package com.appspot.eventorama.server.meta;
 
-//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-06-28 13:24:31")
+//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-06-28 23:26:40")
 /** */
 public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.eventorama.shared.model.User> {
 
@@ -12,6 +12,12 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
 
     /** */
     public final org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.User, com.google.appengine.api.datastore.Key> key = new org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.User, com.google.appengine.api.datastore.Key>(this, "__key__", "key", com.google.appengine.api.datastore.Key.class);
+
+    /** */
+    public final org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.User, com.google.appengine.api.datastore.GeoPt> location = new org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.User, com.google.appengine.api.datastore.GeoPt>(this, "location", "location", com.google.appengine.api.datastore.GeoPt.class);
+
+    /** */
+    public final org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.User, java.util.Date> locationUpdated = new org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.User, java.util.Date>(this, "locationUpdated", "locationUpdated", java.util.Date.class);
 
     /** */
     public final org.slim3.datastore.StringAttributeMeta<com.appspot.eventorama.shared.model.User> name = new org.slim3.datastore.StringAttributeMeta<com.appspot.eventorama.shared.model.User>(this, "name", "name");
@@ -42,6 +48,8 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
         model.getApplicationRef().setKey((com.google.appengine.api.datastore.Key) entity.getProperty("applicationRef"));
         model.setDeviceId((java.lang.String) entity.getProperty("deviceId"));
         model.setKey(entity.getKey());
+        model.setLocation((com.google.appengine.api.datastore.GeoPt) entity.getProperty("location"));
+        model.setLocationUpdated((java.util.Date) entity.getProperty("locationUpdated"));
         model.setName((java.lang.String) entity.getProperty("name"));
         model.setVersion((java.lang.Long) entity.getProperty("version"));
         return model;
@@ -61,6 +69,8 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
         }
         entity.setProperty("applicationRef", m.getApplicationRef().getKey());
         entity.setProperty("deviceId", m.getDeviceId());
+        entity.setProperty("location", m.getLocation());
+        entity.setProperty("locationUpdated", m.getLocationUpdated());
         entity.setProperty("name", m.getName());
         entity.setProperty("version", m.getVersion());
         entity.setProperty("slim3.schemaVersion", 1);
@@ -138,6 +148,14 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
             writer.setNextPropertyName("key");
             encoder0.encode(writer, m.getKey());
         }
+        if(m.getLocation() != null){
+            writer.setNextPropertyName("location");
+            encoder0.encode(writer, m.getLocation());
+        }
+        if(m.getLocationUpdated() != null){
+            writer.setNextPropertyName("locationUpdated");
+            encoder0.encode(writer, m.getLocationUpdated());
+        }
         if(m.getName() != null){
             writer.setNextPropertyName("name");
             encoder0.encode(writer, m.getName());
@@ -160,6 +178,10 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
         m.setDeviceId(decoder0.decode(reader, m.getDeviceId()));
         reader = rootReader.newObjectReader("key");
         m.setKey(decoder0.decode(reader, m.getKey()));
+        reader = rootReader.newObjectReader("location");
+        m.setLocation(decoder0.decode(reader, m.getLocation()));
+        reader = rootReader.newObjectReader("locationUpdated");
+        m.setLocationUpdated(decoder0.decode(reader, m.getLocationUpdated()));
         reader = rootReader.newObjectReader("name");
         m.setName(decoder0.decode(reader, m.getName()));
         reader = rootReader.newObjectReader("version");
