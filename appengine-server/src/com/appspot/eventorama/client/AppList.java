@@ -170,6 +170,8 @@ public class AppList extends Composite {
                 if (result != null) {
                     app.setKey(result);
                     updateTableRow(app, row);
+                } else {
+                    Window.alert("failed to create application");
                 }
             }
         });
