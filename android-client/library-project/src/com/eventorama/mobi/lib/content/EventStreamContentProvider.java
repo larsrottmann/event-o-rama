@@ -20,6 +20,8 @@ public class EventStreamContentProvider extends ContentProvider {
 
 	public static Uri content_uri = null;
 
+	public static final int SAVE_STATE_LOCAL = 1;
+	public static final int SAVE_STATE_SERVER = 2;
 
 	public static class Columns {
 		public static final String ID = "_id";
@@ -177,6 +179,12 @@ public class EventStreamContentProvider extends ContentProvider {
 
 	    @Override
 	    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+	    	if(values != null)
+	    	{
+	    		if(values.containsKey(EventStreamContentProvider.Columns.CREATED))
+	    			throw new IllegalArgumentException("You can not update the field 'CREATED'!");
+	    	}
+	    	
 	        SQLiteDatabase db = dbHelper.getWritableDatabase();
 	        int count = 0;
 	        switch (sUriMatcher.match(uri)) {

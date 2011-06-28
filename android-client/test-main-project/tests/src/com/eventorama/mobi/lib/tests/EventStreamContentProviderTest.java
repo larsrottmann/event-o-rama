@@ -17,27 +17,62 @@ public class EventStreamContentProviderTest extends ProviderTestCase3<EventStrea
 	
     protected void setUp() throws Exception {
         super.setUp();
-
     }
     
+    public void testDeleteData()
+    {
+    	ContentProvider provider = getProvider();
+    	
+    	Uri uri = EventStreamContentProvider.content_uri;
+    	
+    	Uri entryUri = provider.insert(uri, null);
+
+    	Cursor c = provider.query(uri, null, null, null, null);    	
+    	int entries = c.getCount();
+    	c.close();
+    	
+    	int result = provider.delete(entryUri, null, null);
+    	
+    	c = provider.query(uri, null, null, null, null);    	
+    	int entriesnow = c.getCount();
+    	c.close();
+    	
+    	assertEquals(1, result);
+    	assertTrue(entriesnow < entries);    
+    }
     
-    public void testQuery(){
-        ContentProvider provider = getProvider();
+    public void testUpdatedServerSync()
+    {
+    	//create dummy data
+    	ContentProvider provider = getProvider();
+       	Uri uri = EventStreamContentProvider.content_uri;
+       	
+       	ContentValues cv = new ContentValues();
+       	cv.put(EventStreamContentProvider.Columns.SAVE_STATE, EventStreamContentProvider.SAVE_STATE_LOCAL);
+       	for(int i = 0; i < 10; i++)
+       	{
+       		cv.put(EventStreamContentProvider.Columns.TEXT, "Text"+i);
+       		provider.insert(uri, cv);
+       	}
 
-        Uri uri = EventStreamContentProvider.content_uri;
+       	cv.put(EventStreamContentProvider.Columns.SAVE_STATE, EventStreamContentProvider.SAVE_STATE_SERVER);
+       	for(int i = 0; i < 10; i++)
+       	{
+       		cv.put(EventStreamContentProvider.Columns.TEXT, "TextSaved"+i);
+       		provider.insert(uri, cv);
+       	}
 
-        Cursor cursor = provider.query(uri, null, null, null, null);
+       	Cursor c = provider.query(uri, null, EventStreamContentProvider.Columns.SAVE_STATE+"="+EventStreamContentProvider.SAVE_STATE_LOCAL, null, null);
+       	assertEquals(10, c.getCount());
+    	
+       	c = provider.query(uri, null, EventStreamContentProvider.Columns.SAVE_STATE+"="+EventStreamContentProvider.SAVE_STATE_SERVER, null, null);
+       	assertEquals(10, c.getCount());
 
-        assertNotNull(cursor);
-
-        cursor = null;
-        try {
-            cursor = provider.query(Uri.parse("definitelywrong"), null, null, null, null);
-            // we're wrong if we get until here!
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertTrue(true);
-        }
+       	//update everything to saved Server
+       	cv = new ContentValues();
+       	cv.put(EventStreamContentProvider.Columns.SAVE_STATE, EventStreamContentProvider.SAVE_STATE_SERVER);
+       	int updates = provider.update(uri, cv, EventStreamContentProvider.Columns.SAVE_STATE+"="+EventStreamContentProvider.SAVE_STATE_LOCAL, null);
+       	assertEquals(10,updates);
     }
     
     public void testInsertData()
@@ -63,7 +98,6 @@ public class EventStreamContentProviderTest extends ProviderTestCase3<EventStrea
     	
     	assertNotNull(entryUri);
     	
-    	Log.v("TTEST", "got entry uri: "+entryUri);
     	//read it back
     	c = provider.query(entryUri, null, null, null, null);
     	assertNotNull(c);
@@ -94,6 +128,17 @@ public class EventStreamContentProviderTest extends ProviderTestCase3<EventStrea
     	int updates = provider.update(entryUri, cv, null, null);
     	assertEquals(1, updates);
     	
+    	cv = new ContentValues();
+    	cv.put(EventStreamContentProvider.Columns.CREATED, 5555);
+    	try {
+    		provider.update(entryUri, cv, null, null);
+    		fail("tried to update CREATED field, no exception thrown!");
+    	}
+    	catch(IllegalArgumentException ex)
+    	{
+    		assertTrue("Exception thrown as expected: "+ex,true);
+    	}
+    
     }
     
 
