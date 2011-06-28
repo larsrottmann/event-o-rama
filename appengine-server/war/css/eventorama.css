@@ -1,0 +1,43 @@
+@CHARSET "utf-8";
+
+body {
+  padding: 8px;
+}
+
+#messagePanelContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+}
+
+#messagePanelInnerContainer {
+    max-width: 434px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#messagePanel {
+    display: inline-block;
+    position: relative;
+    top: -20px;
+    padding: 26px 8px 6px 8px;
+    
+    text-align: left;
+    font-weight: bold;
+    background-color: #b55a1f;
+    color: #fff;
+    
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#c37848), to(#b55a1f));
+    -webkit-box-shadow: 0px 2px 5px rgba(0,0,0,0.4);
+}
+
+#error {
+    font-weight: bold;
+    background-color: #b00;
+    color: #fff;
+}
