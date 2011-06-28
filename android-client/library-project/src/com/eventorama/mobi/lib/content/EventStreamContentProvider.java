@@ -20,6 +20,8 @@ public class EventStreamContentProvider extends ContentProvider {
 
 	public static Uri content_uri = null;
 
+	public static final int SAVE_STATE_LOCAL = 1;
+	public static final int SAVE_STATE_SERVER = 2;
 
 	public static class Columns {
 		public static final String ID = "_id";
@@ -28,6 +30,7 @@ public class EventStreamContentProvider extends ContentProvider {
 		public static final String TYPE = "type";
 		public static final String TEXT = "text";
 		public static final String PEOPLE_ID ="people_id";
+		public static final String SAVE_STATE ="save_state";
 	}
 	
 	
@@ -38,7 +41,7 @@ public class EventStreamContentProvider extends ContentProvider {
     private static class DBHelper extends SQLiteOpenHelper {
 
         private static final String TABLE_NAME = "eventstream";
-        private static final int DATABASE_VERSION = 2;
+        private static final int DATABASE_VERSION = 4;
         
         private static final String DATABASE_NAME = "eventorama";
         
@@ -48,7 +51,8 @@ public class EventStreamContentProvider extends ContentProvider {
         Columns.TYPE + " INTEGER, " +
         Columns.PEOPLE_ID + " INTEGER, " +
         Columns.TEXT + " TEXT, " +
-        Columns.TITLE+ " TEXT);";
+        Columns.TITLE+ " TEXT, " +
+        Columns.SAVE_STATE + " INTEGER );";
         
         DBHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -175,6 +179,12 @@ public class EventStreamContentProvider extends ContentProvider {
 
 	    @Override
 	    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+	    	if(values != null)
+	    	{
+	    		if(values.containsKey(EventStreamContentProvider.Columns.CREATED))
+	    			throw new IllegalArgumentException("You can not update the field 'CREATED'!");
+	    	}
+	    	
 	        SQLiteDatabase db = dbHelper.getWritableDatabase();
 	        int count = 0;
 	        switch (sUriMatcher.match(uri)) {

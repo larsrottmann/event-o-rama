@@ -1,7 +1,14 @@
 package com.eventorama.mobi.lib;
 
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.google.gson.Gson;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -23,6 +30,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 public class SignUpActivity extends Activity{
+	
+	private static final String TAG = SignUpActivity.class.getName();
 
 	private static final String SELECTION_KEY = "selected_key";
 	private static final String USERNAME_KEY = "username_key";
@@ -129,7 +138,6 @@ public class SignUpActivity extends Activity{
 				rb.setId(idcounter);
 				rg.addView(rb);
 				idcounter++;
-				Log.v("T",rb.getId()+"");
 			}
 			mSelected = rg.getChildAt(0).getId();
 			rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {				
@@ -182,9 +190,12 @@ public class SignUpActivity extends Activity{
 		}
 		return result;
 	}
-	
+	/**
+	 * Perform server communication to register us for this event
+	 */
 	private class SignUpTask extends AsyncTask<String, Integer, Integer>
 	{
+
 
 		@Override
 		protected Integer doInBackground(String... params) {
@@ -192,9 +203,23 @@ public class SignUpActivity extends Activity{
 			//TODO: check if username is available
 			try {
 				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//build post body
+				Gson gson = new Gson();
+				Map<String, String> data = new HashMap<String, String>();
+				data.put("name", username);
+				data.put("device-id", "798983987298347");
+				Log.v(TAG, "will post: "+gson.toJson(data));
+				EventORamaApplication eora = (EventORamaApplication) getApplication();
+				URL url = new URL(eora.getServerUrl("/app/"+getPackageName()+"/users"));
+				URLConnection conn = url.openConnection();
+				conn.setDoOutput(true);
+				OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+				osw.append(gson.toJson(data));
+				osw.flush();
+				
+			} catch (Exception e) {
+				Log.e(TAG, "Error connecting to server! ",e);
+				return RESULT_ERROR;				
 			}
 			return RESULT_SUCCESS;
 		}

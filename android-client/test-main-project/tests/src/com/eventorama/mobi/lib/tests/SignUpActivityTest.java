@@ -30,7 +30,7 @@ public class SignUpActivityTest extends ActivityInstrumentationTestCase2<SignUpA
 		
 		String result = (String) PrivateAccessor.invokePrivateMethod(mSignupActivity, "capitalizeString", params);
 		
-		Assert.assertTrue(result.equals("This Is A Test S T R I N g"));
+		Assert.assertTrue(result.equals("This Is A Test S T R I N G"));
 		
 	}
 

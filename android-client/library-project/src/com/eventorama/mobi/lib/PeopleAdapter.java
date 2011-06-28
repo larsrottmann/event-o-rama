@@ -33,7 +33,7 @@ public class PeopleAdapter extends CursorAdapter {
 			int index = c.getColumnIndex(PeopleContentProvider.Columns.LAST_STATUS_ID);
 			int lastId = c.getInt(index);
 			if (lastId>0) {
-				Uri feedUri = Uri.withAppendedPath(EventStreamContentProvider.CONTENT_URI, String.valueOf(lastId));
+				Uri feedUri = Uri.withAppendedPath(EventStreamContentProvider.content_uri, String.valueOf(lastId));
 				Cursor feedCursor = context.getContentResolver().query(feedUri, new String[]{EventStreamContentProvider.Columns.TEXT, EventStreamContentProvider.Columns.TITLE}, null, null, null);
 				index = feedCursor.getColumnIndex(EventStreamContentProvider.Columns.TEXT);
 				result = feedCursor.getString(index);								
