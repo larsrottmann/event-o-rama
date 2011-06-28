@@ -31,6 +31,8 @@ public class AppList extends Composite {
 
     private VerticalPanel mainPanel = new VerticalPanel();
     private FlexTable appsFlexTable = new FlexTable();
+    private Button createAppButton = new Button("Create event");
+
     private VerticalPanel addAppsPanel = new VerticalPanel();
     private Label addAppsLabel = new Label("New Event");
     private Grid appsGrid = new Grid(4, 2);
@@ -40,7 +42,7 @@ public class AppList extends Composite {
     private DateBox startDateBox = new DateBox();
     private Label expirationLabel = new Label("End Date");
     private DateBox expirationDateBox = new DateBox();
-    private Button addAppButton = new Button("Add");
+    private Button addAppButton = new Button("Create");
 
     public AppList() {
         errorPanel = RootPanel.get("error");
@@ -51,6 +53,15 @@ public class AppList extends Composite {
         appsFlexTable.setText(0, 2, "End Date");
         appsFlexTable.setText(0, 3, "Active");
         appsFlexTable.setText(0, 4, "Remove");
+
+        appsFlexTable.setCellPadding(6);
+        appsFlexTable.addStyleName("appsList");
+        appsFlexTable.getRowFormatter().addStyleName(0, "appsListHeader");
+        appsFlexTable.getCellFormatter().addStyleName(0, 0, "appsListColumn");
+        appsFlexTable.getCellFormatter().addStyleName(0, 1, "appsListNumericColumn");
+        appsFlexTable.getCellFormatter().addStyleName(0, 2, "appsListNumericColumn");
+        appsFlexTable.getCellFormatter().addStyleName(0, 3, "appsListColumn");
+        appsFlexTable.getCellFormatter().addStyleName(0, 4, "appsListRemoveColumn");
 
         startDateBox.setFormat(new DefaultFormat(DateTimeFormat.getFormat("dd.MM.yyyy")));
         expirationDateBox.setFormat(new DefaultFormat(DateTimeFormat.getFormat("dd.MM.yyyy")));
@@ -63,19 +74,28 @@ public class AppList extends Composite {
         appsGrid.setWidget(3, 0, expirationLabel);
         appsGrid.setWidget(3, 1, expirationDateBox);
 
-        addAppsPanel.setBorderWidth(1);
         addAppsPanel.add(appsGrid);
         addAppsPanel.add(addAppButton);
+        addAppsPanel.setStyleName("addAppsPanel", true);
 
-        initWidget(mainPanel);
-        mainPanel.add(appsFlexTable);
-        mainPanel.add(addAppsPanel);
-
-        eventTextBox.setFocus(true);
-
+        addAppButton.setStyleName("appsButton", true);
         addAppButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 addApp();
+            }
+        });
+
+        createAppButton.setStyleName("appsButton", true);
+
+        initWidget(mainPanel);
+        mainPanel.add(appsFlexTable);
+        mainPanel.add(createAppButton);
+
+        createAppButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                mainPanel.remove(createAppButton);
+                mainPanel.add(addAppsPanel);
+                eventTextBox.setFocus(true);
             }
         });
 
@@ -84,12 +104,16 @@ public class AppList extends Composite {
 
     private void refreshApps() {
         errorPanel.setVisible(false);
+
+        Main.showMessage("Loading events ...", false);
         applicationsService.getList(new AsyncCallback<List<Application>>() {
             public void onFailure(Throwable caught) {
-                showError("Error loading data: " + caught.getMessage());
+                Main.hideMessage();
+                showError("Error loading events: " + caught.getMessage());
             }
 
             public void onSuccess(List<Application> result) {
+                Main.hideMessage();
                 updateTable(result);
             }
         });
@@ -113,27 +137,37 @@ public class AppList extends Composite {
         appsFlexTable.setText(row, 2, DateTimeFormat.getFormat("dd.MM.yyyy").format(app.getExpirationDate()));
         appsFlexTable.setText(row, 3, Boolean.toString(app.isActive()));
 
+        appsFlexTable.getCellFormatter().addStyleName(row, 0, "appsListColumn");
+        appsFlexTable.getCellFormatter().addStyleName(row, 1, "appsListNumericColumn");
+        appsFlexTable.getCellFormatter().addStyleName(row, 2, "appsListNumericColumn");
+        appsFlexTable.getCellFormatter().addStyleName(row, 3, "appsListColumn");
+
         // Add a button to remove this stock from the table.
         Button removeAppButton = new Button("x");
         removeAppButton.addStyleDependentName("remove");
         removeAppButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
+                Main.showMessage("Deleting event ...", false);
                 applicationsService.delete(appKey, new AsyncCallback<Void>() {
                     public void onFailure(Throwable caught) {
-                        showError("Error deleting data: " + caught.getMessage());
+                        Main.hideMessage();
+                        showError("Error deleting event: " + caught.getMessage());
                     }
 
                     public void onSuccess(Void result) {
+                        Main.hideMessage();
                         refreshApps();
                     }
                 });
             }
         });
         appsFlexTable.setWidget(row, 4, removeAppButton);
+        appsFlexTable.getCellFormatter().addStyleName(row, 4, "appsListRemoveColumn");
     }
 
     private void addApp() {
         errorPanel.setVisible(false);
+
         final String title = eventTextBox.getText().trim();
         if (!title.matches("^[0-9a-zA-Z\\.\\-\\s]{3,20}$")) {
             showError("'" + title + "' is not a valid event title, allowed characters are 0-9, a-z, space, dot and dash (3 up to 20 characters).");
@@ -165,21 +199,26 @@ public class AppList extends Composite {
         app.setExpirationDate(expirationDate);
         final int row = appsFlexTable.getRowCount() + 1;
 
+        Main.showMessage("Creating event ...", false);
         applicationsService.create(app, new AsyncCallback<Key>() {
             public void onFailure(Throwable caught) {
-                showError("Error creating data: " + caught.getMessage());
+                Main.hideMessage();
+                showError("Error creating event: " + caught.getMessage());
             }
 
             public void onSuccess(Key result) {
+                Main.hideMessage();
                 eventTextBox.setText(null);
                 startDateBox.setValue(null);
                 expirationDateBox.setValue(null);
                 if (result != null) {
-                    Main.showMessage("App added", true);
+                    Main.showMessage("Event created", true);
                     app.setKey(result);
                     updateTableRow(app, row);
+                    mainPanel.remove(addAppsPanel);
+                    mainPanel.add(createAppButton);
                 } else {
-                    showError("Failed to create new event");
+                    showError("Failed to create event");
                 }
             }
         });

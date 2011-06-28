@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 public class Main implements EntryPoint {
 
-    private static final int TRANSIENT_MESSAGE_HIDE_DELAY = 5000;
+    private static final int TRANSIENT_MESSAGE_HIDE_DELAY = 2000;
     
     public static RootPanel sMessagePanel = null;
     
@@ -20,7 +20,7 @@ public class Main implements EntryPoint {
 
     
     public void onModuleLoad() {
-        showMessage("Loading...", false);
+        showMessage("Loading ...", false);
 
         loginService.login(
             GWT.getHostPageBaseURL(),
@@ -34,10 +34,11 @@ public class Main implements EntryPoint {
                     hideMessage();
                     loginInfo = result;
                     if (loginInfo.isLoggedIn()) {
+                        RootPanel.get("header_account").add(new Logout(loginInfo.getLogoutUrl()));
                         RootPanel.get("appList").add(new AppList());
-                        RootPanel.get("account").add(new Logout(loginInfo.getLogoutUrl()));
                     } else {
-                        RootPanel.get("account").add(new Login(loginInfo.getLoginUrl()));
+                        RootPanel.get("header_account").getElement().removeFromParent();
+                        RootPanel.get("appList").add(new Login(loginInfo.getLoginUrl()));
                     }
                 }
             }
