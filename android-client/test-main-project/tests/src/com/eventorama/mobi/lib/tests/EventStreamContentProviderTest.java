@@ -137,9 +137,6 @@ public class EventStreamContentProviderTest extends ProviderTestCase3<EventStrea
     	catch(IllegalArgumentException ex)
     	{
     		assertTrue("Exception thrown as expected: "+ex,true);
-    	}
-    
+    	}    
     }
-    
-
 }
