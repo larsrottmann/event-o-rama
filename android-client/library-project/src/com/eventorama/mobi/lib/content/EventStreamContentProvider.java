@@ -18,10 +18,7 @@ public class EventStreamContentProvider extends ContentProvider {
 
 	private final static String TAG = EventStreamContentProvider.class.toString();
 
-	//TODO: check for concurrent applications / packages
-	private static final String AUTHORITY = "com.eventorama.mobi";
-
-	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/eventstream");
+	public static Uri content_uri = null;
 
 
 	public static class Columns {
@@ -32,15 +29,9 @@ public class EventStreamContentProvider extends ContentProvider {
 	}
 	
 	
-    private static final UriMatcher sUriMatcher;
+    private static UriMatcher sUriMatcher;
     private static final int EVENT = 0;
     private static final int EVENTS = 1;
-
-    static {
-        sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sUriMatcher.addURI(AUTHORITY, "event/#", EVENT);
-        sUriMatcher.addURI(AUTHORITY, "events", EVENTS);
-    }
 	
     private static class DBHelper extends SQLiteOpenHelper {
 
@@ -78,6 +69,13 @@ public class EventStreamContentProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         dbHelper = new DBHelper(getContext());
+        String packagename = getContext().getPackageName();
+        Log.v(TAG, "using package as authority: "+packagename);
+        content_uri =  Uri.parse("content://"+ packagename +"/eventstream");
+        sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+        sUriMatcher.addURI(packagename, "eventstream/#", EVENT);
+        sUriMatcher.addURI(packagename, "eventstream", EVENTS);
+
         return true;
     }
 
@@ -144,8 +142,8 @@ public class EventStreamContentProvider extends ContentProvider {
 	        SQLiteDatabase db = dbHelper.getWritableDatabase();
 	        long rowId = db.insert(DBHelper.TABLE_NAME, null, values);
 	        if (rowId > 0) {
-	            Uri entryUri = ContentUris.withAppendedId(CONTENT_URI, rowId);
-	            getContext().getContentResolver().notifyChange(CONTENT_URI, null);
+	            Uri entryUri = ContentUris.withAppendedId(content_uri, rowId);
+	            getContext().getContentResolver().notifyChange(content_uri, null);
 	            return entryUri;
 	        } else {
 	            throw new SQLException("Failed to insert row into " + uri);
