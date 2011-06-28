@@ -28,6 +28,7 @@ public class EventStreamContentProvider extends ContentProvider {
 		public static final String TYPE = "type";
 		public static final String TEXT = "text";
 		public static final String PEOPLE_ID ="people_id";
+		public static final String SAVE_STATE ="save_state";
 	}
 	
 	
@@ -38,7 +39,7 @@ public class EventStreamContentProvider extends ContentProvider {
     private static class DBHelper extends SQLiteOpenHelper {
 
         private static final String TABLE_NAME = "eventstream";
-        private static final int DATABASE_VERSION = 2;
+        private static final int DATABASE_VERSION = 4;
         
         private static final String DATABASE_NAME = "eventorama";
         
@@ -48,7 +49,8 @@ public class EventStreamContentProvider extends ContentProvider {
         Columns.TYPE + " INTEGER, " +
         Columns.PEOPLE_ID + " INTEGER, " +
         Columns.TEXT + " TEXT, " +
-        Columns.TITLE+ " TEXT);";
+        Columns.TITLE+ " TEXT, " +
+        Columns.SAVE_STATE + " INTEGER );";
         
         DBHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
