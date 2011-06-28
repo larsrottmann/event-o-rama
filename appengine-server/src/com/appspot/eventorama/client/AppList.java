@@ -11,13 +11,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.DateBox;
@@ -26,6 +26,8 @@ import com.google.gwt.user.datepicker.client.DateBox.DefaultFormat;
 public class AppList extends Composite {
 
     private ApplicationsServiceAsync applicationsService = GWT.create(ApplicationsService.class);
+
+    private RootPanel errorPanel;
 
     private VerticalPanel mainPanel = new VerticalPanel();
     private FlexTable appsFlexTable = new FlexTable();
@@ -41,6 +43,9 @@ public class AppList extends Composite {
     private Button addAppButton = new Button("Add");
 
     public AppList() {
+        errorPanel = RootPanel.get("error");
+        errorPanel.setVisible(false);
+
         appsFlexTable.setText(0, 0, "Event Name");
         appsFlexTable.setText(0, 1, "Start Date");
         appsFlexTable.setText(0, 2, "End Date");
@@ -78,9 +83,10 @@ public class AppList extends Composite {
     }
 
     private void refreshApps() {
+        errorPanel.setVisible(false);
         applicationsService.getList(new AsyncCallback<List<Application>>() {
             public void onFailure(Throwable caught) {
-                Window.alert(caught.getMessage());
+                showError("Error loading data: " + caught.getMessage());
             }
 
             public void onSuccess(List<Application> result) {
@@ -114,7 +120,7 @@ public class AppList extends Composite {
             public void onClick(ClickEvent event) {
                 applicationsService.delete(appKey, new AsyncCallback<Void>() {
                     public void onFailure(Throwable caught) {
-                        Window.alert(caught.getMessage());
+                        showError("Error deleting data: " + caught.getMessage());
                     }
 
                     public void onSuccess(Void result) {
@@ -127,28 +133,29 @@ public class AppList extends Composite {
     }
 
     private void addApp() {
+        errorPanel.setVisible(false);
         final String title = eventTextBox.getText().trim();
         if (!title.matches("^[0-9a-zA-Z\\.\\-\\s]{3,20}$")) {
-            Window.alert("'" + title + "' is not a valid application title, allowed characters are 0-9, a-z, space, dot and dash (3 up to 20 characters).");
+            showError("'" + title + "' is not a valid event title, allowed characters are 0-9, a-z, space, dot and dash (3 up to 20 characters).");
             eventTextBox.selectAll();
             return;
         }
 
         final Date startDate = startDateBox.getValue();
         if (startDate == null) {
-            Window.alert("Please select a valid application start date.");
+            showError("Please select a valid event start date.");
             return;
         }
 
         final Date expirationDate = expirationDateBox.getValue();
         if (expirationDate == null) {
-            Window.alert("Please select a valid application expiration date.");
+            showError("Please select a valid event end date.");
             return;
         } else if (expirationDate.before(new Date(System.currentTimeMillis()))) {
-            Window.alert("'" + expirationDate + "' is not a valid application expiration date.");
+            showError("'" + expirationDate + "' is not a valid event end date.");
             return;
         } else if (expirationDate.before(startDate)) {
-            Window.alert("Expiration date cannot be before the application start date.");
+            showError("End date cannot be before the event start date.");
             return;
         }
 
@@ -160,7 +167,7 @@ public class AppList extends Composite {
 
         applicationsService.create(app, new AsyncCallback<Key>() {
             public void onFailure(Throwable caught) {
-                Window.alert(caught.getMessage());
+                showError("Error creating data: " + caught.getMessage());
             }
 
             public void onSuccess(Key result) {
@@ -172,9 +179,14 @@ public class AppList extends Composite {
                     app.setKey(result);
                     updateTableRow(app, row);
                 } else {
-                    Window.alert("failed to create application");
+                    showError("Failed to create new event");
                 }
             }
         });
+    }
+
+    private void showError(String message) {
+        errorPanel.getElement().setInnerText(message);
+        errorPanel.setVisible(true);
     }
 }

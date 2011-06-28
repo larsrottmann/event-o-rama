@@ -31,3 +31,9 @@
     background-image: -webkit-gradient(linear, left top, left bottom, from(#c37848), to(#b55a1f));
     -webkit-box-shadow: 0px 2px 5px rgba(0,0,0,0.4);
 }
+
+#error {
+    font-weight: bold;
+    background-color: #b00;
+    color: #fff;
+}
