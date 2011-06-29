@@ -11,6 +11,7 @@ import org.slim3.tester.ControllerTestCase;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.appspot.eventorama.server.meta.UserMeta;
@@ -24,327 +25,179 @@ import static org.hamcrest.CoreMatchers.*;
 
 public class UsersControllerTest extends ControllerTestCase {
 
-    @Test
-    public void testCreateUser() throws Exception {
-        Application app = new Application();
+    private Application app;
+    private User user1, user2;
+    
+    
+    /* (non-Javadoc)
+     * @see org.slim3.tester.ControllerTestCase#setUp()
+     */
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        
+        app = new Application();
         Datastore.put(app);
         
-        try
-        {
-            tester.request.setMethod("post");
-            tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Boromir\", \"device-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
+        user1 = new User();
+        user1.setName("Boromir");
+        user1.getApplicationRef().setModel(app);
+        user2 = new User();
+        user2.setName("Arwen");
+        user2.getApplicationRef().setModel(app);
+        Datastore.put(user1, user2);
+    }
 
-            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
-            UsersController controller = tester.getController();
-            assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_CREATED));
-            assertThat(tester.response.containsHeader("location"), is(true));
-        }
-        finally
-        {
-            Datastore.delete(app.getKey());
-        }
+    
+    @Test
+    public void testCreateUser() throws Exception {
+        tester.request.setMethod("post");
+        tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Legolas\", \"device-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
+
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
+        UsersController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_CREATED));
+        assertThat(tester.response.containsHeader("location"), is(true));
     }
 
     @Test
     public void testCreateUserMissingUserName() throws Exception {
-        Application app = new Application();
-        Datastore.put(app);
-        
-        try
-        {
-            tester.request.setMethod("post");
-            tester.request.setReader(new BufferedReader(new StringReader("{\"device-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
+        tester.request.setMethod("post");
+        tester.request.setReader(new BufferedReader(new StringReader("{\"device-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
 
-            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
-            UsersController controller = tester.getController();
-            assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
-        }
-        finally
-        {
-            Datastore.delete(app.getKey());
-        }
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
+        UsersController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
     }
 
     @Test
     public void testCreateUserMissingDeviceId() throws Exception {
-        Application app = new Application();
-        Datastore.put(app);
-        
-        try
-        {
-            tester.request.setMethod("post");
-            tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Boromir\"}")));
+        tester.request.setMethod("post");
+        tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Boromir\"}")));
 
-            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
-            UsersController controller = tester.getController();
-            assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
-        }
-        finally
-        {
-            Datastore.delete(app.getKey());
-        }
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
+        UsersController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
     }
 
     @Test
     public void testCreateUserNameAlreadyTaken() throws Exception {
-        Application app = new Application();
-        Datastore.put(app);
-        
-        User user = new User();
-        user.setName("Boromir");
-        user.getApplicationRef().setModel(app);
-        Datastore.put(user);
-        
-        try
-        {
-            tester.request.setMethod("post");
-            tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Boromir\", \"device-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
+        tester.request.setMethod("post");
+        tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Boromir\", \"device-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
 
-            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
-            UsersController controller = tester.getController();
-            assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_CONFLICT));
-        }
-        finally
-        {
-            Datastore.delete(user.getKey(), app.getKey());
-        }
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
+        UsersController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_CONFLICT));
     }
 
     @Test
     public void testGetUsers() throws Exception {
-        Application app = new Application();
-        Datastore.put(app);
+        tester.request.setMethod("get");
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
+        UsersController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+        assertThat(tester.response.getContentType().contains("application/json"), is(true));
         
-        User user1 = new User();
-        user1.setName("Boromir");
-        user1.getApplicationRef().setModel(app);
-        User user2 = new User();
-        user2.setName("Arwen");
-        user2.getApplicationRef().setModel(app);
-        Datastore.put(user1, user2);
-        
-        try
-        {
-            tester.request.setMethod("get");
-            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
-            UsersController controller = tester.getController();
-            assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
-            assertThat(tester.response.getContentType().contains("application/json"), is(true));
-            
-            JSONArray json = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
-            assertThat(json.length(), is(2));
-            assertThat(json.opt(0), instanceOf(JSONObject.class));
-        }
-        finally
-        {
-            Datastore.delete(user1.getKey(), user2.getKey(), app.getKey());
-        }
+        JSONArray json = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
+        assertThat(json.length(), is(2));
+        assertThat(json.opt(0), instanceOf(JSONObject.class));
     }
     
     @Test
     public void testGetUser() throws Exception {
-        Application app = new Application();
-        Datastore.put(app);
+        tester.request.setMethod("get");
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user1.getKey().getId());
+        UsersController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+        assertThat(tester.response.getContentType().contains("application/json"), is(true));
         
-        User user = new User();
-        user.setName("Boromir");
-        user.getApplicationRef().setModel(app);
-        Datastore.put(user);
-        
-        try
-        {
-            tester.request.setMethod("get");
-            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
-            UsersController controller = tester.getController();
-            assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
-            assertThat(tester.response.getContentType().contains("application/json"), is(true));
-            
-            JSONObject json = new JSONObject(new JSONTokener(tester.response.getOutputAsString()));
-            assertThat(Arrays.asList(JSONObject.getNames(json)), hasItems("id", "name", "device-id"));
-            assertThat((String) json.get("name"), is("Boromir"));
-        }
-        finally
-        {
-            Datastore.delete(user.getKey(), app.getKey());
-        }
+        JSONObject json = new JSONObject(new JSONTokener(tester.response.getOutputAsString()));
+        assertThat(Arrays.asList(JSONObject.getNames(json)), hasItems("id", "name", "device-id"));
+        assertThat((String) json.get("name"), is("Boromir"));
     }
 
     @Test
     public void testGetNonExistentUser() throws Exception {
-        Application app = new Application();
-        Datastore.put(app);
-        
-        try
-        {
-            tester.request.setMethod("get");
-            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/123");
-            UsersController controller = tester.getController();
-            assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_FOUND));
-        }
-        finally
-        {
-            Datastore.delete(app.getKey());
-        }
+        tester.request.setMethod("get");
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/123");
+        UsersController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_FOUND));
     }
 
     @Test
     public void testUpdateUser() throws Exception {
-        Application app = new Application();
-        Datastore.put(app);
+        tester.request.setMethod("put");
+        tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"lat\": 6.213211, \"location-update\": 1309350829}")));
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user1.getKey().getId());
+        UsersController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
         
-        User user = new User();
-        user.setName("Boromir");
-        user.getApplicationRef().setModel(app);
-        Datastore.put(user);
-
-        try
-        {
-            tester.request.setMethod("put");
-            tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"lat\": 6.213211, \"location-update\": 1309350829}")));
-            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
-            UsersController controller = tester.getController();
-            assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
-            
-            User updatedUser = Datastore.get(UserMeta.get(), user.getKey());
-            assertThat(updatedUser.getLocationUpdated(), is(new Date(1309350829)));
-            assertThat(updatedUser.getLocation().getLatitude(), is(6.213211f));
-            assertThat(updatedUser.getLocation().getLongitude(), is(51.4344453f));
-        }
-        finally
-        {
-            Datastore.delete(user.getKey(), app.getKey());
-        }
+        User updatedUser = Datastore.get(UserMeta.get(), user1.getKey());
+        assertThat(updatedUser.getLocationUpdated(), is(new Date(1309350829)));
+        assertThat(updatedUser.getLocation().getLatitude(), is(6.213211f));
+        assertThat(updatedUser.getLocation().getLongitude(), is(51.4344453f));
     }
 
     @Test
     public void testUpdateUserShouldSetLocationUpdateIfMissing() throws Exception {
-        Application app = new Application();
-        Datastore.put(app);
+        tester.request.setMethod("put");
+        tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"lat\": 6.213211}")));
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user1.getKey().getId());
+        UsersController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
         
-        User user = new User();
-        user.setName("Boromir");
-        user.getApplicationRef().setModel(app);
-        Datastore.put(user);
-
-        try
-        {
-            tester.request.setMethod("put");
-            tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"lat\": 6.213211}")));
-            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
-            UsersController controller = tester.getController();
-            assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
-            
-            User updatedUser = Datastore.get(UserMeta.get(), user.getKey());
-            assertThat(updatedUser.getLocationUpdated(), is(notNullValue()));
-        }
-        finally
-        {
-            Datastore.delete(user.getKey(), app.getKey());
-        }
+        User updatedUser = Datastore.get(UserMeta.get(), user1.getKey());
+        assertThat(updatedUser.getLocationUpdated(), is(notNullValue()));
     }
 
     @Test
     public void testUpdateNonExistentUser() throws Exception {
-        Application app = new Application();
-        Datastore.put(app);
-        
-        try
-        {
-            tester.request.setMethod("put");
-            tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"lat\": 6.213211, \"location-update\": 1309350829}")));
-            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/123");
-            UsersController controller = tester.getController();
-            assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_FOUND));
-        }
-        finally
-        {
-            Datastore.delete(app.getKey());
-        }
+        tester.request.setMethod("put");
+        tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"lat\": 6.213211, \"location-update\": 1309350829}")));
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/123");
+        UsersController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_FOUND));
     }
 
     @Test
     public void testUpdateUserMissingLonLocation() throws Exception {
-        Application app = new Application();
-        Datastore.put(app);
-        
-        User user = new User();
-        user.setName("Boromir");
-        user.getApplicationRef().setModel(app);
-        Datastore.put(user);
-        
-        try
-        {
-            tester.request.setMethod("put");
-            tester.request.setReader(new BufferedReader(new StringReader("{\"lat\": 6.213211, \"location-update\": 1309350829}")));
-            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
-            UsersController controller = tester.getController();
-            assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
-        }
-        finally
-        {
-            Datastore.delete(user.getKey(), app.getKey());
-        }
+        tester.request.setMethod("put");
+        tester.request.setReader(new BufferedReader(new StringReader("{\"lat\": 6.213211, \"location-update\": 1309350829}")));
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user1.getKey().getId());
+        UsersController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
     }
 
     @Test
     public void testUpdateUserMissingLatLocation() throws Exception {
-        Application app = new Application();
-        Datastore.put(app);
-        
-        User user = new User();
-        user.setName("Boromir");
-        user.getApplicationRef().setModel(app);
-        Datastore.put(user);
-        
-        try
-        {
-            tester.request.setMethod("put");
-            tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"location-update\": 1309350829}")));
-            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
-            UsersController controller = tester.getController();
-            assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
-        }
-        finally
-        {
-            Datastore.delete(user.getKey(), app.getKey());
-        }
+        tester.request.setMethod("put");
+        tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"location-update\": 1309350829}")));
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user1.getKey().getId());
+        UsersController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
     }
     
     @Test
     public void testUpdateUserInvalidJson() throws Exception {
-        Application app = new Application();
-        Datastore.put(app);
-        
-        User user = new User();
-        user.setName("Boromir");
-        user.getApplicationRef().setModel(app);
-        Datastore.put(user);
-        
-        try
-        {
-            tester.request.setMethod("put");
-            tester.request.setReader(new BufferedReader(new StringReader("\"lon\": 51.4344453, \"location-update\": 1309350829")));
-            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
-            UsersController controller = tester.getController();
-            assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
-        }
-        finally
-        {
-            Datastore.delete(user.getKey(), app.getKey());
-        }
+        tester.request.setMethod("put");
+        tester.request.setReader(new BufferedReader(new StringReader("\"lon\": 51.4344453, \"location-update\": 1309350829")));
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user1.getKey().getId());
+        UsersController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
     }
     
     @Test

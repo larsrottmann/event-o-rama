@@ -21,19 +21,12 @@ public class IndexControllerTest extends ControllerTestCase {
         app.setDownloadUrl("http://some.host.com/download/link");
         Datastore.put(app);
         
-        try
-        {
-            tester.start("/download/" + KeyFactory.keyToString(app.getKey()));
-            IndexController controller = tester.getController();
-            assertThat(controller, is(notNullValue()));
-            assertThat(tester.asKey("id"), is(app.getKey()));
-            assertThat(tester.isRedirect(), is(true));
-            assertThat(tester.getDestinationPath(), is(app.getDownloadUrl()));
-        }
-        finally
-        {
-            Datastore.delete(app.getKey());
-        }
+        tester.start("/download/" + KeyFactory.keyToString(app.getKey()));
+        IndexController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.asKey("id"), is(app.getKey()));
+        assertThat(tester.isRedirect(), is(true));
+        assertThat(tester.getDestinationPath(), is(app.getDownloadUrl()));
     }
 
     @Test
@@ -41,18 +34,11 @@ public class IndexControllerTest extends ControllerTestCase {
         Application app = new Application();
         Datastore.put(app);
         
-        try
-        {
-            tester.start("/download/" + KeyFactory.keyToString(app.getKey()));
-            IndexController controller = tester.getController();
-            assertThat(controller, is(notNullValue()));
-            assertThat(tester.asKey("id"), is(app.getKey()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_ACCEPTED));
-        }
-        finally
-        {
-            Datastore.delete(app.getKey());
-        }
+        tester.start("/download/" + KeyFactory.keyToString(app.getKey()));
+        IndexController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.asKey("id"), is(app.getKey()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_ACCEPTED));
     }
 
     @Test
