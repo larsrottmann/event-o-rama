@@ -33,5 +33,15 @@ public class SignUpActivityTest extends ActivityInstrumentationTestCase2<SignUpA
 		Assert.assertTrue(result.equals("This Is A Test S T R I N G"));
 		
 	}
+	
+	public void testExtractUserId()
+	{
+		Object[] params = new Object[1];
+		params[0] = "http://blah.blubs.com/test/830984/iwueo/4711";
+		
+		int result = (Integer) PrivateAccessor.invokePrivateMethod(mSignupActivity, "extractUserId", params);
+		
+		assertEquals(4711, result);		
+	}
 
 }
