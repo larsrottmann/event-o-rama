@@ -33,6 +33,10 @@ div#header_account {
   right: 12px;
 }
 
+div#header_account a {
+  color: #ddd;
+}
+
 div#content {
   padding-top: 42px;
 }
