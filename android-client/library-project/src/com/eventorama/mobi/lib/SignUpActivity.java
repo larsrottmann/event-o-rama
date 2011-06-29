@@ -1,14 +1,11 @@
 package com.eventorama.mobi.lib;
 
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
+import org.apache.http.Header;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -28,6 +25,10 @@ import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.eventorama.mobi.lib.EventORamaApplication.HTTPResponse;
+import com.google.gson.Gson;
 
 public class SignUpActivity extends Activity{
 	
@@ -44,6 +45,7 @@ public class SignUpActivity extends Activity{
 	private int mSelected = 0;
 	private ProgressDialog mDialog;
 	private SignUpTask mSignupTask;
+	
 	
 	
 
@@ -202,28 +204,46 @@ public class SignUpActivity extends Activity{
 			String username = params[0];
 			//TODO: check if username is available
 			try {
-				Thread.sleep(2000);
 				//build post body
 				Gson gson = new Gson();
 				Map<String, String> data = new HashMap<String, String>();
 				data.put("name", username);
 				data.put("device-id", "798983987298347");
-				Log.v(TAG, "will post: "+gson.toJson(data));
 				EventORamaApplication eora = (EventORamaApplication) getApplication();
-				URL url = new URL(eora.getServerUrl("/app/"+getPackageName()+"/users"));
-				URLConnection conn = url.openConnection();
-				conn.setDoOutput(true);
-				OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
-				osw.append(gson.toJson(data));
-				osw.flush();
-				
+				HTTPResponse resp = eora.doHttpRequest("/users", gson.toJson(data), EventORamaApplication.HTTP_METHOD_POST);
+				if(resp == null)
+				{
+					Log.e(TAG, "no response from server");
+					return RESULT_ERROR;
+				}
+				else
+				{
+					if(resp.getRespCode() == 409)
+						return RESULT_TAKEN;
+					else if(resp.getRespCode() == 201)
+					{
+						//get location header
+						Header locheader = resp.getHeader("location");
+						if(locheader != null)
+						{
+							String userid = extractUserId(locheader.getValue());
+							Log.v(TAG, "got userid:" +userid);
+							//TODO: save
+							return RESULT_SUCCESS;
+						}
+					}
+				}
 			} catch (Exception e) {
 				Log.e(TAG, "Error connecting to server! ",e);
 				return RESULT_ERROR;				
 			}
-			return RESULT_SUCCESS;
+			return RESULT_ERROR;
 		}
 		
+		private String extractUserId(String value) {			
+			return value.substring(value.lastIndexOf("/")+1);
+		}
+
 		@Override
 		protected void onPostExecute(Integer result) {
 		
@@ -242,6 +262,9 @@ public class SignUpActivity extends Activity{
 					mDialog.dismiss();
 				EditText et = (EditText) findViewById(R.id.signup_edittext_username);
 				et.setError(getText(R.string.signup_username_taken_error));
+				break;
+			case RESULT_ERROR:
+				Toast.makeText(mContext,  getResources().getText(R.string.generic_connection_error), Toast.LENGTH_LONG).show();
 				break;
 			default:
 				break;
