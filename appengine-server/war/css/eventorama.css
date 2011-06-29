@@ -53,32 +53,32 @@ div#content {
   margin: 4px;
 }
 
-.appsListHeader {
+.eventListHeader {
   background-color: #ccc;
 }
 
-.appsList {
+.eventList {
   border: 1px solid silver;
   padding: 4px;
   margin: 4px;
 }
 
-.appsListColumn {
+.eventListColumn {
   padding: 4px;
 }
 
-.appsListNumericColumn {
+.eventListNumericColumn {
   padding: 4px;
   text-align: right;
   width: 6em;
 }
 
-.appsListRemoveColumn {
+.eventListRemoveColumn {
   padding: 4px;
   text-align: center;
 }
 
-.appsButton {
+.eventButton {
     margin: 4px !important;
 }
 
@@ -86,13 +86,13 @@ div#content {
 	font-weight: bold;
 }
 
-.addAppsPanel {
+.addEventPanel {
   border: 1px solid silver;
   padding: 4px;
   margin: 4px;
 }
 
-.addAppsElement {
+.eventElement {
   margin: 2px;
   padding: 2px;
 }
