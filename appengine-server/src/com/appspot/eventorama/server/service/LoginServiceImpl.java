@@ -1,6 +1,6 @@
 package com.appspot.eventorama.server.service;
 
-import com.appspot.eventorama.client.LoginInfo;
+import com.appspot.eventorama.client.model.LoginInfo;
 import com.appspot.eventorama.client.service.LoginService;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;

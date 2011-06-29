@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.user.datepicker.client.DateBox.DefaultFormat;
 
-public class AppList extends Composite {
+public class EventList extends Composite {
 
     private ApplicationsServiceAsync applicationsService = GWT.create(ApplicationsService.class);
 
@@ -45,7 +45,7 @@ public class AppList extends Composite {
     private Button addAppButton = new Button("Create");
     private Button cancelAddAppButton = new Button("Cancel");
 
-    public AppList() {
+    public EventList() {
         errorLabel.setVisible(false);
         errorLabel.setStyleName("error", true);
 

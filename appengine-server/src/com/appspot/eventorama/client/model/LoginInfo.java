@@ -1,4 +1,4 @@
-package com.appspot.eventorama.client;
+package com.appspot.eventorama.client.model;
 
 import java.io.Serializable;
 
