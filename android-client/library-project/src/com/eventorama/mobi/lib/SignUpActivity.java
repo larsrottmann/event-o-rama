@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eventorama.mobi.lib.EventORamaApplication.HTTPResponse;
+import com.eventorama.mobi.lib.service.ActivityCreatorService;
 import com.google.gson.Gson;
 
 public class SignUpActivity extends Activity{
@@ -194,12 +195,13 @@ public class SignUpActivity extends Activity{
 		}
 		return result;
 	}
+	
+	
 	/**
 	 * Perform server communication to register us for this event
 	 */
 	private class SignUpTask extends AsyncTask<String, Integer, Integer>
 	{
-
 
 		@Override
 		protected Integer doInBackground(String... params) {
@@ -235,6 +237,13 @@ public class SignUpActivity extends Activity{
 							editor.putString(EventORamaApplication.PREFS_USERNAME, username);
 							editor.putInt(EventORamaApplication.PREFS_USERID, userid);
 							editor.commit();
+							
+							//create activity
+							Intent service = new Intent(mContext, ActivityCreatorService.class);
+							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TEXT, "TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TYPE, 0);
+							startService(service);
+							
 							return RESULT_SUCCESS;
 						}
 					}

@@ -5,7 +5,6 @@ import com.eventorama.mobi.lib.content.EventStreamContentProvider;
 
 import android.app.ListActivity;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 

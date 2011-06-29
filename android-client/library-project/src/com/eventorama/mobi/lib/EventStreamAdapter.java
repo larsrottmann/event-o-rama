@@ -56,7 +56,7 @@ public class EventStreamAdapter extends CursorAdapter {
 		
 		
 		public void fillView(Cursor c, Context context) {
-			int index = c.getColumnIndex(EventStreamContentProvider.Columns.TITLE);			
+			int index = c.getColumnIndex(EventStreamContentProvider.Columns.TEXT);			
 			String title = c.getString(index);
 			if (title != null && title.length() > 0) {
 				mMessageTextView.setText(title);
