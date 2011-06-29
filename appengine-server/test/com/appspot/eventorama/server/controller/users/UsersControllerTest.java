@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.*;
 import static org.hamcrest.CoreMatchers.*;
 
-public class UserControllerTest extends ControllerTestCase {
+public class UsersControllerTest extends ControllerTestCase {
 
     @Test
     public void testCreateUser() throws Exception {
@@ -35,7 +35,7 @@ public class UserControllerTest extends ControllerTestCase {
             tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Boromir\", \"device-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
 
             tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
-            UserController controller = tester.getController();
+            UsersController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_CREATED));
             assertThat(tester.response.containsHeader("location"), is(true));
@@ -57,7 +57,7 @@ public class UserControllerTest extends ControllerTestCase {
             tester.request.setReader(new BufferedReader(new StringReader("{\"device-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
 
             tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
-            UserController controller = tester.getController();
+            UsersController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
         }
@@ -78,7 +78,7 @@ public class UserControllerTest extends ControllerTestCase {
             tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Boromir\"}")));
 
             tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
-            UserController controller = tester.getController();
+            UsersController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
         }
@@ -104,7 +104,7 @@ public class UserControllerTest extends ControllerTestCase {
             tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Boromir\", \"device-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
 
             tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
-            UserController controller = tester.getController();
+            UsersController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_CONFLICT));
         }
@@ -131,7 +131,7 @@ public class UserControllerTest extends ControllerTestCase {
         {
             tester.request.setMethod("get");
             tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
-            UserController controller = tester.getController();
+            UsersController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
             assertThat(tester.response.getContentType().contains("application/json"), is(true));
@@ -160,7 +160,7 @@ public class UserControllerTest extends ControllerTestCase {
         {
             tester.request.setMethod("get");
             tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
-            UserController controller = tester.getController();
+            UsersController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
             assertThat(tester.response.getContentType().contains("application/json"), is(true));
@@ -184,7 +184,7 @@ public class UserControllerTest extends ControllerTestCase {
         {
             tester.request.setMethod("get");
             tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/123");
-            UserController controller = tester.getController();
+            UsersController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_FOUND));
         }
@@ -209,7 +209,7 @@ public class UserControllerTest extends ControllerTestCase {
             tester.request.setMethod("put");
             tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"lat\": 6.213211, \"location-update\": 1309350829}")));
             tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
-            UserController controller = tester.getController();
+            UsersController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
             
@@ -239,7 +239,7 @@ public class UserControllerTest extends ControllerTestCase {
             tester.request.setMethod("put");
             tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"lat\": 6.213211}")));
             tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
-            UserController controller = tester.getController();
+            UsersController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
             
@@ -262,7 +262,7 @@ public class UserControllerTest extends ControllerTestCase {
             tester.request.setMethod("put");
             tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"lat\": 6.213211, \"location-update\": 1309350829}")));
             tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/123");
-            UserController controller = tester.getController();
+            UsersController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_FOUND));
         }
@@ -287,7 +287,7 @@ public class UserControllerTest extends ControllerTestCase {
             tester.request.setMethod("put");
             tester.request.setReader(new BufferedReader(new StringReader("{\"lat\": 6.213211, \"location-update\": 1309350829}")));
             tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
-            UserController controller = tester.getController();
+            UsersController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
         }
@@ -312,7 +312,7 @@ public class UserControllerTest extends ControllerTestCase {
             tester.request.setMethod("put");
             tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"location-update\": 1309350829}")));
             tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
-            UserController controller = tester.getController();
+            UsersController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
         }
@@ -337,7 +337,7 @@ public class UserControllerTest extends ControllerTestCase {
             tester.request.setMethod("put");
             tester.request.setReader(new BufferedReader(new StringReader("\"lon\": 51.4344453, \"location-update\": 1309350829")));
             tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
-            UserController controller = tester.getController();
+            UsersController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
         }
@@ -351,7 +351,7 @@ public class UserControllerTest extends ControllerTestCase {
     public void testInvalidAppId() throws Exception {
         tester.request.setMethod("get");
         tester.start("/app/" + KeyFactory.createKeyString(Application.class.getSimpleName(), -666) + "/users");
-        UserController controller = tester.getController();
+        UsersController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
         assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_FOUND));
     }

@@ -26,9 +26,9 @@ import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.repackaged.com.google.common.base.StringUtil;
 
-public class UserController extends Controller {
+public class UsersController extends Controller {
 
-    private static final Logger log = Logger.getLogger(UserController.class.getName());
+    private static final Logger log = Logger.getLogger(UsersController.class.getName());
 
     
     @Override

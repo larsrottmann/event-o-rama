@@ -21,10 +21,16 @@ public class AppRouter extends RouterImpl {
         // User Management: POST / GET 
         addRouting(
             "/app/{app_id}/users",
-            "/users/user?app_id={app_id}");
+            "/users/users?app_id={app_id}");
         // User Management: PUT
         addRouting(
             "/app/{app_id}/users/{user_id}",
-            "/users/user?app_id={app_id}&user_id={user_id}");
+            "/users/users?app_id={app_id}&user_id={user_id}");
+        
+        // Activities Management: POST / GET
+        addRouting(
+            "/app/{app_id}/activities",
+            "/activities/activities?app_id={app_id}");
+
     }
 }
