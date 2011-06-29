@@ -86,7 +86,7 @@ public class UsersController extends Controller {
 
 
     private Navigation getUsers(Application app) throws Exception {
-        log.info("getUsers(): app=" + KeyFactory.keyToString(app.getKey()));
+        log.info("app=" + KeyFactory.keyToString(app.getKey()));
 
         UserMeta userMeta = UserMeta.get();
         List<User> users = Datastore.query(userMeta)
@@ -105,7 +105,7 @@ public class UsersController extends Controller {
 
     
     private Navigation getUser(Application app) throws Exception {
-        log.info("getUser(): app=" + KeyFactory.keyToString(app.getKey()));
+        log.info("app=" + KeyFactory.keyToString(app.getKey()));
 
         UserMeta userMeta = UserMeta.get();
         User user = Datastore.query(userMeta)
@@ -131,7 +131,7 @@ public class UsersController extends Controller {
 
 
     private Navigation createUser(Application app) throws Exception {
-        log.info("createUser(): app=" + KeyFactory.keyToString(app.getKey()));
+        log.info("app=" + KeyFactory.keyToString(app.getKey()));
 
         try {
             JSONObject json = new JSONObject(new JSONTokener(request.getReader()));
@@ -180,7 +180,7 @@ public class UsersController extends Controller {
 
 
     private Navigation updateUser(Application app) {
-        log.info("modifyUser(): app=" + KeyFactory.keyToString(app.getKey()));
+        log.info("app=" + KeyFactory.keyToString(app.getKey()));
         requestScope("user_id", asString("user_id"));
         
         Validators v = new Validators(request);
