@@ -1,6 +1,7 @@
 package com.eventorama.mobi.lib;
 
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eventorama.mobi.lib.EventORamaApplication.HTTPResponse;
+import com.eventorama.mobi.lib.content.EventStreamContentProvider;
 import com.eventorama.mobi.lib.service.ActivityCreatorService;
 import com.google.gson.Gson;
 
@@ -240,8 +242,11 @@ public class SignUpActivity extends Activity{
 							
 							//create activity
 							Intent service = new Intent(mContext, ActivityCreatorService.class);
-							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TEXT, "TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TYPE, 0);
+							StringBuilder sb = new StringBuilder();
+							Formatter formatter = new Formatter(sb);
+							formatter.format(getText(R.string.activity_text_joindedparty).toString(), username);
+							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TEXT, sb.toString());
+							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TYPE, EventStreamContentProvider.TYPE_TEXT);
 							startService(service);
 							
 							return RESULT_SUCCESS;
