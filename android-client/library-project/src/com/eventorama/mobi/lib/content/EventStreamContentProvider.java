@@ -22,6 +22,8 @@ public class EventStreamContentProvider extends ContentProvider {
 
 	public static final int SAVE_STATE_LOCAL = 1;
 	public static final int SAVE_STATE_SERVER = 2;
+	
+	public static final int TYPE_TEXT = 1;
 
 	public static class Columns {
 		public static final String ID = "_id";
