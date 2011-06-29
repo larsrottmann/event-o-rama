@@ -47,6 +47,11 @@ div#error {
     background-color: #FF4444;
 }
 
+.loginInfo {
+  padding: 4px;
+  margin: 4px;
+}
+
 .appsListHeader {
   background-color: #ccc;
 }

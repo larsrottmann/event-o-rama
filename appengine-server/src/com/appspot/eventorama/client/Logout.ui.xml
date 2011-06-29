@@ -6,4 +6,4 @@
     <g:HTMLPanel>
         <g:Anchor ui:field="link">Logout (<span ui:field='nameSpan'/>)</g:Anchor>
     </g:HTMLPanel>
-</ui:UiBinder> 
+</ui:UiBinder>
