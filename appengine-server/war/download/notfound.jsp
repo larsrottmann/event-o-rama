@@ -9,6 +9,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="../css/eventorama.css">
 <title>Application Download</title>
+<link rel="stylesheet" href="/main/gwt/standard/standard.css">
 </head>
 <body>
     <div id="header">
@@ -18,8 +19,8 @@
 
     <div id="content">
         <div id="content_body" class="genericContent">
-            The app you are trying to download does no longer exist. Maybe the creator revoked the application or it simply expired.<br/>
-            <a href="/index.html">Home</a>
+            The app you are trying to download does no longer exist. Maybe the creator revoked the application or it simply expired.<br/><br/>
+            <a href="/">Home</a>
         </div>
     </div>
 
