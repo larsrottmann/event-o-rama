@@ -1,5 +1,6 @@
 package com.appspot.eventorama.client;
 
+import com.appspot.eventorama.client.model.LoginInfo;
 import com.appspot.eventorama.client.service.LoginService;
 import com.appspot.eventorama.client.service.LoginServiceAsync;
 import com.google.gwt.core.client.EntryPoint;
@@ -35,10 +36,10 @@ public class Main implements EntryPoint {
                     loginInfo = result;
                     if (loginInfo.isLoggedIn()) {
                         RootPanel.get("header_account").add(new Logout(loginInfo));
-                        RootPanel.get("appList").add(new AppList());
+                        RootPanel.get("content_body").add(new EventList());
                     } else {
                         RootPanel.get("header_account").getElement().removeFromParent();
-                        RootPanel.get("appList").add(new Login(loginInfo.getLoginUrl()));
+                        RootPanel.get("content_body").add(new Login(loginInfo.getLoginUrl()));
                     }
                 }
             }

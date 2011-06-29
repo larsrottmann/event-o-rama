@@ -16,20 +16,19 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.user.datepicker.client.DateBox.DefaultFormat;
 
-public class AppList extends Composite {
+public class EventList extends Composite {
 
     private ApplicationsServiceAsync applicationsService = GWT.create(ApplicationsService.class);
 
-    private RootPanel errorPanel;
-
     private VerticalPanel mainPanel = new VerticalPanel();
+    private Label errorLabel = new Label();
     private FlexTable appsFlexTable = new FlexTable();
     private Button createAppButton = new Button("Create event");
 
@@ -42,11 +41,13 @@ public class AppList extends Composite {
     private DateBox startDateBox = new DateBox();
     private Label expirationLabel = new Label("End Date");
     private DateBox expirationDateBox = new DateBox();
+    private HorizontalPanel addAppsButtonPanel = new HorizontalPanel();
     private Button addAppButton = new Button("Create");
+    private Button cancelAddAppButton = new Button("Cancel");
 
-    public AppList() {
-        errorPanel = RootPanel.get("error");
-        errorPanel.setVisible(false);
+    public EventList() {
+        errorLabel.setVisible(false);
+        errorLabel.setStyleName("error", true);
 
         appsFlexTable.setText(0, 0, "Event Name");
         appsFlexTable.setText(0, 1, "Start Date");
@@ -83,9 +84,13 @@ public class AppList extends Composite {
         expirationLabel.setStyleName("addAppsElement", true);
         expirationDateBox.setStyleName("addAppsElement", true);
         addAppButton.setStyleName("appsButton", true);
+        cancelAddAppButton.setStyleName("appsButton", true);
+
+        addAppsButtonPanel.add(addAppButton);
+        addAppsButtonPanel.add(cancelAddAppButton);
 
         addAppsPanel.add(appsGrid);
-        addAppsPanel.add(addAppButton);
+        addAppsPanel.add(addAppsButtonPanel);
         addAppsPanel.setStyleName("addAppsPanel", true);
 
         addAppButton.addClickHandler(new ClickHandler() {
@@ -94,9 +99,18 @@ public class AppList extends Composite {
             }
         });
 
+        cancelAddAppButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                errorLabel.setVisible(false);
+                mainPanel.remove(addAppsPanel);
+                mainPanel.add(createAppButton);
+            }
+        });
+
         createAppButton.setStyleName("appsButton", true);
 
         initWidget(mainPanel);
+        mainPanel.add(errorLabel);
         mainPanel.add(appsFlexTable);
         mainPanel.add(createAppButton);
 
@@ -112,7 +126,7 @@ public class AppList extends Composite {
     }
 
     private void refreshApps() {
-        errorPanel.setVisible(false);
+        errorLabel.setVisible(false);
 
         Main.showMessage("Loading events ...", false);
         applicationsService.getList(new AsyncCallback<List<Application>>() {
@@ -151,7 +165,6 @@ public class AppList extends Composite {
         appsFlexTable.getCellFormatter().addStyleName(row, 2, "appsListNumericColumn");
         appsFlexTable.getCellFormatter().addStyleName(row, 3, "appsListColumn");
 
-        // Add a button to remove this stock from the table.
         Button removeAppButton = new Button("x");
         removeAppButton.addStyleDependentName("remove");
         removeAppButton.addClickHandler(new ClickHandler() {
@@ -175,7 +188,7 @@ public class AppList extends Composite {
     }
 
     private void addApp() {
-        errorPanel.setVisible(false);
+        errorLabel.setVisible(false);
 
         final String title = eventTextBox.getText().trim();
         if (!title.matches("^[0-9a-zA-Z\\.\\-\\s]{3,20}$")) {
@@ -234,7 +247,7 @@ public class AppList extends Composite {
     }
 
     private void showError(String message) {
-        errorPanel.getElement().setInnerText(message);
-        errorPanel.setVisible(true);
+        errorLabel.setText(message);
+        errorLabel.setVisible(true);
     }
 }
