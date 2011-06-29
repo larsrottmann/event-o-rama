@@ -1,6 +1,8 @@
 package com.appspot.eventorama.server.controller.users;
 
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.json.JSONObject;
@@ -15,10 +17,11 @@ import org.slim3.util.BeanUtil;
 
 import com.appspot.eventorama.server.meta.ApplicationMeta;
 import com.appspot.eventorama.server.meta.UserMeta;
+import com.appspot.eventorama.server.util.GAEHelper;
+import com.appspot.eventorama.server.util.UserHelper;
 import com.appspot.eventorama.shared.model.Application;
 import com.appspot.eventorama.shared.model.User;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.api.utils.SystemProperty;
 
 public class UserController extends Controller {
 
@@ -88,15 +91,46 @@ public class UserController extends Controller {
     }
 
 
-    private Navigation getUsers(Application app) {
+    private Navigation getUsers(Application app) throws Exception {
         log.info("getUsers(): app=" + KeyFactory.keyToString(app.getKey()));
+
+        UserMeta userMeta = UserMeta.get();
+        List<User> users = Datastore.query(userMeta)
+            .filter(userMeta.applicationRef.equal(app.getKey()))
+            .asList();
+
+        log.info("Sending user JSON payload: " + userMeta.modelsToJson(users.toArray(new User[0])));
+
+        response.setHeader("content-type", "application/json; charset=utf-8");
+        OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream());
+        writer.write(UserHelper.usersToJsonArray(users).toString());
+        writer.flush();
 
         return null;
     }
 
     
-    private Navigation getUser(Application app) {
+    private Navigation getUser(Application app) throws Exception {
         log.info("getUser(): app=" + KeyFactory.keyToString(app.getKey()));
+
+        UserMeta userMeta = UserMeta.get();
+        User user = Datastore.query(userMeta)
+            .filter(userMeta.key.equal(Datastore.createKey(userMeta, asLong("user_id"))),
+                    userMeta.applicationRef.equal(app.getKey()))
+            .asSingle();
+
+        if (user == null) {
+            log.warning(String.format("User with id '%s' for app '%s' not found.", asString("user_id"), KeyFactory.keyToString(app.getKey())));
+            response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
+            return null;
+        }
+            
+        log.info("Sending user JSON payload: " + userMeta.modelToJson(user));
+
+        response.setHeader("content-type", "application/json; charset=utf-8");
+        OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream());
+        writer.write(UserHelper.userToJsonObject(user).toString());
+        writer.flush();
 
         return null;
     }
@@ -162,15 +196,7 @@ public class UserController extends Controller {
     {
         StringBuilder url = new StringBuilder();
         
-        if (SystemProperty.environment.value() ==
-            SystemProperty.Environment.Value.Development) {
-            // The app is not running on App Engine...
-            url.append("http://localhost:8888");
-        }
-        else {
-            url.append("http://event-o-rama.appspot.com");
-        }
-            
+        url.append(GAEHelper.getGaeHostName());
         url.append("/app/");
         url.append(KeyFactory.keyToString(user.getApplicationRef().getKey()));
         url.append("/users/");

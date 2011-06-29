@@ -14,6 +14,7 @@ import org.slim3.datastore.Datastore;
 import com.appspot.eventorama.client.service.ApplicationsService;
 import com.appspot.eventorama.client.service.NotLoggedInException;
 import com.appspot.eventorama.server.meta.ApplicationMeta;
+import com.appspot.eventorama.server.util.GAEHelper;
 import com.appspot.eventorama.shared.model.Application;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -38,7 +39,7 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         // XXX workaround because serializing GAE user object throws an exception
         for (Application app : apps) {
             app.setUser(null);
-            populateLocalDownloadUrl(app);
+            app.setLocalDownloadUrl(GAEHelper.getGaeHostName() + "/download/" + KeyFactory.keyToString(app.getKey()));
         }
 
         return apps;
@@ -62,14 +63,7 @@ public class ApplicationsServiceImpl implements ApplicationsService {
             connection.setDoOutput(true);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("content-type", "application/json; charset=utf-8");
-
-            String hostName = "event-o-rama.appspot.com";
-            if (SystemProperty.environment.value() ==
-                SystemProperty.Environment.Value.Development) {
-                // The app is not running on App Engine...
-                hostName = "localhost:8888";
-            }
-            connection.setRequestProperty("x-eventorama-callback", "http://" + hostName + "/notify/" + app.getKey().getId());
+            connection.setRequestProperty("x-eventorama-callback", GAEHelper.getGaeHostName() + "/notify/" + app.getKey().getId());
 
             OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
             log.info("Sending app-maker payload: " + ApplicationMeta.get().modelToJson(app));
@@ -115,7 +109,7 @@ public class ApplicationsServiceImpl implements ApplicationsService {
 
         // XXX workaround because serializing GAE user object throws an exception
         app.setUser(null);
-        populateLocalDownloadUrl(app);
+        app.setLocalDownloadUrl(GAEHelper.getGaeHostName() + "/download/" + KeyFactory.keyToString(app.getKey()));
         
         return app;
     }
@@ -134,14 +128,4 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         return userService.getCurrentUser();
     }
 
-    private void populateLocalDownloadUrl(Application app) {
-        String hostName = "eventorama.appspot.com";
-        if (SystemProperty.environment.value() ==
-            SystemProperty.Environment.Value.Development) {
-            // The app is not running on App Engine...
-            hostName = "localhost:8888";
-        }
-
-        app.setLocalDownloadUrl("http://" + hostName + "/download/" + KeyFactory.keyToString(app.getKey()));
-    }
 }

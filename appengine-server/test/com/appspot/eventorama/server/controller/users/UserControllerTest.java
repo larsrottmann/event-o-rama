@@ -3,9 +3,13 @@ package com.appspot.eventorama.server.controller.users;
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
+import java.util.Arrays;
 
 import org.slim3.datastore.Datastore;
 import org.slim3.tester.ControllerTestCase;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.junit.Test;
 
 import com.appspot.eventorama.shared.model.Application;
@@ -13,6 +17,7 @@ import com.appspot.eventorama.shared.model.User;
 import com.google.appengine.api.datastore.KeyFactory;
 
 import static org.junit.Assert.*;
+import static org.junit.matchers.JUnitMatchers.*;
 import static org.hamcrest.CoreMatchers.*;
 
 public class UserControllerTest extends ControllerTestCase {
@@ -103,17 +108,22 @@ public class UserControllerTest extends ControllerTestCase {
         }
         finally
         {
-            Datastore.delete(app.getKey());
-            Datastore.delete(user.getKey());
+            Datastore.delete(user.getKey(), app.getKey());
         }
     }
-
-    
 
     @Test
     public void testGetUsers() throws Exception {
         Application app = new Application();
         Datastore.put(app);
+        
+        User user1 = new User();
+        user1.setName("Boromir");
+        user1.getApplicationRef().setModel(app);
+        User user2 = new User();
+        user2.setName("Arwen");
+        user2.getApplicationRef().setModel(app);
+        Datastore.put(user1, user2);
         
         try
         {
@@ -122,15 +132,49 @@ public class UserControllerTest extends ControllerTestCase {
             UserController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
             assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+            assertThat(tester.response.getContentType().contains("application/json"), is(true));
+            
+            JSONArray json = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
+            assertThat(json.length(), is(2));
+            assertThat(json.opt(0), instanceOf(JSONObject.class));
         }
         finally
         {
-            Datastore.delete(app.getKey());
+            Datastore.delete(user1.getKey(), user2.getKey(), app.getKey());
         }
     }
     
     @Test
     public void testGetUser() throws Exception {
+        Application app = new Application();
+        Datastore.put(app);
+        
+        User user = new User();
+        user.setName("Boromir");
+        user.getApplicationRef().setModel(app);
+        Datastore.put(user);
+        
+        try
+        {
+            tester.request.setMethod("get");
+            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
+            UserController controller = tester.getController();
+            assertThat(controller, is(notNullValue()));
+            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+            assertThat(tester.response.getContentType().contains("application/json"), is(true));
+            
+            JSONObject json = new JSONObject(new JSONTokener(tester.response.getOutputAsString()));
+            assertThat(Arrays.asList(JSONObject.getNames(json)), hasItems("id", "name", "device-id"));
+            assertThat((String) json.get("name"), is("Boromir"));
+        }
+        finally
+        {
+            Datastore.delete(user.getKey(), app.getKey());
+        }
+    }
+
+    @Test
+    public void testGetNonExistentUser() throws Exception {
         Application app = new Application();
         Datastore.put(app);
         
@@ -140,7 +184,7 @@ public class UserControllerTest extends ControllerTestCase {
             tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/123");
             UserController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_FOUND));
         }
         finally
         {
@@ -148,6 +192,7 @@ public class UserControllerTest extends ControllerTestCase {
         }
     }
 
+    // TODO
     @Test
     public void testUpdateUser() throws Exception {
         Application app = new Application();
