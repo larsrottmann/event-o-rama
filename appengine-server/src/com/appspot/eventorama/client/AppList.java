@@ -74,11 +74,20 @@ public class AppList extends Composite {
         appsGrid.setWidget(3, 0, expirationLabel);
         appsGrid.setWidget(3, 1, expirationDateBox);
 
+        addAppsLabel.setStyleName("addAppsElement", true);
+        addAppsLabel.setStyleName("panelTitle", true);
+        eventLabel.setStyleName("addAppsElement", true);
+        eventTextBox.setStyleName("addAppsElement", true);
+        startLabel.setStyleName("addAppsElement", true);
+        startDateBox.setStyleName("addAppsElement", true);
+        expirationLabel.setStyleName("addAppsElement", true);
+        expirationDateBox.setStyleName("addAppsElement", true);
+        addAppButton.setStyleName("appsButton", true);
+
         addAppsPanel.add(appsGrid);
         addAppsPanel.add(addAppButton);
         addAppsPanel.setStyleName("addAppsPanel", true);
 
-        addAppButton.setStyleName("appsButton", true);
         addAppButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 addApp();
