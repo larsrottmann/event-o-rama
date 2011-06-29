@@ -184,6 +184,7 @@ public class EventList extends Composite {
                     public void onSuccess(Void result) {
                         Main.hideMessage();
                         loadEvents();
+                        Main.showMessage("Event deleted", true);
                     }
 
                     public void onFailure(Throwable caught) {

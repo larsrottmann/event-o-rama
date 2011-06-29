@@ -3,7 +3,7 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui">
     <ui:style>
     </ui:style>
-    <g:HTMLPanel stylePrimaryName="loginInfo">
+    <g:HTMLPanel stylePrimaryName="genericContent">
         Please sign in to your Google Account to access the Event-O-Rama application.<br/>
         <g:Anchor ui:field="link">Sign In</g:Anchor>
     </g:HTMLPanel>

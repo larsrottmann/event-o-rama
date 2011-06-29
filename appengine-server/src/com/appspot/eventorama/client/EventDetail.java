@@ -79,13 +79,17 @@ public class EventDetail extends Composite {
 
         removeButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
+                Main.showMessage("Deleting event ...", false);
                 applicationsService.delete(eventKey, new AsyncCallback<Void>() {
                     public void onSuccess(Void result) {
+                        Main.hideMessage();
+                        Main.showMessage("Event deleted", true);
                         RootPanel.get("content_body").remove(EventDetail.this);
                         RootPanel.get("content_body").add(new EventList());
                     }
 
                     public void onFailure(Throwable caught) {
+                        Main.hideMessage();
                         showError("Error deleting event: " + caught.getMessage());
                     }
                 });
@@ -103,12 +107,15 @@ public class EventDetail extends Composite {
     private void loadEvent() {
         errorLabel.setVisible(false);
 
+        Main.showMessage("Loading event ...", false);
         applicationsService.get(eventKey, new AsyncCallback<Application>() {
             public void onSuccess(Application result) {
+                Main.hideMessage();
                 updateGrid(result);
             }
 
             public void onFailure(Throwable caught) {
+                Main.hideMessage();
                 showError("Error loading event: " + caught.getMessage());
             }
         });

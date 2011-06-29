@@ -48,7 +48,7 @@ div#content {
     background-color: #FF4444;
 }
 
-.loginInfo {
+.genericContent {
   padding: 4px;
   margin: 4px;
 }
@@ -101,7 +101,7 @@ div#content {
     position: fixed;
     top: 0;
     left: 0;
-    width: 80%;
+    width: 100%;
     z-index: 1;
 }
 
