@@ -2,6 +2,7 @@ package com.appspot.eventorama.server.controller.users;
 
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -21,7 +22,9 @@ import com.appspot.eventorama.server.util.GAEHelper;
 import com.appspot.eventorama.server.util.UserHelper;
 import com.appspot.eventorama.shared.model.Application;
 import com.appspot.eventorama.shared.model.User;
+import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.repackaged.com.google.common.base.StringUtil;
 
 public class UserController extends Controller {
 
@@ -69,16 +72,7 @@ public class UserController extends Controller {
         }
         else if ("put".equalsIgnoreCase(request.getMethod()))
         {
-            v.add("user_id", v.required());
-            
-            if (! v.validate()) {
-                Errors errors = v.getErrors();
-                log.warning(String.format("Got an invalid set of input parameters for PUT call: app_id=%s, user_id=%s (%s)", asString("app_id"), asString("user_id"), errors.get("user_id")));
-                response.setStatus(HttpURLConnection.HTTP_BAD_REQUEST);
-                return null;
-            }
-            
-            return modifyUser(app);
+            return updateUser(app);
         }
         else
         {
@@ -185,8 +179,55 @@ public class UserController extends Controller {
     }
 
 
-    private Navigation modifyUser(Application app) {
+    private Navigation updateUser(Application app) {
         log.info("modifyUser(): app=" + KeyFactory.keyToString(app.getKey()));
+        requestScope("user_id", asString("user_id"));
+        
+        Validators v = new Validators(request);
+        v.add("lon", v.required());
+        v.add("lat", v.required());
+        v.add("user_id", v.required());
+
+        try {
+            JSONObject json = new JSONObject(new JSONTokener(request.getReader()));
+            requestScope("lon", json.getDouble("lon"));
+            requestScope("lat", json.getDouble("lat"));
+            requestScope("location_update", json.optString("location-update"));
+        }
+        catch (Exception e)
+        {
+            log.warning("Cannot parse JSON payload: " + e.getMessage());
+            response.setStatus(HttpURLConnection.HTTP_BAD_REQUEST);
+            return null;
+        }
+        
+        if (! v.validate()) {
+            Errors errors = v.getErrors();
+            log.warning(String.format("Got an invalid set of input parameters for PUT call: app_id=%s, user_id=%s (%s), lon=%s, lat=%s, location_updated=%s", 
+                asString("app_id"), asString("user_id"), errors.get("user_id"), asString("lon"), asString("lat"), asString("location_update")));
+            response.setStatus(HttpURLConnection.HTTP_BAD_REQUEST);
+            return null;
+        }
+        
+        UserMeta userMeta = UserMeta.get();
+        User user = Datastore.query(userMeta)
+            .filter(userMeta.key.equal(Datastore.createKey(userMeta, asLong("user_id"))),
+                    userMeta.applicationRef.equal(app.getKey()))
+            .asSingle();
+
+        if (user == null) {
+            log.warning(String.format("User with id '%s' for app '%s' not found.", asString("user_id"), KeyFactory.keyToString(app.getKey())));
+            response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
+            return null;
+        }
+
+        if (StringUtil.isEmpty(asString("location_update")))
+            user.setLocationUpdated(new Date(System.currentTimeMillis()));
+        else
+            user.setLocationUpdated(new Date(asLong("location_update")));
+        user.setLocation(new GeoPt(asFloat("lat"), asFloat("lon")));
+        
+        Datastore.put(user);
 
         return null;
     }

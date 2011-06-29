@@ -160,4 +160,30 @@ public class User implements Serializable {
         }
         return true;
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("User [key=");
+        builder.append(key);
+        builder.append(", version=");
+        builder.append(version);
+        builder.append(", applicationRef=");
+        builder.append(applicationRef);
+        builder.append(", name=");
+        builder.append(name);
+        builder.append(", deviceId=");
+        builder.append(deviceId);
+        builder.append(", location=");
+        builder.append(location);
+        builder.append(", locationUpdated=");
+        builder.append(locationUpdated);
+        builder.append("]");
+        return builder.toString();
+    }
+    
+    
 }

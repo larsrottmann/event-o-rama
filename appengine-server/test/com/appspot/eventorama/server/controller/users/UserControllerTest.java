@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.util.Arrays;
+import java.util.Date;
 
 import org.slim3.datastore.Datastore;
 import org.slim3.tester.ControllerTestCase;
@@ -12,6 +13,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.Test;
 
+import com.appspot.eventorama.server.meta.UserMeta;
 import com.appspot.eventorama.shared.model.Application;
 import com.appspot.eventorama.shared.model.User;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -192,19 +194,77 @@ public class UserControllerTest extends ControllerTestCase {
         }
     }
 
-    // TODO
     @Test
     public void testUpdateUser() throws Exception {
+        Application app = new Application();
+        Datastore.put(app);
+        
+        User user = new User();
+        user.setName("Boromir");
+        user.getApplicationRef().setModel(app);
+        Datastore.put(user);
+
+        try
+        {
+            tester.request.setMethod("put");
+            tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"lat\": 6.213211, \"location-update\": 1309350829}")));
+            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
+            UserController controller = tester.getController();
+            assertThat(controller, is(notNullValue()));
+            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+            
+            User updatedUser = Datastore.get(UserMeta.get(), user.getKey());
+            assertThat(updatedUser.getLocationUpdated(), is(new Date(1309350829)));
+            assertThat(updatedUser.getLocation().getLatitude(), is(6.213211f));
+            assertThat(updatedUser.getLocation().getLongitude(), is(51.4344453f));
+        }
+        finally
+        {
+            Datastore.delete(user.getKey(), app.getKey());
+        }
+    }
+
+    @Test
+    public void testUpdateUserShouldSetLocationUpdateIfMissing() throws Exception {
+        Application app = new Application();
+        Datastore.put(app);
+        
+        User user = new User();
+        user.setName("Boromir");
+        user.getApplicationRef().setModel(app);
+        Datastore.put(user);
+
+        try
+        {
+            tester.request.setMethod("put");
+            tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"lat\": 6.213211}")));
+            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
+            UserController controller = tester.getController();
+            assertThat(controller, is(notNullValue()));
+            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+            
+            User updatedUser = Datastore.get(UserMeta.get(), user.getKey());
+            assertThat(updatedUser.getLocationUpdated(), is(notNullValue()));
+        }
+        finally
+        {
+            Datastore.delete(user.getKey(), app.getKey());
+        }
+    }
+
+    @Test
+    public void testUpdateNonExistentUser() throws Exception {
         Application app = new Application();
         Datastore.put(app);
         
         try
         {
             tester.request.setMethod("put");
+            tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"lat\": 6.213211, \"location-update\": 1309350829}")));
             tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/123");
             UserController controller = tester.getController();
             assertThat(controller, is(notNullValue()));
-            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_FOUND));
         }
         finally
         {
@@ -212,6 +272,81 @@ public class UserControllerTest extends ControllerTestCase {
         }
     }
 
+    @Test
+    public void testUpdateUserMissingLonLocation() throws Exception {
+        Application app = new Application();
+        Datastore.put(app);
+        
+        User user = new User();
+        user.setName("Boromir");
+        user.getApplicationRef().setModel(app);
+        Datastore.put(user);
+        
+        try
+        {
+            tester.request.setMethod("put");
+            tester.request.setReader(new BufferedReader(new StringReader("{\"lat\": 6.213211, \"location-update\": 1309350829}")));
+            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
+            UserController controller = tester.getController();
+            assertThat(controller, is(notNullValue()));
+            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
+        }
+        finally
+        {
+            Datastore.delete(user.getKey(), app.getKey());
+        }
+    }
+
+    @Test
+    public void testUpdateUserMissingLatLocation() throws Exception {
+        Application app = new Application();
+        Datastore.put(app);
+        
+        User user = new User();
+        user.setName("Boromir");
+        user.getApplicationRef().setModel(app);
+        Datastore.put(user);
+        
+        try
+        {
+            tester.request.setMethod("put");
+            tester.request.setReader(new BufferedReader(new StringReader("{\"lon\": 51.4344453, \"location-update\": 1309350829}")));
+            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
+            UserController controller = tester.getController();
+            assertThat(controller, is(notNullValue()));
+            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
+        }
+        finally
+        {
+            Datastore.delete(user.getKey(), app.getKey());
+        }
+    }
+    
+    @Test
+    public void testUpdateUserInvalidJson() throws Exception {
+        Application app = new Application();
+        Datastore.put(app);
+        
+        User user = new User();
+        user.setName("Boromir");
+        user.getApplicationRef().setModel(app);
+        Datastore.put(user);
+        
+        try
+        {
+            tester.request.setMethod("put");
+            tester.request.setReader(new BufferedReader(new StringReader("\"lon\": 51.4344453, \"location-update\": 1309350829")));
+            tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users/" + user.getKey().getId());
+            UserController controller = tester.getController();
+            assertThat(controller, is(notNullValue()));
+            assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
+        }
+        finally
+        {
+            Datastore.delete(user.getKey(), app.getKey());
+        }
+    }
+    
     @Test
     public void testInvalidAppId() throws Exception {
         tester.request.setMethod("get");
