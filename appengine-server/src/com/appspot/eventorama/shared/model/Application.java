@@ -24,7 +24,6 @@ public class Application implements Serializable, IsSerializable {
     private User user;
     private String title;
     private boolean active;
-    private String packageName;
     private Date startDate;
     private Date expirationDate;
     private String downloadUrl;
@@ -77,14 +76,6 @@ public class Application implements Serializable, IsSerializable {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
     }
 
     public Date getStartDate() {
@@ -170,7 +161,11 @@ public class Application implements Serializable, IsSerializable {
 
 
     public boolean isActive() {
-        return active;
+        if (getStartDate() == null || getExpirationDate() == null)
+            return false;
+        
+        Date now = new Date(System.currentTimeMillis());
+        return getStartDate().before(now) && getExpirationDate().after(now);
     }
 
 
@@ -187,8 +182,6 @@ public class Application implements Serializable, IsSerializable {
         builder.append(title);
         builder.append(", active=");
         builder.append(active);
-        builder.append(", packageName=");
-        builder.append(packageName);
         builder.append(", startDate=");
         builder.append(startDate);
         builder.append(", expirationDate=");

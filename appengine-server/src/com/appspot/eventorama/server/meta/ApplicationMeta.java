@@ -1,6 +1,6 @@
 package com.appspot.eventorama.server.meta;
 
-//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-06-28 23:26:41")
+//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-06-29 10:57:46")
 /** */
 public final class ApplicationMeta extends org.slim3.datastore.ModelMeta<com.appspot.eventorama.shared.model.Application> {
 
@@ -15,9 +15,6 @@ public final class ApplicationMeta extends org.slim3.datastore.ModelMeta<com.app
 
     /** */
     public final org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.Application, com.google.appengine.api.datastore.Key> key = new org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.Application, com.google.appengine.api.datastore.Key>(this, "__key__", "key", com.google.appengine.api.datastore.Key.class);
-
-    /** */
-    public final org.slim3.datastore.StringAttributeMeta<com.appspot.eventorama.shared.model.Application> packageName = new org.slim3.datastore.StringAttributeMeta<com.appspot.eventorama.shared.model.Application>(this, "packageName", "packageName");
 
     /** */
     public final org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.Application, java.util.Date> startDate = new org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.Application, java.util.Date>(this, "startDate", "startDate", java.util.Date.class);
@@ -52,7 +49,6 @@ public final class ApplicationMeta extends org.slim3.datastore.ModelMeta<com.app
         model.setDownloadUrl((java.lang.String) entity.getProperty("downloadUrl"));
         model.setExpirationDate((java.util.Date) entity.getProperty("expirationDate"));
         model.setKey(entity.getKey());
-        model.setPackageName((java.lang.String) entity.getProperty("packageName"));
         model.setStartDate((java.util.Date) entity.getProperty("startDate"));
         model.setTitle((java.lang.String) entity.getProperty("title"));
         model.setUser((com.google.appengine.api.users.User) entity.getProperty("user"));
@@ -72,7 +68,6 @@ public final class ApplicationMeta extends org.slim3.datastore.ModelMeta<com.app
         entity.setProperty("active", m.isActive());
         entity.setProperty("downloadUrl", m.getDownloadUrl());
         entity.setProperty("expirationDate", m.getExpirationDate());
-        entity.setProperty("packageName", m.getPackageName());
         entity.setProperty("startDate", m.getStartDate());
         entity.setProperty("title", m.getTitle());
         entity.setProperty("user", m.getUser());
@@ -153,10 +148,6 @@ public final class ApplicationMeta extends org.slim3.datastore.ModelMeta<com.app
             writer.setNextPropertyName("localDownloadUrl");
             encoder0.encode(writer, m.getLocalDownloadUrl());
         }
-        if(m.getPackageName() != null){
-            writer.setNextPropertyName("packageName");
-            encoder0.encode(writer, m.getPackageName());
-        }
         if(m.getStartDate() != null){
             writer.setNextPropertyName("startDate");
             encoder0.encode(writer, m.getStartDate());
@@ -191,8 +182,6 @@ public final class ApplicationMeta extends org.slim3.datastore.ModelMeta<com.app
         m.setKey(decoder0.decode(reader, m.getKey()));
         reader = rootReader.newObjectReader("localDownloadUrl");
         m.setLocalDownloadUrl(decoder0.decode(reader, m.getLocalDownloadUrl()));
-        reader = rootReader.newObjectReader("packageName");
-        m.setPackageName(decoder0.decode(reader, m.getPackageName()));
         reader = rootReader.newObjectReader("startDate");
         m.setStartDate(decoder0.decode(reader, m.getStartDate()));
         reader = rootReader.newObjectReader("title");
