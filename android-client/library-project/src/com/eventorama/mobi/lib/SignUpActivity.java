@@ -13,6 +13,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -226,9 +228,13 @@ public class SignUpActivity extends Activity{
 						Header locheader = resp.getHeader("location");
 						if(locheader != null)
 						{
-							String userid = extractUserId(locheader.getValue());
+							int userid = extractUserId(locheader.getValue());
 							Log.v(TAG, "got userid:" +userid);
-							//TODO: save
+							SharedPreferences settings = getSharedPreferences(EventORamaApplication.PREFS_PREFERENCES_NAME, Context.MODE_PRIVATE);
+							Editor editor = settings.edit();
+							editor.putString(EventORamaApplication.PREFS_USERNAME, username);
+							editor.putInt(EventORamaApplication.PREFS_USERID, userid);
+							editor.commit();
 							return RESULT_SUCCESS;
 						}
 					}
@@ -240,8 +246,8 @@ public class SignUpActivity extends Activity{
 			return RESULT_ERROR;
 		}
 		
-		private String extractUserId(String value) {			
-			return value.substring(value.lastIndexOf("/")+1);
+		private int extractUserId(String value) {			
+			return Integer.parseInt(value.substring(value.lastIndexOf("/")+1));
 		}
 
 		@Override
@@ -264,6 +270,9 @@ public class SignUpActivity extends Activity{
 				et.setError(getText(R.string.signup_username_taken_error));
 				break;
 			case RESULT_ERROR:
+				//show error
+				if(mDialog != null)
+					mDialog.dismiss();				
 				Toast.makeText(mContext,  getResources().getText(R.string.generic_connection_error), Toast.LENGTH_LONG).show();
 				break;
 			default:

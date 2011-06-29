@@ -36,10 +36,11 @@ public class EventORamaApplication extends Application {
 	private static final String TEST_PACKAGE = "ag5zfmV2ZW50LW8tcmFtYXISCxILQXBwbGljYXRpb24YmwgM";
 
 
-	public static final String PREFS_NAME = "eventorama-prefs";
+	public static final String PREFS_PREFERENCES_NAME = "eventorama-prefs";
 
 	public static final String PREFS_USERNAME = "username";
 	public static final String PREFS_DEVICE_ID = "device_id";
+	public static final String PREFS_USERID = "user_id";
 	public static final String PREFS_DEVICE_ID_SAVED = "device_id_saved";
 
 	public static final int HTTP_METHOD_GET = 1;
@@ -50,6 +51,8 @@ public class EventORamaApplication extends Application {
 	private static final Integer SOCKET_TIMEOUT = 10000;  // 10 sec
 
 	private static final String CHARSET = "UTF-8";
+
+	
 
 
 
