@@ -41,8 +41,9 @@ div#content {
   padding-top: 42px;
 }
 
-div#error {
+.error {
     margin: 4px;
+    padding: 4px;
     font-weight: bold;
     background-color: #FF4444;
 }
