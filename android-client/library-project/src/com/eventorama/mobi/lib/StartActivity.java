@@ -23,7 +23,7 @@ public class StartActivity extends Activity
         super.onCreate(savedInstanceState);
         
         //check preferences
-		SharedPreferences settings = getSharedPreferences(EventORamaApplication.PREFS_NAME, Context.MODE_PRIVATE);
+		SharedPreferences settings = getSharedPreferences(EventORamaApplication.PREFS_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		String device_id = settings.getString(EventORamaApplication.PREFS_DEVICE_ID, "");
 		if(device_id.length() == 0)
 		{
