@@ -136,8 +136,9 @@ public class UsersController extends Controller {
         v.add("name", v.required());
         v.add("deviceId", v.required());
 
+        JSONObject json;
         try {
-            JSONObject json = new JSONObject(new JSONTokener(request.getReader()));
+            json = new JSONObject(new JSONTokener(request.getReader()));
             requestScope("name", json.getString("name"));
             requestScope("deviceId", json.getString("device-id"));
         }
@@ -149,7 +150,7 @@ public class UsersController extends Controller {
         }
         
         if (! v.validate()) {
-            log.warning(String.format("app=%s, could not parse JSON: %s", KeyFactory.keyToString(app.getKey()), request.getReader().toString()));
+            log.warning(String.format("app=%s, could not parse JSON: %s", KeyFactory.keyToString(app.getKey()), json.toString()));
             response.setStatus(HttpURLConnection.HTTP_BAD_REQUEST);
             return null;
         }
