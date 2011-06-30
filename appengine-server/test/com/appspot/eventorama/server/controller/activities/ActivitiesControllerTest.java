@@ -47,6 +47,7 @@ public class ActivitiesControllerTest extends ControllerTestCase {
         user = new User();
         user.setName("Boromir");
         user.getApplicationRef().setModel(app);
+        Datastore.put(user);
 
         activity1 = new Activity();
         activity1.setText("Will soon be there.");
@@ -173,6 +174,21 @@ public class ActivitiesControllerTest extends ControllerTestCase {
     }
 
     @Test
+    public void testShouldNotCreateActivityForNonAppUser() throws Exception {
+        user = new User();
+        user.setName("Arwen");
+        Datastore.put(user);
+
+        tester.request.setMethod("post");
+        tester.request.setReader(new BufferedReader(new StringReader("{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"}")));
+
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/activities");
+        ActivitiesController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_FOUND));
+    }
+
+    @Test
     public void testGetActivities() throws Exception {
         tester.request.setMethod("get");
         tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/activities");
@@ -181,9 +197,9 @@ public class ActivitiesControllerTest extends ControllerTestCase {
         assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
         assertThat(tester.response.getContentType().contains("application/json"), is(true));
         
-        JSONArray json = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
-        assertThat(json.length(), is(2));
-        assertThat(json.opt(0), instanceOf(JSONObject.class));
+        JSONArray jsonArray = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
+        assertThat(jsonArray.length(), is(2));
+        assertThat(jsonArray.opt(0), instanceOf(JSONObject.class));
     }
 
     @Test
@@ -199,7 +215,7 @@ public class ActivitiesControllerTest extends ControllerTestCase {
         assertThat(Arrays.asList(JSONObject.getNames(json)), hasItems("timestamp", "type", "user-id", "text"));
         assertThat(json.getLong("timestamp"), is(activity1.getTimestamp().getTime()));
         assertThat(json.getLong("user-id"), is(activity1.getUserRef().getKey().getId()));
-        assertThat((String) json.get("text"), is(activity1.getText()));
+        assertThat(json.getString("text"), is(activity1.getText()));
     }
 
     @Test
