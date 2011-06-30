@@ -1,6 +1,6 @@
 package com.appspot.eventorama.server.meta;
 
-//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-06-30 16:32:27")
+//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-06-30 18:09:25")
 /** */
 public final class ActivityMeta extends org.slim3.datastore.ModelMeta<com.appspot.eventorama.shared.model.Activity> {
 
@@ -21,6 +21,9 @@ public final class ActivityMeta extends org.slim3.datastore.ModelMeta<com.appspo
 
     /** */
     public final org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.Activity, java.lang.Integer> type = new org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.Activity, java.lang.Integer>(this, "type", "type", int.class);
+
+    /** */
+    public final org.slim3.datastore.ModelRefAttributeMeta<com.appspot.eventorama.shared.model.Activity, org.slim3.datastore.ModelRef<com.appspot.eventorama.shared.model.User>, com.appspot.eventorama.shared.model.User> userRef = new org.slim3.datastore.ModelRefAttributeMeta<com.appspot.eventorama.shared.model.Activity, org.slim3.datastore.ModelRef<com.appspot.eventorama.shared.model.User>, com.appspot.eventorama.shared.model.User>(this, "userRef", "userRef", org.slim3.datastore.ModelRef.class, com.appspot.eventorama.shared.model.User.class);
 
     /** */
     public final org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.Activity, java.lang.Long> version = new org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.Activity, java.lang.Long>(this, "version", "version", java.lang.Long.class);
@@ -51,6 +54,10 @@ public final class ActivityMeta extends org.slim3.datastore.ModelMeta<com.appspo
         model.setText((java.lang.String) entity.getProperty("text"));
         model.setTimestamp((java.util.Date) entity.getProperty("timestamp"));
         model.setType(longToPrimitiveInt((java.lang.Long) entity.getProperty("type")));
+        if (model.getUserRef() == null) {
+            throw new NullPointerException("The property(userRef) is null.");
+        }
+        model.getUserRef().setKey((com.google.appengine.api.datastore.Key) entity.getProperty("userRef"));
         model.setVersion((java.lang.Long) entity.getProperty("version"));
         return model;
     }
@@ -72,6 +79,10 @@ public final class ActivityMeta extends org.slim3.datastore.ModelMeta<com.appspo
         entity.setProperty("text", m.getText());
         entity.setProperty("timestamp", m.getTimestamp());
         entity.setProperty("type", m.getType());
+        if (m.getUserRef() == null) {
+            throw new NullPointerException("The property(userRef) must not be null.");
+        }
+        entity.setProperty("userRef", m.getUserRef().getKey());
         entity.setProperty("version", m.getVersion());
         entity.setProperty("slim3.schemaVersion", 1);
         return entity;
@@ -103,6 +114,10 @@ public final class ActivityMeta extends org.slim3.datastore.ModelMeta<com.appspo
             throw new NullPointerException("The property(applicationRef) must not be null.");
         }
         m.getApplicationRef().assignKeyIfNecessary(ds);
+        if (m.getUserRef() == null) {
+            throw new NullPointerException("The property(userRef) must not be null.");
+        }
+        m.getUserRef().assignKeyIfNecessary(ds);
     }
 
     @Override
@@ -158,6 +173,10 @@ public final class ActivityMeta extends org.slim3.datastore.ModelMeta<com.appspo
         }
         writer.setNextPropertyName("type");
         encoder0.encode(writer, m.getType());
+        if(m.getUserRef() != null && m.getUserRef().getKey() != null){
+            writer.setNextPropertyName("userRef");
+            encoder0.encode(writer, m.getUserRef(), maxDepth, currentDepth);
+        }
         if(m.getVersion() != null){
             writer.setNextPropertyName("version");
             encoder0.encode(writer, m.getVersion());
@@ -182,6 +201,8 @@ public final class ActivityMeta extends org.slim3.datastore.ModelMeta<com.appspo
         m.setTimestamp(decoder0.decode(reader, m.getTimestamp()));
         reader = rootReader.newObjectReader("type");
         m.setType(decoder0.decode(reader, m.getType()));
+        reader = rootReader.newObjectReader("userRef");
+        decoder0.decode(reader, m.getUserRef(), maxDepth, currentDepth);
         reader = rootReader.newObjectReader("version");
         m.setVersion(decoder0.decode(reader, m.getVersion()));
         return m;

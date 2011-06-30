@@ -23,6 +23,8 @@ public class Activity implements Serializable {
 
     
     private ModelRef<Application> applicationRef = new ModelRef<Application>(Application.class);
+    private ModelRef<User> userRef = new ModelRef<User>(User.class);
+    
     private int type;
     private String text;
     private Link photoUrl;
@@ -130,6 +132,14 @@ public class Activity implements Serializable {
         return applicationRef;
     }
 
+    /**
+     * @return the userRef
+     */
+    public ModelRef<User> getUserRef() {
+        return userRef;
+    }
+    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -172,6 +182,8 @@ public class Activity implements Serializable {
         builder.append(version);
         builder.append(", applicationRef=");
         builder.append(applicationRef);
+        builder.append(", userRef=");
+        builder.append(userRef);
         builder.append(", type=");
         builder.append(type);
         builder.append(", text=");
@@ -183,5 +195,5 @@ public class Activity implements Serializable {
         builder.append("]");
         return builder.toString();
     }
-    
+
 }
