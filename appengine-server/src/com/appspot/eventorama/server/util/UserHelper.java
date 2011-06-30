@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.appspot.eventorama.shared.model.User;
+import com.google.appengine.api.datastore.KeyFactory;
 
 public class UserHelper {
 
@@ -34,5 +35,17 @@ public class UserHelper {
         }
         
         return jsonArray;
+    }
+
+    public static String getLocationHeaderForUser(User user) {
+        StringBuilder url = new StringBuilder();
+        
+        url.append(GAEHelper.getGaeHostName());
+        url.append("/app/");
+        url.append(KeyFactory.keyToString(user.getApplicationRef().getKey()));
+        url.append("/users/");
+        url.append(user.getKey().getId());
+        
+        return url.toString();
     }
 }

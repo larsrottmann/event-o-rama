@@ -18,7 +18,6 @@ import org.slim3.util.BeanUtil;
 
 import com.appspot.eventorama.server.meta.ApplicationMeta;
 import com.appspot.eventorama.server.meta.UserMeta;
-import com.appspot.eventorama.server.util.GAEHelper;
 import com.appspot.eventorama.server.util.UserHelper;
 import com.appspot.eventorama.shared.model.Application;
 import com.appspot.eventorama.shared.model.User;
@@ -93,7 +92,7 @@ public class UsersController extends Controller {
             .filter(userMeta.applicationRef.equal(app.getKey()))
             .asList();
 
-        log.info("Sending user JSON payload: " + userMeta.modelsToJson(users.toArray(new User[0])));
+        log.info("Sending users JSON payload: " + userMeta.modelsToJson(users.toArray(new User[0])));
 
         response.setHeader("content-type", "application/json; charset=utf-8");
         OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream());
@@ -133,20 +132,14 @@ public class UsersController extends Controller {
     private Navigation createUser(Application app) throws Exception {
         log.info("app=" + KeyFactory.keyToString(app.getKey()));
 
+        Validators v = new Validators(request);
+        v.add("name", v.required());
+        v.add("deviceId", v.required());
+
         try {
             JSONObject json = new JSONObject(new JSONTokener(request.getReader()));
-            requestScope("name", json.get("name"));
-            requestScope("deviceId", json.get("device-id"));
-            
-            Validators v = new Validators(request);
-            v.add("name", v.required());
-            v.add("deviceId", v.required());
-
-            if (! v.validate()) {
-                log.warning(String.format("createUser(): app=%s, could not parse JSON: %s", KeyFactory.keyToString(app.getKey()),  request.getReader().toString()));
-                response.setStatus(HttpURLConnection.HTTP_BAD_REQUEST);
-                return null;
-            }
+            requestScope("name", json.getString("name"));
+            requestScope("deviceId", json.getString("device-id"));
         }
         catch (Exception e)
         {
@@ -155,6 +148,12 @@ public class UsersController extends Controller {
             return null;
         }
         
+        if (! v.validate()) {
+            log.warning(String.format("app=%s, could not parse JSON: %s", KeyFactory.keyToString(app.getKey()), request.getReader().toString()));
+            response.setStatus(HttpURLConnection.HTTP_BAD_REQUEST);
+            return null;
+        }
+
         UserMeta userMeta = UserMeta.get();
         if (Datastore.query(userMeta)
                 .filter(userMeta.name.equal(asString("name")),
@@ -174,7 +173,7 @@ public class UsersController extends Controller {
         Datastore.put(user);
         
         response.setStatus(HttpURLConnection.HTTP_CREATED);
-        response.setHeader("location", getLocationHeaderForUser(user));
+        response.setHeader("location", UserHelper.getLocationHeaderForUser(user));
         return null;
     }
 
@@ -233,16 +232,4 @@ public class UsersController extends Controller {
     }
 
 
-    private String getLocationHeaderForUser(User user)
-    {
-        StringBuilder url = new StringBuilder();
-        
-        url.append(GAEHelper.getGaeHostName());
-        url.append("/app/");
-        url.append(KeyFactory.keyToString(user.getApplicationRef().getKey()));
-        url.append("/users/");
-        url.append(user.getKey().getId());
-        
-        return url.toString();
-    }
 }

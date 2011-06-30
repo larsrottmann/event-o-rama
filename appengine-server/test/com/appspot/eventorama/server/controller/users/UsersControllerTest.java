@@ -115,9 +115,9 @@ public class UsersControllerTest extends ControllerTestCase {
         assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
         assertThat(tester.response.getContentType().contains("application/json"), is(true));
         
-        JSONArray json = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
-        assertThat(json.length(), is(2));
-        assertThat(json.opt(0), instanceOf(JSONObject.class));
+        JSONArray jsonArray = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
+        assertThat(jsonArray.length(), is(2));
+        assertThat(jsonArray.opt(0), instanceOf(JSONObject.class));
     }
     
     @Test
@@ -131,7 +131,7 @@ public class UsersControllerTest extends ControllerTestCase {
         
         JSONObject json = new JSONObject(new JSONTokener(tester.response.getOutputAsString()));
         assertThat(Arrays.asList(JSONObject.getNames(json)), hasItems("id", "name", "device-id"));
-        assertThat((String) json.get("name"), is("Boromir"));
+        assertThat(json.getString("name"), is("Boromir"));
     }
 
     @Test
