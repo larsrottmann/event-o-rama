@@ -85,6 +85,17 @@ public class UsersControllerTest extends ControllerTestCase {
     }
 
     @Test
+    public void testCreateUserInvalidJson() throws Exception {
+        tester.request.setMethod("post");
+        tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Legolas\", \"device-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"")));
+        
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
+        UsersController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
+    }
+    
+    @Test
     public void testCreateUserNameAlreadyTaken() throws Exception {
         tester.request.setMethod("post");
         tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Boromir\", \"device-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
