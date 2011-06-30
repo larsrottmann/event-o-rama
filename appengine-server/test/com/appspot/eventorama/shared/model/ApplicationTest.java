@@ -41,6 +41,10 @@ public class ApplicationTest extends AppEngineTestCase {
         model.setStartDate(new Date(System.currentTimeMillis() - 86400));
         model.setExpirationDate(new Date(System.currentTimeMillis() + 86400));
         assertThat(model.isActive(), is(true));
+        
+        // manually deactivate the event
+        model.setActive(false);
+        assertThat(model.isActive(), is(false));
     }
     
     @Test

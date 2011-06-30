@@ -26,7 +26,7 @@ public class Application implements Serializable, IsSerializable {
 
     private User user;
     private String title;
-    private boolean active;
+    private boolean active = true;
     private Date startDate;
     private Date expirationDate;
     private String downloadUrl;
@@ -174,7 +174,7 @@ public class Application implements Serializable, IsSerializable {
             return false;
         
         Date now = new Date(System.currentTimeMillis());
-        return getStartDate().before(now) && getExpirationDate().after(now);
+        return this.active && getStartDate().before(now) && getExpirationDate().after(now);
     }
 
 
