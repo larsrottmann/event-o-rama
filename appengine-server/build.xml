@@ -1,10 +1,24 @@
 <project name="event-o-rama" default="gen-controller" basedir=".">
     <property file="build.properties" />
+	<property name="src.tests" value="test"/>
 
     <path id="classpath">
-        <fileset dir="war/WEB-INF/classes">
+    	<fileset dir="war/WEB-INF/classes">
             <include name="**/*.class" />
         </fileset>
+        <fileset dir="war/WEB-INF/lib">
+            <include name="**/*.jar" />
+        </fileset>
+        <fileset dir="lib">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+
+    <path id="test.classpath">
+        <pathelement location="war/WEB-INF/classes"/>
+    	<pathelement location="${gwt.home}/gwt-user.jar" />
+        <pathelement location="${appengine.home}/lib/impl/appengine-api-stubs.jar" />
+        <pathelement location="${appengine.home}/lib/impl/appengine-local-runtime.jar" />
         <fileset dir="war/WEB-INF/lib">
             <include name="**/*.jar" />
         </fileset>
@@ -70,4 +84,23 @@
             </zipfileset>
         </zip>
     </target>
+	
+    <target name="servertest" description="Execute server-side unit tests">
+        <junit printsummary="yes" showoutput="yes">
+            <classpath>
+                <pathelement location="src" />
+                <pathelement location="test" />
+                <path refid="test.classpath" />
+            </classpath>
+        	<formatter type="plain" usefile="false"/>
+            <jvmarg value="-Xmx256M" />
+            <batchtest fork="yes" haltonfailure="yes">
+        	    <fileset dir="${src.tests}">
+        	        <include name="**/*Test*.java"/>
+        	        <exclude name="**/AllTests.java"/>
+    	        </fileset>
+            </batchtest>
+        </junit>
+    </target>
+	
 </project>
