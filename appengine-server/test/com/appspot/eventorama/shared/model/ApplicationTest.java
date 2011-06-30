@@ -2,6 +2,7 @@ package com.appspot.eventorama.shared.model;
 
 import java.util.Date;
 
+import org.slim3.datastore.Datastore;
 import org.slim3.tester.AppEngineTestCase;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -41,4 +42,35 @@ public class ApplicationTest extends AppEngineTestCase {
         model.setExpirationDate(new Date(System.currentTimeMillis() + 86400));
         assertThat(model.isActive(), is(true));
     }
+    
+    @Test
+    public void testActivitiesRelation() throws Exception {
+        Activity activity = new Activity();
+        activity.setText("Arrived at venue");
+        activity.getApplicationRef().setModel(model);
+        
+        Datastore.put(model, activity);
+        
+        assertThat(model.getActivityListRef().getModelList().size(), is(1));
+        assertThat(model.getActivityListRef().getModelList().get(0), equalTo(activity));
+    }
+
+    @Test
+    public void testActivitiesRelationSortOrder() throws Exception {
+        Activity activity1 = new Activity();
+        activity1.setTimestamp(new Date(System.currentTimeMillis()));
+        activity1.getApplicationRef().setModel(model);
+        
+        Activity activity2 = new Activity();
+        activity2.setTimestamp(new Date(System.currentTimeMillis() + 86400));
+        activity2.getApplicationRef().setModel(model);
+        
+        Datastore.put(model, activity1, activity2);
+        
+        assertThat(model.getActivityListRef().getModelList().size(), is(2));
+        // check that activities are sorted in descending order according to their timestamp
+        assertThat(model.getActivityListRef().getModelList().get(0), equalTo(activity2));
+        assertThat(model.getActivityListRef().getModelList().get(1), equalTo(activity1));
+    }
+
 }

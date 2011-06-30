@@ -3,15 +3,15 @@ package com.appspot.eventorama.shared.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Link;
 
 import org.slim3.datastore.Attribute;
 import org.slim3.datastore.Model;
 import org.slim3.datastore.ModelRef;
 
 @Model(schemaVersion = 1)
-public class User implements Serializable {
+public class Activity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -21,11 +21,12 @@ public class User implements Serializable {
     @Attribute(version = true)
     private Long version;
 
+    
     private ModelRef<Application> applicationRef = new ModelRef<Application>(Application.class);
-    private String name;
-    private String deviceId;
-    private GeoPt location;
-    private Date locationUpdated;
+    private int type;
+    private String text;
+    private Link photoUrl;
+    private Date timestamp;
     
     
     /**
@@ -66,34 +67,60 @@ public class User implements Serializable {
         this.version = version;
     }
 
-    
-    
     /**
-     * @return the name
+     * @return the type
      */
-    public String getName() {
-        return name;
+    public int getType() {
+        return type;
     }
 
     /**
-     * @param name the name to set
+     * @param type the type to set
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setType(int type) {
+        this.type = type;
     }
 
     /**
-     * @return the deviceId
+     * @return the text
      */
-    public String getDeviceId() {
-        return deviceId;
+    public String getText() {
+        return text;
     }
 
     /**
-     * @param deviceId the deviceId to set
+     * @param text the text to set
      */
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    /**
+     * @return the photoUrl
+     */
+    public Link getPhotoUrl() {
+        return photoUrl;
+    }
+
+    /**
+     * @param photoUrl the photoUrl to set
+     */
+    public void setPhotoUrl(Link photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    /**
+     * @return the timestamp
+     */
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    /**
+     * @param timestamp the timestamp to set
+     */
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 
     /**
@@ -101,34 +128,6 @@ public class User implements Serializable {
      */
     public ModelRef<Application> getApplicationRef() {
         return applicationRef;
-    }
-
-    /**
-     * @return the location
-     */
-    public GeoPt getLocation() {
-        return location;
-    }
-
-    /**
-     * @param location the location to set
-     */
-    public void setLocation(GeoPt location) {
-        this.location = location;
-    }
-
-    /**
-     * @return the locationUpdated
-     */
-    public Date getLocationUpdated() {
-        return locationUpdated;
-    }
-
-    /**
-     * @param locationUpdated the locationUpdated to set
-     */
-    public void setLocationUpdated(Date locationUpdated) {
-        this.locationUpdated = locationUpdated;
     }
 
     @Override
@@ -150,7 +149,7 @@ public class User implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        User other = (User) obj;
+        Activity other = (Activity) obj;
         if (key == null) {
             if (other.key != null) {
                 return false;
@@ -167,23 +166,22 @@ public class User implements Serializable {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("User [key=");
+        builder.append("Activity [key=");
         builder.append(key);
         builder.append(", version=");
         builder.append(version);
         builder.append(", applicationRef=");
         builder.append(applicationRef);
-        builder.append(", name=");
-        builder.append(name);
-        builder.append(", deviceId=");
-        builder.append(deviceId);
-        builder.append(", location=");
-        builder.append(location);
-        builder.append(", locationUpdated=");
-        builder.append(locationUpdated);
+        builder.append(", type=");
+        builder.append(type);
+        builder.append(", text=");
+        builder.append(text);
+        builder.append(", photoUrl=");
+        builder.append(photoUrl);
+        builder.append(", timestamp=");
+        builder.append(timestamp);
         builder.append("]");
         return builder.toString();
     }
-    
     
 }

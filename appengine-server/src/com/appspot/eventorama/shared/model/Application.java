@@ -4,11 +4,14 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.users.User;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import org.slim3.datastore.Attribute;
+import org.slim3.datastore.InverseModelListRef;
 import org.slim3.datastore.Model;
+import org.slim3.datastore.Sort;
 
 @Model(schemaVersion = 1)
 public class Application implements Serializable, IsSerializable {
@@ -27,8 +30,14 @@ public class Application implements Serializable, IsSerializable {
     private Date startDate;
     private Date expirationDate;
     private String downloadUrl;
+    
     @Attribute(persistent = false)
     private String localDownloadUrl;
+    @Attribute(persistent = false)
+    private InverseModelListRef<Activity, Application> activityListRef =
+        new InverseModelListRef<Activity, Application>(Activity.class, "applicationRef", this,
+                new Sort("timestamp", SortDirection.DESCENDING));
+    
     
     /**
      * Returns the key.
@@ -166,6 +175,11 @@ public class Application implements Serializable, IsSerializable {
         
         Date now = new Date(System.currentTimeMillis());
         return getStartDate().before(now) && getExpirationDate().after(now);
+    }
+
+
+    public InverseModelListRef<Activity, Application> getActivityListRef() {
+        return activityListRef;
     }
 
 
