@@ -18,19 +18,23 @@ public class AppRouter extends RouterImpl {
         
         // Android Client
         
-        // User Management: POST / GET 
+        // User Management: POST / GET (list)
         addRouting(
             "/app/{app_id}/users",
             "/users/users?app_id={app_id}");
-        // User Management: PUT
+        // User Management: PUT / GET (single)
         addRouting(
             "/app/{app_id}/users/{user_id}",
             "/users/users?app_id={app_id}&user_id={user_id}");
         
-        // Activities Management: POST / GET
+        // Activities Management: POST / GET (list)
         addRouting(
             "/app/{app_id}/activities",
             "/activities/activities?app_id={app_id}");
+        // Activities Management: GET (single)
+        addRouting(
+            "/app/{app_id}/activities/{activity_id}",
+            "/activities/activities?app_id={app_id}&activity_id={activity_id}");
 
     }
 }
