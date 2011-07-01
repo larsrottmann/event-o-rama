@@ -1,11 +1,17 @@
 <project name="event-o-rama" default="gen-controller" basedir=".">
     <property file="build.properties" />
 	<property name="src.tests" value="test"/>
+    <!-- Arguments to gwtc and devmode targets -->
+    <property name="gwt.args" value="" />
+
+    <import file="${appengine.home}/config/user/ant-macros.xml" />
 
     <path id="classpath">
     	<fileset dir="war/WEB-INF/classes">
             <include name="**/*.class" />
         </fileset>
+        <pathelement location="${gwt.home}/gwt-user.jar"/>
+        <fileset dir="${gwt.home}" includes="gwt-dev*.jar"/>
         <fileset dir="war/WEB-INF/lib">
             <include name="**/*.jar" />
         </fileset>
@@ -26,6 +32,9 @@
             <include name="**/*.jar" />
         </fileset>
     </path>
+
+	
+    <!-- START Slim3 tasks -->
 
     <taskdef name="gen-model" classname="org.slim3.gen.task.GenModelTask" classpathref="classpath"/>
     <taskdef name="gen-view" classname="org.slim3.gen.task.GenViewTask" classpathref="classpath"/>
@@ -85,22 +94,122 @@
         </zip>
     </target>
 	
-    <target name="servertest" description="Execute server-side unit tests">
+	<!-- END Slim3 tasks -->
+	
+    <target name="copyjars" description="Copies the App Engine JARs to the WAR.">
+        <copy todir="war/WEB-INF/lib" flatten="true">
+            <fileset dir="${appengine.home}/lib/user">
+                <include name="**/*.jar" />
+            </fileset>
+        </copy>
+    </target>
+	
+    <target name="compile" depends="copyjars" description="Compiles Java source and copies other source files to the WAR.">
+        <mkdir dir="war/WEB-INF/classes" />
+        <copy todir="war/WEB-INF/classes">
+            <fileset dir="src">
+                <exclude name="**/*.java" />
+            </fileset>
+        </copy>
+        <javac
+            srcdir="src"
+            destdir="war/WEB-INF/classes"
+            classpathref="classpath"
+            debug="on" 
+        	includeAntRuntime="false"/>
+    </target>	
+
+    <target name="datanucleusenhance" depends="compile" description="Performs JDO enhancement on compiled data classes.">
+        <enhance_war war="war" />
+    </target>   
+
+    <target name="compile-gwt" depends="datanucleusenhance" description="GWT compile to JavaScript (production mode)">
+        <java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
+            <classpath>
+                <pathelement location="src"/>
+                <path refid="classpath"/>
+                <pathelement location="${gwt.home}/validation-api-1.0.0.GA.jar" />
+                <pathelement location="${gwt.home}/validation-api-1.0.0.GA-sources.jar" />
+            </classpath>
+            <!-- add jvmarg -Xss16M or similar if you see a StackOverflowError -->
+            <jvmarg value="-Xmx256M"/>
+            <arg line="-war"/>
+            <arg value="war"/>
+            <!-- Additional arguments like -style PRETTY or -logLevel DEBUG -->
+            <arg line="${gwt.args}"/>
+            <arg value="com.appspot.eventorama.Main"/>
+        </java>
+    </target>
+	
+    <target name="compile-tests" depends="datanucleusenhance">
+        <javac 
+        	srcdir="test" 
+        	destdir="war/WEB-INF/classes" 
+        	debug="true"
+            deprecation="true" 
+        	listfiles="true" 
+        	includeAntRuntime="false"
+        >
+            <classpath>
+                <path refid="classpath"/>
+                <path refid="test.classpath"/>
+            </classpath>
+        </javac>
+    </target>
+	
+    <target name="servertest" depends="compile-tests" description="Execute server-side unit tests">
         <junit printsummary="yes" showoutput="yes">
             <classpath>
                 <pathelement location="src" />
                 <pathelement location="test" />
                 <path refid="test.classpath" />
             </classpath>
-        	<formatter type="plain" usefile="false"/>
+            <formatter type="plain" usefile="false"/>
             <jvmarg value="-Xmx256M" />
             <batchtest fork="yes" haltonfailure="yes">
-        	    <fileset dir="${src.tests}">
-        	        <include name="**/*Test*.java"/>
-        	        <exclude name="**/AllTests.java"/>
-    	        </fileset>
+                <fileset dir="${src.tests}">
+                    <include name="**/*Test*.java"/>
+                    <exclude name="**/AllTests.java"/>
+                </fileset>
             </batchtest>
         </junit>
+    </target>
+    
+    <target name="runserver" depends="datanucleusenhance" description="Starts the development server.">
+        <dev_appserver war="war" port="8888"/>
+    </target>
+
+    <target name="build" depends="compile-gwt" description="Build this project" />
+
+    <target name="clean" description="Cleans this project">
+        <delete dir="war/WEB-INF/classes" failonerror="false" />
+        <delete dir="war/main" failonerror="false" />
+    </target>
+
+	
+	<!-- GAE deployment -->
+	
+    <target name="update" depends="datanucleusenhance" description="Uploads the application to App Engine.">
+        <appcfg action="update" war="war" />
+    </target>
+
+    <target name="update_indexes" depends="datanucleusenhance" description="Uploads just the datastore index configuration to App Engine.">
+        <appcfg action="update_indexes" war="war" />
+    </target>
+
+    <target name="rollback" depends="datanucleusenhance" description="Rolls back an interrupted application update.">
+        <appcfg action="rollback" war="war" />
+    </target>
+
+    <target name="request_logs" description="Downloads log data from App Engine for the application.">
+        <appcfg action="request_logs" war="war">
+            <options>
+                <arg value="--num_days=5"/>
+            </options>
+            <args>
+                <arg value="logs.txt"/>
+            </args>
+        </appcfg>
     </target>
 	
 </project>
