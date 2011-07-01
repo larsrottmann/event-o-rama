@@ -33,10 +33,10 @@ public class Application implements Serializable, IsSerializable {
     
     @Attribute(persistent = false)
     private String localDownloadUrl;
-    @Attribute(persistent = false)
-    private InverseModelListRef<Activity, Application> activityListRef =
-        new InverseModelListRef<Activity, Application>(Activity.class, "applicationRef", this,
-                new Sort("timestamp", SortDirection.DESCENDING));
+//    @Attribute(persistent = false)
+//    private InverseModelListRef<Activity, Application> activityListRef =
+//        new InverseModelListRef<Activity, Application>(Activity.class, "applicationRef", this,
+//                new Sort("timestamp", SortDirection.DESCENDING));
     
     
     /**
@@ -178,9 +178,9 @@ public class Application implements Serializable, IsSerializable {
     }
 
 
-    public InverseModelListRef<Activity, Application> getActivityListRef() {
-        return activityListRef;
-    }
+//    public InverseModelListRef<Activity, Application> getActivityListRef() {
+//        return activityListRef;
+//    }
 
 
     @Override

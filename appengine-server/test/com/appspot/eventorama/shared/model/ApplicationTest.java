@@ -46,7 +46,8 @@ public class ApplicationTest extends AppEngineTestCase {
         model.setActive(false);
         assertThat(model.isActive(), is(false));
     }
-    
+
+    /**
     @Test
     public void testActivitiesRelation() throws Exception {
         Activity activity = new Activity();
@@ -76,5 +77,6 @@ public class ApplicationTest extends AppEngineTestCase {
         assertThat(model.getActivityListRef().getModelList().get(0), equalTo(activity2));
         assertThat(model.getActivityListRef().getModelList().get(1), equalTo(activity1));
     }
+    */
 
 }
