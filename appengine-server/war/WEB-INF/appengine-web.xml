@@ -26,4 +26,9 @@
 	</resource-files>
 	<sessions-enabled>false</sessions-enabled>
 	<threadsafe>true</threadsafe>
+	
+    <admin-console>
+        <page name="Application Stats" url="/appstats" />
+    </admin-console>
+	
 </appengine-web-app>
