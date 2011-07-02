@@ -14,6 +14,7 @@ import org.slim3.controller.validator.Errors;
 import org.slim3.controller.validator.Validators;
 import org.slim3.datastore.Datastore;
 import org.slim3.datastore.EntityNotFoundRuntimeException;
+import org.slim3.datastore.ModelQuery;
 import org.slim3.util.BeanUtil;
 
 import com.appspot.eventorama.server.meta.ActivityMeta;
@@ -84,9 +85,13 @@ public class ActivitiesController extends Controller {
         log.info("app=" + KeyFactory.keyToString(app.getKey()));
 
         ActivityMeta activityMeta = ActivityMeta.get();
-        List<Activity> activities = Datastore.query(activityMeta)
-            .filter(activityMeta.applicationRef.equal(app.getKey()))
-            .asList();
+        ModelQuery<Activity> modelQuery = Datastore.query(activityMeta)
+            .filter(activityMeta.applicationRef.equal(app.getKey()));
+        if (requestScope("since") != null)
+        {
+            modelQuery = modelQuery.filter(activityMeta.timestamp.greaterThanOrEqual(new Date(asLong("since"))));
+        }
+        List<Activity> activities = modelQuery.asList();
 
         log.info("Sending activities JSON payload: " + activityMeta.modelsToJson(activities.toArray(new Activity[0])));
 

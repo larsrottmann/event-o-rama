@@ -200,8 +200,25 @@ public class ActivitiesControllerTest extends ControllerTestCase {
         JSONArray jsonArray = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
         assertThat(jsonArray.length(), is(2));
         assertThat(jsonArray.opt(0), instanceOf(JSONObject.class));
+        assertThat(((JSONObject) jsonArray.opt(0)).getString("text"), is(activity1.getText()));
     }
 
+    @Test
+    public void testGetActivitiesFilteredByTimestamp() throws Exception {
+        tester.request.setMethod("get");
+        tester.request.setParameter("since", Long.toString(System.currentTimeMillis() + 1800 * 1000));   // should only return latest)
+        tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/activities");
+        ActivitiesController controller = tester.getController();
+        assertThat(controller, is(notNullValue()));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+        assertThat(tester.response.getContentType().contains("application/json"), is(true));
+        
+        JSONArray jsonArray = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
+        assertThat(jsonArray.length(), is(1));
+        assertThat(jsonArray.opt(0), instanceOf(JSONObject.class));
+        assertThat(((JSONObject) jsonArray.opt(0)).getString("text"), is(activity2.getText()));
+    }
+    
     @Test
     public void testGetActivity() throws Exception {
         tester.request.setMethod("get");
