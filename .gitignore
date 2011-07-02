@@ -5,3 +5,4 @@ target/
 local.properties
 gen/
 coverage/
+.DS_Store
