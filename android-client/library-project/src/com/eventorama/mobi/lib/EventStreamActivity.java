@@ -5,14 +5,19 @@ import com.eventorama.mobi.lib.content.EventStreamContentProvider;
 import com.eventorama.mobi.lib.service.ActivitySyncService;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 public class EventStreamActivity extends ListActivity {
 	
 	
+	private Context mContext = this;
 
 	protected static final String EVENTSTREAM_NOSYNC = "EVENTSTREAM_NOSYNC";
 
@@ -32,6 +37,16 @@ public class EventStreamActivity extends ListActivity {
 			final Intent service = new Intent(this, ActivitySyncService.class);
 			startService(service);
 		}
+		
+		Button peopleButton = (Button) findViewById(R.id.button2);
+		peopleButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(mContext, PeopleActivity.class);
+				startActivity(intent);
+			}
+		});
 
 	}
 

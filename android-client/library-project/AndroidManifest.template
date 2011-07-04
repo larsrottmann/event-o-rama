@@ -21,7 +21,7 @@
 		</activity>
 
 		<activity
-			android:name="com.eventorama.mobi.lib.PeopleUpActivity"></activity>
+			android:name="com.eventorama.mobi.lib.PeopleActivity"></activity>
 
 		<activity android:noHistory="true"
 			android:name="com.eventorama.mobi.lib.SignUpActivity"></activity>

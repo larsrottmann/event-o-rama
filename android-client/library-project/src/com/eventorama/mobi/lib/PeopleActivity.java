@@ -13,7 +13,8 @@ public class PeopleActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);		
+		super.onCreate(savedInstanceState);
+		 setContentView(R.layout.activity_people);
 		 mGridView = (GridView) findViewById(R.id.gridview);
 		 Cursor c = managedQuery(PeopleContentProvider.CONTENT_URI, null, null, null, null);		 
 		 mGridView.setAdapter(new PeopleAdapter(this,c));
