@@ -145,9 +145,12 @@ public class EventStreamContentProvider extends ContentProvider {
 	        } else {
 	            values = new ContentValues();
 	        }
-
-	        Long now = Long.valueOf(System.currentTimeMillis());
-	        values.put(Columns.CREATED, now);
+	        
+	        if(!values.containsKey(Columns.CREATED))
+	        {
+	        	final Long now = Long.valueOf(System.currentTimeMillis());
+	        	values.put(Columns.CREATED, now);
+	        }
 
 	        SQLiteDatabase db = dbHelper.getWritableDatabase();
 	        long rowId = db.insert(DBHelper.TABLE_NAME, null, values);

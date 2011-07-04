@@ -30,8 +30,9 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.eventorama.mobi.lib.EventORamaApplication.HTTPResponse;
+
 import com.eventorama.mobi.lib.content.EventStreamContentProvider;
+import com.eventorama.mobi.lib.data.HTTPResponse;
 import com.eventorama.mobi.lib.service.ActivityCreatorService;
 import com.google.gson.Gson;
 
@@ -98,7 +99,7 @@ public class SignUpActivity extends Activity{
 		}
 		
 		showProgressDialog();
-		//TODO: check against Server, for now we just wait
+
 		this.mSignupTask = new SignUpTask();		
 		this.mSignupTask.execute(desiredUsername);
 	}
@@ -107,6 +108,11 @@ public class SignUpActivity extends Activity{
 		mDialog = ProgressDialog.show(mContext, null ,getText(R.string.signup_login_text), true);		
 	}
 	
+	/**
+	 * Builds a caplitalized String with uppercase letter for each word like "the final Test" will result in "The Final Test"
+	 * @param input
+	 * @return input capitalized
+	 */
 	private String capitalizeString(String input)
 	{
 		StringBuilder capitalizedString = new StringBuilder();
@@ -208,13 +214,13 @@ public class SignUpActivity extends Activity{
 		@Override
 		protected Integer doInBackground(String... params) {
 			String username = params[0];
-			//TODO: check if username is available
+
 			try {
 				//build post body
 				Gson gson = new Gson();
 				Map<String, String> data = new HashMap<String, String>();
 				data.put("name", username);
-				data.put("device-id", "798983987298347");
+				data.put("device-id", "798983987298347");			//TODO: get real device-id
 				EventORamaApplication eora = (EventORamaApplication) getApplication();
 				HTTPResponse resp = eora.doHttpRequest("/users", gson.toJson(data), EventORamaApplication.HTTP_METHOD_POST);
 				if(resp == null)
@@ -246,6 +252,7 @@ public class SignUpActivity extends Activity{
 							Formatter formatter = new Formatter(sb);
 							formatter.format(getText(R.string.activity_text_joindedparty).toString(), username);
 							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TEXT, sb.toString());
+							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_USER_ID, userid);
 							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TYPE, EventStreamContentProvider.TYPE_TEXT);
 							startService(service);
 							
@@ -273,6 +280,7 @@ public class SignUpActivity extends Activity{
 				if(mDialog != null)
 					mDialog.dismiss();
 				Intent i = new Intent();
+				i.putExtra(EventStreamActivity.EVENTSTREAM_NOSYNC, true);
 				i.setClass(getApplicationContext(), EventStreamActivity.class);
 				startActivity(i);
 				break;

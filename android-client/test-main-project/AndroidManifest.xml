@@ -32,8 +32,11 @@
 		<provider android:name="com.eventorama.mobi.lib.content.EventStreamContentProvider" android:authorities="com.eventorama.mobi.sowhatevernew" android:exported="false" />
 		<provider android:name="com.eventorama.mobi.lib.content.PeopleContentProvider" android:authorities="com.eventorama.mobi.sowhatevernew" android:exported="false" />
 
-
+		<!-- Service for creating new activities -->	
 		<service android:name="com.eventorama.mobi.lib.service.ActivityCreatorService" />
+
+		<!-- Service for syncing the activities with the server -->	
+		<service android:name="com.eventorama.mobi.lib.service.ActivitySyncService" />
 
 		<!-- Only C2DM servers can send messages for the app. If permission is 
 			not set - any other app can generate it -->
