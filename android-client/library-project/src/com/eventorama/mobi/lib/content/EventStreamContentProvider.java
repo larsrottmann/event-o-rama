@@ -79,12 +79,13 @@ public class EventStreamContentProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         dbHelper = new DBHelper(getContext());
-        String packagename = getContext().getPackageName();
-        Log.v(TAG, "using package as authority: "+packagename);
-        content_uri =  Uri.parse("content://"+ packagename +"/eventstream");
+        String authority = getContext().getPackageName()+".events";
+        
+        content_uri =  Uri.parse("content://"+ authority +"/eventstream");
+        Log.v(TAG, "using package as authority: "+authority+ "registered uri: "+content_uri);
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sUriMatcher.addURI(packagename, "eventstream/#", EVENT);
-        sUriMatcher.addURI(packagename, "eventstream", EVENTS);
+        sUriMatcher.addURI(authority, "eventstream/#", EVENT);
+        sUriMatcher.addURI(authority, "eventstream", EVENTS);
 
         return true;
     }

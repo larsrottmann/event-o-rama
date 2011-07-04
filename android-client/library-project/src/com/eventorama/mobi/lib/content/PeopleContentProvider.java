@@ -19,9 +19,8 @@ public class PeopleContentProvider extends ContentProvider {
 	private final static String TAG = PeopleContentProvider.class.toString();
 
 	// TODO: check for concurrent applications / packages
-	private static final String AUTHORITY = "com.eventorama.mobi";
-
-	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/people");
+	
+	public static Uri content_uri = null;
 
 	public static class Columns {
 		public static final String ID = "_id";
@@ -32,25 +31,22 @@ public class PeopleContentProvider extends ContentProvider {
 		public static final String LAT = "lat";
 		public static final String LONG = "long";
 		public static final String PROFILE_PIC = "profile_pic";
+		public static final String SERVER_ID = "server_id";
 
 	}
 
-	private static final UriMatcher sUriMatcher;
+	private UriMatcher sUriMatcher;
 	private static final int ONE = 0;
 	private static final int MANY = 1;
 
-	static {
-		sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		sUriMatcher.addURI(AUTHORITY, "people/#", ONE);
-		sUriMatcher.addURI(AUTHORITY, "people", MANY);
-	}
+	
 
 	private static class DBHelper extends SQLiteOpenHelper {
 
-		private static final String TABLE_NAME = "PEOPLEs";
-		private static final int DATABASE_VERSION = 1;
+		private static final String TABLE_NAME = "PEOPLE";
+		private static final int DATABASE_VERSION = 3;
 
-		private static final String DATABASE_NAME = "eventstream";
+		private static final String DATABASE_NAME = "eventorama";
 
 		private static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME + " (" + 
 			Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + 
@@ -60,7 +56,8 @@ public class PeopleContentProvider extends ContentProvider {
 			Columns.LONG + " TEXT, " + 
 			Columns.PROFILE_PIC + " TEXT, " +
 			Columns.LAST_STATUS_ID + " INTEGER DEFAULT -1 NOT NULL, " + 
-			Columns.NAME + " TEXT ";
+			Columns.NAME + " TEXT, "+
+			Columns.SERVER_ID + " INTEGER NOT NULL );";
 
 		DBHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -84,6 +81,14 @@ public class PeopleContentProvider extends ContentProvider {
 	@Override
 	public boolean onCreate() {
 		dbHelper = new DBHelper(getContext());
+		String authority = getContext().getPackageName()+".people";
+        Log.v(TAG, "using package as authority: "+authority);
+        content_uri =  Uri.parse("content://"+ authority +"/people");
+        
+        sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+        sUriMatcher.addURI(authority, "people/#", ONE);
+        sUriMatcher.addURI(authority, "people", MANY);
+
 		return true;
 	}
 
@@ -153,8 +158,8 @@ public class PeopleContentProvider extends ContentProvider {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		long rowId = db.insert(DBHelper.TABLE_NAME, null, values);
 		if (rowId > 0) {
-			Uri entryUri = ContentUris.withAppendedId(CONTENT_URI, rowId);
-			getContext().getContentResolver().notifyChange(CONTENT_URI, null);
+			Uri entryUri = ContentUris.withAppendedId(content_uri, rowId);
+			getContext().getContentResolver().notifyChange(content_uri, null);
 			return entryUri;
 		} else {
 			throw new SQLException("Failed to insert row into " + uri);

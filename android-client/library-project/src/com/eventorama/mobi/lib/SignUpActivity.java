@@ -12,10 +12,13 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +35,7 @@ import android.widget.Toast;
 
 
 import com.eventorama.mobi.lib.content.EventStreamContentProvider;
+import com.eventorama.mobi.lib.content.PeopleContentProvider;
 import com.eventorama.mobi.lib.data.HTTPResponse;
 import com.eventorama.mobi.lib.service.ActivityCreatorService;
 import com.google.gson.Gson;
@@ -255,6 +259,14 @@ public class SignUpActivity extends Activity{
 							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_USER_ID, userid);
 							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TYPE, EventStreamContentProvider.TYPE_TEXT);
 							startService(service);
+							
+							//insert into people content provider
+							final Uri uri = PeopleContentProvider.content_uri;
+							ContentResolver resolver = getContentResolver();
+							ContentValues cv = new ContentValues();
+							cv.put(PeopleContentProvider.Columns.NAME, username);
+							cv.put(PeopleContentProvider.Columns.SERVER_ID, userid);
+							resolver.insert(uri, cv);
 							
 							return RESULT_SUCCESS;
 						}

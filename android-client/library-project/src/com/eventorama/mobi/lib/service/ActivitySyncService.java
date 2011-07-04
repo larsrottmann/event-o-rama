@@ -53,7 +53,7 @@ public class ActivitySyncService extends IntentService {
 			for (int i = 0; i < serverElements.length; i++) {
 				String timestamp = serverElements[i].getTimestamp()+"";
 				Cursor c = mContentResolver.query(uri, null, EventStreamContentProvider.Columns.CREATED+"= ?", new String[]{timestamp}, null);
-				if(!c.moveToFirst()) //insert activity, otherwhise skips
+				if(c!= null && !c.moveToFirst()) //insert activity, otherwhise skips
 				{
 					ContentValues cv = new ContentValues();
 					cv.put(EventStreamContentProvider.Columns.CREATED, serverElements[i].getTimestamp());

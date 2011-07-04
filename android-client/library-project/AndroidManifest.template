@@ -29,8 +29,8 @@
 		<activity
 			android:name="com.eventorama.mobi.lib.EventStreamActivity"></activity>
 
-		<provider android:name="com.eventorama.mobi.lib.content.EventStreamContentProvider" android:authorities="_TARGET_PACKAGE_" android:exported="false" />
-		<provider android:name="com.eventorama.mobi.lib.content.PeopleContentProvider" android:authorities="_TARGET_PACKAGE_" android:exported="false" />
+		<provider android:name="com.eventorama.mobi.lib.content.EventStreamContentProvider" android:authorities="_TARGET_PACKAGE_.events" android:exported="false" />
+		<provider android:name="com.eventorama.mobi.lib.content.PeopleContentProvider" android:authorities="_TARGET_PACKAGE_.people" android:exported="false" />
 
 
 		<!-- Service for creating new activities -->	

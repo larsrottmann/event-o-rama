@@ -16,7 +16,7 @@ public class PeopleActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		 setContentView(R.layout.activity_people);
 		 mGridView = (GridView) findViewById(R.id.gridview);
-		 Cursor c = managedQuery(PeopleContentProvider.CONTENT_URI, null, null, null, null);		 
+		 Cursor c = managedQuery(PeopleContentProvider.content_uri, null, null, null, null);		 
 		 mGridView.setAdapter(new PeopleAdapter(this,c));
 		 startManagingCursor(c);
 	}
