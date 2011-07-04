@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.slim3.controller.Controller;
@@ -15,7 +16,6 @@ import org.slim3.controller.validator.Validators;
 import org.slim3.datastore.Datastore;
 import org.slim3.datastore.EntityNotFoundRuntimeException;
 import org.slim3.datastore.ModelQuery;
-import org.slim3.util.BeanUtil;
 
 import com.appspot.eventorama.server.meta.ActivityMeta;
 import com.appspot.eventorama.server.meta.ApplicationMeta;
@@ -135,61 +135,84 @@ public class ActivitiesController extends Controller {
 
         Validators v = new Validators(request);
         v.add("userId", v.required());
-        v.add("type", v.required());
+        v.add("type", v.required(), v.longType(), v.longRange(0, Long.MAX_VALUE));
         v.add("text", v.required());
-        v.add("timestamp", v.required());
+        v.add("timestamp", v.required(), v.longType(), v.longRange(0, Long.MAX_VALUE));
 
-        JSONObject json;
+        JSONArray jsonArray;
         try {
-            json = new JSONObject(new JSONTokener(request.getReader()));
-            requestScope("userId", json.getString("user-id"));
-            requestScope("type", json.getInt("type"));
-            requestScope("text", json.getString("text"));
-            requestScope("timestamp", new Date(json.getLong("timestamp")));
-            requestScope("photoUrl", json.optString("photo-uri", null));
+            jsonArray = new JSONArray(new JSONTokener(request.getReader()));
         }
         catch (Exception e)
         {
-            log.warning("Cannot parse JSON payload: " + e.getMessage());
-            response.setStatus(HttpURLConnection.HTTP_BAD_REQUEST);
-            return null;
-        }
-        
-        if (! v.validate()) {
-            log.warning(String.format("app=%s, could not parse JSON: %s", KeyFactory.keyToString(app.getKey()), json.toString()));
+            log.severe("Cannot parse JSON payload: " + e.getMessage());
             response.setStatus(HttpURLConnection.HTTP_BAD_REQUEST);
             return null;
         }
 
-        if (!(app.getStartDate().before((Date) requestScope("timestamp")) && app.getExpirationDate().after((Date) requestScope("timestamp"))) || !app.isActive()) {
-            log.warning(String.format("app=%s, activity is outside app lifetime or app is inactive: active=%s, start=%s, end=%s, json=%s", KeyFactory.keyToString(app.getKey()), app.isActive(), app.getStartDate().getTime(), app.getExpirationDate().getTime(), json.toString()));
-            response.setStatus(HttpURLConnection.HTTP_NOT_ACCEPTABLE);
-            return null;
+        JSONArray jsonResponse = new JSONArray();
+        for (int i = 0; i < jsonArray.length(); i++)
+        {
+            JSONObject json = jsonArray.optJSONObject(i);
+            if (json == null)
+            {
+                log.warning(String.format("app=%s, could not parse JSON object at index %s", KeyFactory.keyToString(app.getKey()), i));
+                jsonResponse.put(-1);
+                continue;
+            }
+            
+            requestScope("userId", json.optString("user-id"));
+            requestScope("type", Long.toString(json.optLong("type", -1L)));
+            requestScope("text", json.optString("text", null));
+            requestScope("timestamp", Long.toString(json.optLong("timestamp", -1L)));
+            requestScope("photoUrl", json.optString("photo-uri", null));
+
+            if (! v.validate()) {
+                log.warning(String.format("app=%s, could not parse JSON: %s, errors: %s", KeyFactory.keyToString(app.getKey()), json.toString(), v.getErrors().toString()));
+                jsonResponse.put(-1 * HttpURLConnection.HTTP_BAD_REQUEST);
+                continue;
+            }
+
+            if (!(app.getStartDate().before(new Date(asLong("timestamp"))) && app.getExpirationDate().after(new Date(asLong("timestamp")))) || !app.isActive()) {
+                log.warning(String.format("app=%s, activity is outside app lifetime or app is inactive: active=%s, start=%s, end=%s, json=%s", KeyFactory.keyToString(app.getKey()), app.isActive(), app.getStartDate().getTime(), app.getExpirationDate().getTime(), json.toString()));
+                jsonResponse.put(-1 * HttpURLConnection.HTTP_NOT_ACCEPTABLE);
+                continue;
+            }
+            
+            UserMeta userMeta = UserMeta.get();
+            User user = Datastore.query(userMeta)
+                .filter(userMeta.key.equal(Datastore.createKey(userMeta, asLong("userId"))),
+                        userMeta.applicationRef.equal(app.getKey()))
+                .asSingle();
+
+            if (user == null) {
+                log.warning(String.format("User with id '%s' for app '%s' not found.", asString("userId"), KeyFactory.keyToString(app.getKey())));
+                jsonResponse.put(-1 * HttpURLConnection.HTTP_NOT_FOUND);
+                continue;
+            }
+
+            Activity activity = new Activity();
+            activity.getApplicationRef().setModel(app);
+            activity.getUserRef().setModel(user);
+            activity.setTimestamp(new Date(asLong("timestamp")));
+            activity.setText(asString("text"));
+            activity.setType(asInteger("type"));
+            if (requestScope("photoUrl") != null)
+                activity.setPhotoUrl(new Link((String) requestScope("photoUrl")));
+
+            Datastore.put(activity);
+            jsonResponse.put(activity.getKey().getId());
         }
+
         
-        UserMeta userMeta = UserMeta.get();
-        User user = Datastore.query(userMeta)
-            .filter(userMeta.key.equal(Datastore.createKey(userMeta, asLong("userId"))),
-                    userMeta.applicationRef.equal(app.getKey()))
-            .asSingle();
+        log.info("Sending activities JSON id list: " + jsonResponse.toString());
 
-        if (user == null) {
-            log.warning(String.format("User with id '%s' for app '%s' not found.", asString("userId"), KeyFactory.keyToString(app.getKey())));
-            response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
-            return null;
-        }
+        response.setStatus(HttpURLConnection.HTTP_OK);
+        response.setHeader("content-type", "application/json; charset=utf-8");
+        OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream());
+        writer.write(jsonResponse.toString());
+        writer.flush();
 
-        Activity activity = new Activity();
-        BeanUtil.copy(request, activity);
-        activity.getApplicationRef().setModel(app);
-        activity.getUserRef().setModel(user);
-        if (requestScope("photoUrl") != null)
-            activity.setPhotoUrl(new Link((String) requestScope("photoUrl")));
-
-        Datastore.put(activity);
-        
-        response.setStatus(HttpURLConnection.HTTP_CREATED);
-        response.setHeader("location", ActivityHelper.getLocationHeaderForActivity(activity));
         return null;
     }
 

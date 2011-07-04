@@ -65,63 +65,92 @@ public class ActivitiesControllerTest extends ControllerTestCase {
     @Test
     public void testCreateActivity() throws Exception {
         tester.request.setMethod("post");
-        tester.request.setReader(new BufferedReader(new StringReader("{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"}")));
+        tester.request.setReader(new BufferedReader(new StringReader("[{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"}]")));
 
         tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/activities");
         ActivitiesController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
-        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_CREATED));
-        assertThat(tester.response.containsHeader("location"), is(true));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+        assertThat(tester.response.getContentType().contains("application/json"), is(true));
+        
+        JSONArray jsonArray = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
+        assertThat(jsonArray.length(), is(1));
+        assertThat(jsonArray.opt(0), instanceOf(Integer.class));
+        assertThat(jsonArray.optInt(0), is(not(-1)));
     }
 
     @Test
     public void testCreateActivityMissingUserId() throws Exception {
         tester.request.setMethod("post");
-        tester.request.setReader(new BufferedReader(new StringReader("{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"text\": \"Will be late.\"}")));
+        tester.request.setReader(new BufferedReader(new StringReader("[{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"text\": \"Will be late.\"}]")));
 
         tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/activities");
         ActivitiesController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
-        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+        assertThat(tester.response.getContentType().contains("application/json"), is(true));
+        
+        JSONArray jsonArray = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
+        assertThat(jsonArray.length(), is(1));
+        assertThat(jsonArray.opt(0), instanceOf(Integer.class));
+        assertThat(jsonArray.optInt(0), is(-400));
     }
 
     @Test
     public void testCreateActivityMissingTimestamp() throws Exception {
         tester.request.setMethod("post");
-        tester.request.setReader(new BufferedReader(new StringReader("{\"type\": 1, \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"}")));
+        tester.request.setReader(new BufferedReader(new StringReader("[{\"type\": 1, \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"}]")));
 
         tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/activities");
         ActivitiesController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
-        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+        assertThat(tester.response.getContentType().contains("application/json"), is(true));
+        
+        JSONArray jsonArray = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
+        assertThat(jsonArray.length(), is(1));
+        assertThat(jsonArray.opt(0), instanceOf(Integer.class));
+        assertThat(jsonArray.optInt(0), is(-400));
     }
 
     @Test
     public void testCreateActivityMissingType() throws Exception {
         tester.request.setMethod("post");
-        tester.request.setReader(new BufferedReader(new StringReader("{\"timestamp\": " + System.currentTimeMillis() + ", \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"}")));
+        tester.request.setReader(new BufferedReader(new StringReader("[{\"timestamp\": " + System.currentTimeMillis() + ", \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"}]")));
 
         tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/activities");
         ActivitiesController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
-        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+        assertThat(tester.response.getContentType().contains("application/json"), is(true));
+        
+        JSONArray jsonArray = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
+        assertThat(jsonArray.length(), is(1));
+        assertThat(jsonArray.opt(0), instanceOf(Integer.class));
+        assertThat(jsonArray.optInt(0), is(-400));
     }
 
     @Test
     public void testCreateActivityMissingText() throws Exception {
         tester.request.setMethod("post");
-        tester.request.setReader(new BufferedReader(new StringReader("{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"user-id\": " + user.getKey().getId() + "}")));
+        tester.request.setReader(new BufferedReader(new StringReader("[{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"user-id\": " + user.getKey().getId() + "}]")));
 
         tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/activities");
         ActivitiesController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
-        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_BAD_REQUEST));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+        assertThat(tester.response.getContentType().contains("application/json"), is(true));
+        
+        JSONArray jsonArray = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
+        assertThat(jsonArray.length(), is(1));
+        assertThat(jsonArray.opt(0), instanceOf(Integer.class));
+        assertThat(jsonArray.optInt(0), is(-400));
     }
 
     @Test
     public void testCreateActivityInvalidJson() throws Exception {
         tester.request.setMethod("post");
-        tester.request.setReader(new BufferedReader(new StringReader("{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"")));
+        tester.request.setReader(new BufferedReader(new StringReader("[{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"]")));
 
         tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/activities");
         ActivitiesController controller = tester.getController();
@@ -135,12 +164,18 @@ public class ActivitiesControllerTest extends ControllerTestCase {
         Datastore.put(app);
         
         tester.request.setMethod("post");
-        tester.request.setReader(new BufferedReader(new StringReader("{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"}")));
+        tester.request.setReader(new BufferedReader(new StringReader("[{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"}]")));
 
         tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/activities");
         ActivitiesController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
-        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_ACCEPTABLE));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+        assertThat(tester.response.getContentType().contains("application/json"), is(true));
+        
+        JSONArray jsonArray = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
+        assertThat(jsonArray.length(), is(1));
+        assertThat(jsonArray.opt(0), instanceOf(Integer.class));
+        assertThat(jsonArray.optInt(0), is(-406));
     }
 
     @Test
@@ -150,12 +185,18 @@ public class ActivitiesControllerTest extends ControllerTestCase {
         Datastore.put(app);
 
         tester.request.setMethod("post");
-        tester.request.setReader(new BufferedReader(new StringReader("{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"}")));
+        tester.request.setReader(new BufferedReader(new StringReader("[{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"}]")));
 
         tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/activities");
         ActivitiesController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
-        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_ACCEPTABLE));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+        assertThat(tester.response.getContentType().contains("application/json"), is(true));
+        
+        JSONArray jsonArray = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
+        assertThat(jsonArray.length(), is(1));
+        assertThat(jsonArray.opt(0), instanceOf(Integer.class));
+        assertThat(jsonArray.optInt(0), is(-406));
     }
 
     @Test
@@ -165,12 +206,18 @@ public class ActivitiesControllerTest extends ControllerTestCase {
         Datastore.put(app);
 
         tester.request.setMethod("post");
-        tester.request.setReader(new BufferedReader(new StringReader("{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"}")));
+        tester.request.setReader(new BufferedReader(new StringReader("[{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"}]")));
 
         tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/activities");
         ActivitiesController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
-        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_ACCEPTABLE));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+        assertThat(tester.response.getContentType().contains("application/json"), is(true));
+        
+        JSONArray jsonArray = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
+        assertThat(jsonArray.length(), is(1));
+        assertThat(jsonArray.opt(0), instanceOf(Integer.class));
+        assertThat(jsonArray.optInt(0), is(-406));
     }
 
     @Test
@@ -180,12 +227,18 @@ public class ActivitiesControllerTest extends ControllerTestCase {
         Datastore.put(user);
 
         tester.request.setMethod("post");
-        tester.request.setReader(new BufferedReader(new StringReader("{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"}")));
+        tester.request.setReader(new BufferedReader(new StringReader("[{\"timestamp\": " + System.currentTimeMillis() + ", \"type\": 1, \"user-id\": " + user.getKey().getId() + ", \"text\": \"Will be late.\"}]")));
 
         tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/activities");
         ActivitiesController controller = tester.getController();
         assertThat(controller, is(notNullValue()));
-        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_NOT_FOUND));
+        assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_OK));
+        assertThat(tester.response.getContentType().contains("application/json"), is(true));
+        
+        JSONArray jsonArray = new JSONArray(new JSONTokener(tester.response.getOutputAsString()));
+        assertThat(jsonArray.length(), is(1));
+        assertThat(jsonArray.opt(0), instanceOf(Integer.class));
+        assertThat(jsonArray.optInt(0), is(-404));
     }
 
     @Test
