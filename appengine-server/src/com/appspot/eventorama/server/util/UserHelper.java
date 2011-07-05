@@ -24,6 +24,8 @@ public class UserHelper {
             values.put("lon", user.getLocation().getLongitude());
             values.put("lat", user.getLocation().getLatitude());
         }
+        if (user.getAccuracy() != null)
+            values.put("accuracy", user.getAccuracy());
         
         return new JSONObject(values);
     }

@@ -27,6 +27,7 @@ public class User implements Serializable, IsSerializable {
     private String deviceId;
     private GeoPt location;
     private Date locationUpdated;
+    private Float accuracy;
     
     
     /**
@@ -132,6 +133,20 @@ public class User implements Serializable, IsSerializable {
         this.locationUpdated = locationUpdated;
     }
 
+    /**
+     * @return the accuracy
+     */
+    public Float getAccuracy() {
+        return accuracy;
+    }
+
+    /**
+     * @param accuracy the accuracy to set
+     */
+    public void setAccuracy(Float accuracy) {
+        this.accuracy = accuracy;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -182,6 +197,8 @@ public class User implements Serializable, IsSerializable {
         builder.append(location);
         builder.append(", locationUpdated=");
         builder.append(locationUpdated);
+        builder.append(", accuracy=");
+        builder.append(accuracy);
         builder.append("]");
         return builder.toString();
     }

@@ -203,7 +203,7 @@ public class EventList extends Composite {
 
         final String title = eventNameTextBox.getText().trim();
         if (!title.matches("^[0-9a-zA-Z\\.\\-\\s]{3,20}$")) {
-            showError("'" + title + "' is not a valid event title, allowed characters are 0-9, a-z, space, dot and dash (3 up to 20 characters).");
+            showError("\"" + title + "\" is not a valid event title, allowed characters are 0-9, a-z, space, dot and dash (3 up to 20 characters).");
             eventNameTextBox.selectAll();
             return;
         }
@@ -219,7 +219,7 @@ public class EventList extends Composite {
             showError("Please select a valid event end date.");
             return;
         } else if (expirationDate.before(new Date(System.currentTimeMillis()))) {
-            showError("'" + expirationDate + "' is not a valid event end date.");
+            showError("\"" + DateTimeFormat.getFormat("dd.MM.yyyy").format(expirationDate) + "\" is not a valid event end date.");
             return;
         } else if (expirationDate.before(startDate)) {
             showError("End date cannot be before the event start date.");

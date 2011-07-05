@@ -1,6 +1,6 @@
 package com.appspot.eventorama.server.meta;
 
-//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-07-01 15:27:50")
+//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-07-05 13:24:25")
 /** */
 public final class ActivityMeta extends org.slim3.datastore.ModelMeta<com.appspot.eventorama.shared.model.Activity> {
 

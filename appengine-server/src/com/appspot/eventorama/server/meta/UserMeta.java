@@ -1,8 +1,11 @@
 package com.appspot.eventorama.server.meta;
 
-//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-07-01 15:27:50")
+//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-07-05 13:24:25")
 /** */
 public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.eventorama.shared.model.User> {
+
+    /** */
+    public final org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.User, java.lang.Float> accuracy = new org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.User, java.lang.Float>(this, "accuracy", "accuracy", java.lang.Float.class);
 
     /** */
     public final org.slim3.datastore.ModelRefAttributeMeta<com.appspot.eventorama.shared.model.User, org.slim3.datastore.ModelRef<com.appspot.eventorama.shared.model.Application>, com.appspot.eventorama.shared.model.Application> applicationRef = new org.slim3.datastore.ModelRefAttributeMeta<com.appspot.eventorama.shared.model.User, org.slim3.datastore.ModelRef<com.appspot.eventorama.shared.model.Application>, com.appspot.eventorama.shared.model.Application>(this, "applicationRef", "applicationRef", org.slim3.datastore.ModelRef.class, com.appspot.eventorama.shared.model.Application.class);
@@ -42,6 +45,7 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
     @Override
     public com.appspot.eventorama.shared.model.User entityToModel(com.google.appengine.api.datastore.Entity entity) {
         com.appspot.eventorama.shared.model.User model = new com.appspot.eventorama.shared.model.User();
+        model.setAccuracy(doubleToFloat((java.lang.Double) entity.getProperty("accuracy")));
         if (model.getApplicationRef() == null) {
             throw new NullPointerException("The property(applicationRef) is null.");
         }
@@ -64,6 +68,7 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
         } else {
             entity = new com.google.appengine.api.datastore.Entity(kind);
         }
+        entity.setProperty("accuracy", m.getAccuracy());
         if (m.getApplicationRef() == null) {
             throw new NullPointerException("The property(applicationRef) must not be null.");
         }
@@ -136,6 +141,10 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
         com.appspot.eventorama.shared.model.User m = (com.appspot.eventorama.shared.model.User) model;
         writer.beginObject();
         org.slim3.datastore.json.Default encoder0 = new org.slim3.datastore.json.Default();
+        if(m.getAccuracy() != null){
+            writer.setNextPropertyName("accuracy");
+            encoder0.encode(writer, m.getAccuracy());
+        }
         if(m.getApplicationRef() != null && m.getApplicationRef().getKey() != null){
             writer.setNextPropertyName("applicationRef");
             encoder0.encode(writer, m.getApplicationRef(), maxDepth, currentDepth);
@@ -172,6 +181,8 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
         com.appspot.eventorama.shared.model.User m = new com.appspot.eventorama.shared.model.User();
         org.slim3.datastore.json.JsonReader reader = null;
         org.slim3.datastore.json.Default decoder0 = new org.slim3.datastore.json.Default();
+        reader = rootReader.newObjectReader("accuracy");
+        m.setAccuracy(decoder0.decode(reader, m.getAccuracy()));
         reader = rootReader.newObjectReader("applicationRef");
         decoder0.decode(reader, m.getApplicationRef(), maxDepth, currentDepth);
         reader = rootReader.newObjectReader("deviceId");
