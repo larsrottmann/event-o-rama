@@ -284,9 +284,6 @@ public class SignUpActivity extends Activity{
 			return RESULT_ERROR;
 		}
 		
-		private int extractUserId(String value) {			
-			return Integer.parseInt(value.substring(value.lastIndexOf("/")+1));
-		}
 
 		@Override
 		protected void onPostExecute(Integer result) {
@@ -320,4 +317,9 @@ public class SignUpActivity extends Activity{
 		}
 		
 	}
+
+	private int extractUserId(String value) {			
+		return Integer.parseInt(value.substring(value.lastIndexOf("/")+1));
+	}
+
 }
