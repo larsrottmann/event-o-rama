@@ -65,6 +65,7 @@ public class PeopleSyncService extends IntentService {
 						cv.put(PeopleContentProvider.Columns.ACCURACY, peoples[i].getAccuracy());
 						mContentResolver.update(uri, cv, query,  new String[]{Integer.toString(peoples[i].getServerId())});						
 					}
+					c.close();
 				}
 				else
 				{

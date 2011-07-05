@@ -30,6 +30,8 @@ import android.util.Log;
 
 public class EventORamaApplication extends Application {
 
+	private static final int DEFAULT_BUFFER = 131072; //128k
+
 	private static final String TAG = EventORamaApplication.class.getName();
 
 	//	private static final String SERVER_URL = "http://10.0.2.2:8080/";
@@ -53,10 +55,6 @@ public class EventORamaApplication extends Application {
 	private static final Integer SOCKET_TIMEOUT = 10000;  // 10 sec
 
 	private static final String CHARSET = "UTF-8";
-
-	
-
-
 
 	//HttpClient for all requests
 	private HttpClient httpclient = null;
@@ -112,7 +110,7 @@ public class EventORamaApplication extends Application {
 
 			HttpEntity responseEntity = response.getEntity();
 
-			BufferedReader in = new BufferedReader(new InputStreamReader(responseEntity.getContent(), Charset.forName("UTF-8")), 131072);
+			BufferedReader in = new BufferedReader(new InputStreamReader(responseEntity.getContent(), Charset.forName("UTF-8")), DEFAULT_BUFFER);
 			String inputLine;
 			StringBuilder sb = new StringBuilder();
 			while ((inputLine = in.readLine()) != null)
