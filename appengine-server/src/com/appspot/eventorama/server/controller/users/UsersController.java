@@ -186,12 +186,14 @@ public class UsersController extends Controller {
         Validators v = new Validators(request);
         v.add("lon", v.required());
         v.add("lat", v.required());
+        v.add("accuracy", v.required());
         v.add("user_id", v.required());
 
         try {
             JSONObject json = new JSONObject(new JSONTokener(request.getReader()));
             requestScope("lon", json.getDouble("lon"));
             requestScope("lat", json.getDouble("lat"));
+            requestScope("accuracy", json.getDouble("accuracy"));
             requestScope("location_update", json.optString("location-update"));
         }
         catch (Exception e)
@@ -203,8 +205,8 @@ public class UsersController extends Controller {
         
         if (! v.validate()) {
             Errors errors = v.getErrors();
-            log.warning(String.format("Got an invalid set of input parameters for PUT call: app_id=%s, user_id=%s (%s), lon=%s, lat=%s, location_updated=%s", 
-                asString("app_id"), asString("user_id"), errors.get("user_id"), asString("lon"), asString("lat"), asString("location_update")));
+            log.warning(String.format("Got an invalid set of input parameters for PUT call: app_id=%s, user_id=%s (%s), lon=%s, lat=%s, location_updated=%s, accuracy=%s", 
+                asString("app_id"), asString("user_id"), errors.get("user_id"), asString("lon"), asString("lat"), asString("location_update"), asString("accuracy")));
             response.setStatus(HttpURLConnection.HTTP_BAD_REQUEST);
             return null;
         }
@@ -226,6 +228,7 @@ public class UsersController extends Controller {
         else
             user.setLocationUpdated(new Date(asLong("location_update")));
         user.setLocation(new GeoPt(asFloat("lat"), asFloat("lon")));
+        user.setAccuracy(asFloat("accuracy"));
         
         Datastore.put(user);
 
