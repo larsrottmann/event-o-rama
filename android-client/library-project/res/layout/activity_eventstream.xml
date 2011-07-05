@@ -2,18 +2,69 @@
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent" android:orientation="vertical">
-    <RelativeLayout android:id="@+id/RelativeLayout1" android:baselineAligned="false" android:layout_width="match_parent" android:layout_height="wrap_content">
-        <TextView android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:textAppearance="?android:attr/textAppearanceMedium" android:id="@+id/textView1" android:text="TextView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="right"></TextView>
-        <Button android:text="What's app?" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/button1" android:layout_alignParentRight="true"></Button>
-        <Button android:text="People View" android:layout_toLeftOf="@+id/button1" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/button2" android:layout_alignTop="@+id/button1" android:layout_alignBottom="@+id/button1"></Button>
-    </RelativeLayout>
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+	<RelativeLayout
+		android:id="@+id/RelativeLayout1"
+		android:baselineAligned="false"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="0">
+		<TextView
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentTop="true"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:id="@+id/textView1"
+			android:text="TextView"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="right"></TextView>
+
+		<Button
+			android:text="People View"
+			android:layout_toLeftOf="@+id/button1"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:id="@+id/button2"
+			android:layout_alignParentRight="true"></Button>
+
+	</RelativeLayout>
 
 
 	<ListView
 		android:id="@android:id/list"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content" />
+		android:layout_height="wrap_content"
+		android:layout_weight="1" />
+
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:id="@+id/relativeLayout2"
+		android:layout_gravity="bottom"
+		android:layout_alignParentBottom="true"
+		android:layout_weight="0">
+		<Button
+			android:layout_weight="1"
+			android:layout_height="wrap_content"
+			android:text="Refresh People"
+			android:layout_width="wrap_content"
+			android:id="@+id/button4"></Button>
+		<Button
+			android:layout_weight="1"
+			android:layout_height="wrap_content"
+			android:text="Refresh Activities"
+			android:layout_width="wrap_content"
+			android:id="@+id/button3"></Button>
+		<Button
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text="What's app?"
+			android:id="@+id/button1"
+			android:layout_alignParentRight="true"
+			android:layout_weight="1"></Button>
+
+	</LinearLayout>
 
 
 </LinearLayout>

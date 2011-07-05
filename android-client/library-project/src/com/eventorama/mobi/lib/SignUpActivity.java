@@ -38,6 +38,7 @@ import com.eventorama.mobi.lib.content.EventStreamContentProvider;
 import com.eventorama.mobi.lib.content.PeopleContentProvider;
 import com.eventorama.mobi.lib.data.HTTPResponse;
 import com.eventorama.mobi.lib.service.ActivityCreatorService;
+import com.eventorama.mobi.lib.service.PeopleSyncService;
 import com.google.gson.Gson;
 
 public class SignUpActivity extends Activity{
@@ -249,8 +250,16 @@ public class SignUpActivity extends Activity{
 							editor.putString(EventORamaApplication.PREFS_USERNAME, username);
 							editor.putInt(EventORamaApplication.PREFS_USERID, userid);
 							editor.commit();
-							
-							//create activity
+
+							//insert into people content provider
+							final Uri uri = PeopleContentProvider.content_uri;
+							ContentResolver resolver = getContentResolver();
+							ContentValues cv = new ContentValues();
+							cv.put(PeopleContentProvider.Columns.NAME, username);
+							cv.put(PeopleContentProvider.Columns.SERVER_ID, userid);
+							resolver.insert(uri, cv);
+						
+							//create activity via ActivityCreatorService
 							Intent service = new Intent(mContext, ActivityCreatorService.class);
 							StringBuilder sb = new StringBuilder();
 							Formatter formatter = new Formatter(sb);
@@ -259,14 +268,10 @@ public class SignUpActivity extends Activity{
 							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_USER_ID, userid);
 							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TYPE, EventStreamContentProvider.TYPE_TEXT);
 							startService(service);
-							
-							//insert into people content provider
-							final Uri uri = PeopleContentProvider.content_uri;
-							ContentResolver resolver = getContentResolver();
-							ContentValues cv = new ContentValues();
-							cv.put(PeopleContentProvider.Columns.NAME, username);
-							cv.put(PeopleContentProvider.Columns.SERVER_ID, userid);
-							resolver.insert(uri, cv);
+														
+							//trigger people sync service
+							service = new Intent(mContext, PeopleSyncService.class);
+							startService(service);
 							
 							return RESULT_SUCCESS;
 						}

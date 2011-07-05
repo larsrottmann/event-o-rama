@@ -26,10 +26,11 @@ public class PeopleContentProvider extends ContentProvider {
 		public static final String ID = "_id";
 		public static final String CREATED = "created";// timestamp
 		public static final String UPDATED = "updated";
-		public static final String NAME = "name";
+		public static final String NAME = "name";		
 		public static final String LAST_STATUS_ID = "last_status_id";
 		public static final String LAT = "lat";
 		public static final String LONG = "long";
+		public static final String ACCURACY = "accuracy";
 		public static final String PROFILE_PIC = "profile_pic";
 		public static final String SERVER_ID = "server_id";
 
@@ -44,7 +45,7 @@ public class PeopleContentProvider extends ContentProvider {
 	private static class DBHelper extends SQLiteOpenHelper {
 
 		private static final String TABLE_NAME = "PEOPLE";
-		private static final int DATABASE_VERSION = 3;
+		private static final int DATABASE_VERSION = 5;
 
 		private static final String DATABASE_NAME = "eventorama";
 
@@ -52,11 +53,12 @@ public class PeopleContentProvider extends ContentProvider {
 			Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + 
 			Columns.CREATED  + " INTEGER, " + 
 			Columns.UPDATED + " INTEGER, " + 
-			Columns.LAT + " TEXT, " + 
-			Columns.LONG + " TEXT, " + 
+			Columns.LAT + " REAL, " + 
+			Columns.LONG + " REAL, " + 
 			Columns.PROFILE_PIC + " TEXT, " +
 			Columns.LAST_STATUS_ID + " INTEGER DEFAULT -1 NOT NULL, " + 
 			Columns.NAME + " TEXT, "+
+			Columns.ACCURACY + " REAL, "+
 			Columns.SERVER_ID + " INTEGER NOT NULL );";
 
 		DBHelper(Context context) {

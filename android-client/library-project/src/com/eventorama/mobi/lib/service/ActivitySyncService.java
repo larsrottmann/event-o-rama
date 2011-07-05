@@ -80,11 +80,11 @@ public class ActivitySyncService extends IntentService {
        		{
        			int counter = 0;
        			
-       			int idCol  = c.getColumnIndex(EventStreamContentProvider.Columns.ID);
-       			int textCol  = c.getColumnIndex(EventStreamContentProvider.Columns.TEXT);
-       			int useridCol = c.getColumnIndex(EventStreamContentProvider.Columns.PEOPLE_ID);
-       			int timestampCol  = c.getColumnIndex(EventStreamContentProvider.Columns.CREATED);
-       			int typeCol = c.getColumnIndex(EventStreamContentProvider.Columns.TYPE);
+       			final int idCol  = c.getColumnIndex(EventStreamContentProvider.Columns.ID);
+       			final int textCol  = c.getColumnIndex(EventStreamContentProvider.Columns.TEXT);
+       			final int useridCol = c.getColumnIndex(EventStreamContentProvider.Columns.PEOPLE_ID);
+       			final int timestampCol  = c.getColumnIndex(EventStreamContentProvider.Columns.CREATED);
+       			final int typeCol = c.getColumnIndex(EventStreamContentProvider.Columns.TYPE);
        			
        			do	{
        				activities[counter] = new ActivityElement(c.getInt(idCol),
@@ -125,7 +125,7 @@ public class ActivitySyncService extends IntentService {
 					cv.put(EventStreamContentProvider.Columns.SAVE_STATE, EventStreamContentProvider.SAVE_STATE_SERVER);					
 					
 					int updates = mContentResolver.update(uri, cv, sb.toString(), null);
-					Log.v(TAG, "updated "+updates+" entries");
+					Log.v(TAG, "updated "+updates+" entries as synced");
 					break;
 
 //				default:

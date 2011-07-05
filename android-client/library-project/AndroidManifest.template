@@ -39,6 +39,9 @@
 		<!-- Service for syncing the activities with the server -->	
 		<service android:name="com.eventorama.mobi.lib.service.ActivitySyncService" />
 
+		<!-- Service for syncing the users with the server -->	
+		<service android:name="com.eventorama.mobi.lib.service.PeopleSyncService" />
+
 
 		<!-- Only C2DM servers can send messages for the app. If permission is 
 			not set - any other app can generate it -->

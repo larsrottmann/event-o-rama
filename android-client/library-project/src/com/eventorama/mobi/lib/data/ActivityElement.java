@@ -4,13 +4,21 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class ActivityElement {
-
 	
 	private final int internal_id;
-	@Expose	private final long timestamp;
-	@Expose	private final String text;
-	@Expose	private final int type;
-	@Expose @SerializedName("user-id") private final int user_id;
+	
+	@Expose	
+	private final long timestamp;
+	
+	@Expose	
+	private final String text;
+	
+	@Expose	
+	private final int type;
+	
+	@Expose 
+	@SerializedName("user-id") 
+	private final int user_id;
 
 	
 	public ActivityElement(int internal_id, long timestamp, String text,

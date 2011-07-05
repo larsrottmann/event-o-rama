@@ -3,6 +3,7 @@ package com.eventorama.mobi.lib;
 
 import com.eventorama.mobi.lib.content.EventStreamContentProvider;
 import com.eventorama.mobi.lib.service.ActivitySyncService;
+import com.eventorama.mobi.lib.service.PeopleSyncService;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -39,14 +40,40 @@ public class EventStreamActivity extends ListActivity {
 		}
 		
 		Button peopleButton = (Button) findViewById(R.id.button2);
-		peopleButton.setOnClickListener(new OnClickListener() {
-			
+		peopleButton.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(mContext, PeopleActivity.class);
 				startActivity(intent);
 			}
 		});
+		
+		Button refreshpeopleButton = (Button) findViewById(R.id.button4);
+		refreshpeopleButton.setOnClickListener(new OnClickListener() {			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(mContext, PeopleSyncService.class);
+				startService(intent);
+			}
+		});
+		
+		Button refreshActivityButton = (Button) findViewById(R.id.button3);
+		refreshActivityButton.setOnClickListener(new OnClickListener() {			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(mContext, ActivitySyncService.class);
+				startService(intent);
+			}
+		});
+
+		Button whatsapp = (Button) findViewById(R.id.button1);
+		whatsapp.setOnClickListener(new OnClickListener() {			
+			@Override
+			public void onClick(View v) {
+
+			}
+		});
+
 
 	}
 
