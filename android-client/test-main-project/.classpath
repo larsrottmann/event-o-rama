@@ -5,5 +5,6 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="src" path="eventOrama-lib_src"/>
 	<classpathentry kind="lib" path="/eventOrama-lib/libs/gson-1.7.1.jar"/>
+	<classpathentry kind="lib" path="/eventOrama-lib/libs/acra-4.2.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

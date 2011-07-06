@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
-import org.apache.http.Header;
+import org.acra.ACRA;
+import org.acra.annotation.ReportsCrashes;
+import org.acra.ReportingInteractionMode;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -28,9 +30,12 @@ import com.eventorama.mobi.lib.data.HTTPResponse;
 import android.app.Application;
 import android.util.Log;
 
+@ReportsCrashes(formKey = "dEZSMmVOTHR6dEcwbWlsWjR3SWZDOEE6MQ",
+				mode = ReportingInteractionMode.TOAST,
+				resToastText=R.string.application_crash_toast)
 public class EventORamaApplication extends Application {
 
-	private static final int DEFAULT_BUFFER = 131072; //128k
+	private static final int DEFAULT_BUFFER = 30720; //30k
 
 	private static final String TAG = EventORamaApplication.class.getName();
 
@@ -58,6 +63,13 @@ public class EventORamaApplication extends Application {
 
 	//HttpClient for all requests
 	private HttpClient httpclient = null;
+
+	@Override
+	public void onCreate() {
+		// The following line triggers the initialization of ACRA
+		ACRA.init(this);
+		super.onCreate();
+	}
 
 	private String getServerUrl(String method)
 	{
@@ -103,7 +115,7 @@ public class EventORamaApplication extends Application {
 			}
 
 			Log.v(TAG, "Executing http request to: "+httpMessage.getURI());			
-			
+
 			long now = System.currentTimeMillis();
 			HttpResponse response = this.httpclient.execute(httpMessage);
 			Log.v(TAG, "HTTP request finished in: "+(System.currentTimeMillis()-now)+" ms");
@@ -120,7 +132,7 @@ public class EventORamaApplication extends Application {
 			int respCode = response.getStatusLine().getStatusCode();			
 
 			Log.v(TAG, "response body: "+sb.toString()+" code: "+respCode);
-			
+
 			return  new HTTPResponse(respCode, sb.toString(), response.getAllHeaders());
 		}
 		catch(Exception e)

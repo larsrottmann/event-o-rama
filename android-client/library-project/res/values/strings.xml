@@ -12,4 +12,5 @@
     <string name="generic_connection_error">Connection Error! Autsch...</string>
     <string name="activity_text_joindedparty">%s joined the party!</string>
     <string name="activity_text_shout">%1$s: %2$s</string>
+    <string name="application_crash_toast">CRASH! We send a crash report in order to fix this... stay tuned!</string>
 </resources>
