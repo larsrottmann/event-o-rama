@@ -70,6 +70,8 @@ public class EventStreamActivity extends ListActivity {
 		whatsapp.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View v) {
+				Intent intent = new  Intent(mContext, EventCreationActivity.class);
+				startActivity(intent);
 
 			}
 		});
