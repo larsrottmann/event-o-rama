@@ -150,6 +150,15 @@ public class ActivitiesController extends Controller {
             return null;
         }
 
+        
+        UserMeta userMeta = UserMeta.get();
+        User user = Datastore.query(userMeta)
+            .filter(userMeta.key.equal(Datastore.createKey(userMeta, asLong("userId"))),
+                    userMeta.applicationRef.equal(app.getKey()))
+            .asSingle();
+
+        
+        boolean newActivityCreated = false;
         JSONArray jsonResponse = new JSONArray();
         for (int i = 0; i < jsonArray.length(); i++)
         {
@@ -179,12 +188,6 @@ public class ActivitiesController extends Controller {
                 continue;
             }
             
-            UserMeta userMeta = UserMeta.get();
-            User user = Datastore.query(userMeta)
-                .filter(userMeta.key.equal(Datastore.createKey(userMeta, asLong("userId"))),
-                        userMeta.applicationRef.equal(app.getKey()))
-                .asSingle();
-
             if (user == null) {
                 log.warning(String.format("User with id '%s' for app '%s' not found.", asString("userId"), KeyFactory.keyToString(app.getKey())));
                 jsonResponse.put(-1 * HttpURLConnection.HTTP_NOT_FOUND);
@@ -202,6 +205,8 @@ public class ActivitiesController extends Controller {
 
             Datastore.put(activity);
             jsonResponse.put(activity.getKey().getId());
+            
+            newActivityCreated = true;
         }
 
         
@@ -212,6 +217,9 @@ public class ActivitiesController extends Controller {
         OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream());
         writer.write(jsonResponse.toString());
         writer.flush();
+        
+        if (newActivityCreated)
+            ActivityHelper.enqueueDeviceMessage(servletContext, app, user);
 
         return null;
     }

@@ -14,6 +14,7 @@
         <param-value>UTF-8</param-value>
     </context-param>
 
+
     <filter>
         <filter-name>HotReloadingFilter</filter-name>
         <filter-class>org.slim3.controller.HotReloadingFilter</filter-class>
@@ -38,6 +39,7 @@
             <param-value>Appstats available: /appstats/details?time={ID}</param-value>
         </init-param>
     </filter>
+
 
     <filter-mapping>
         <filter-name>AppstatsFilter</filter-name>
@@ -78,9 +80,11 @@
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
     
+    
     <listener>
         <listener-class>com.appspot.eventorama.server.ServerConfigListener</listener-class>
     </listener>
+
 
     <servlet>
         <servlet-name>GlobalTransactionServlet</servlet-name>
@@ -100,6 +104,11 @@
         <servlet-name>AppstatsServlet</servlet-name>
         <servlet-class>com.google.appengine.tools.appstats.AppstatsServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>c2dmRetryServlet</servlet-name>
+        <servlet-class>com.google.android.c2dm.server.C2DMRetryServlet</servlet-class>
+    </servlet>
+
 
     <servlet-mapping>
         <servlet-name>GlobalTransactionServlet</servlet-name>
@@ -117,6 +126,11 @@
         <servlet-name>AppstatsServlet</servlet-name>
         <url-pattern>/appstats/*</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>c2dmRetryServlet</servlet-name>
+        <url-pattern>/tasks/c2dm</url-pattern>
+    </servlet-mapping>
+
     
     <security-constraint>
         <web-resource-collection>
@@ -149,4 +163,15 @@
             <role-name>admin</role-name>
         </auth-constraint>
     </security-constraint>
+    <!-- Only allow admins (and the task queue itself) to run tasks. -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>tasks</web-resource-name>
+            <url-pattern>/tasks/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+    
 </web-app>
