@@ -3,3 +3,18 @@ Server part of event-o-rama application, to be deployed to Google AppEngine.
 Consists of:
 - GWT web interface to collect essential app data
 - Amazon EC2 interface to trigger app creation and receive finish notification
+
+
+Getting Started:
+----------------
+1.) Create a file war/service.properties with the following content
+
+    auth.user = appmaker
+    auth.password = xxxxx
+    
+    These attributes are the Basic Auth credentials for the App-Maker notification call.
+    
+2.) Run the shell script 'scripts/get_c2dm_token.sh' to retrieve initial Google Auth Token
+    for sending C2DM messages. You will be asked for the 3v3nt0rama user password
+    The script stores the token in the file 'war/dataMessagingToken.txt'.
+    
