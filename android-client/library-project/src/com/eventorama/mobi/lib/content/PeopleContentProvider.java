@@ -45,9 +45,9 @@ public class PeopleContentProvider extends ContentProvider {
 	private static class DBHelper extends SQLiteOpenHelper {
 
 		private static final String TABLE_NAME = "PEOPLE";
-		private static final int DATABASE_VERSION = 5;
+		private static final int DATABASE_VERSION = 6;
 
-		private static final String DATABASE_NAME = "eventorama";
+		private static final String DATABASE_NAME = "eventorama-people";
 
 		private static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME + " (" + 
 			Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + 

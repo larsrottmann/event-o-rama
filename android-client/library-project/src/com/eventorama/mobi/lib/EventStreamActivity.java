@@ -15,10 +15,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-public class EventStreamActivity extends ListActivity {
-	
+
+public class EventStreamActivity extends ListActivity  {
 	
 	private Context mContext = this;
+	
+	private Cursor mCursor = null;
+
+	private EventStreamAdapter mAdapter;
 
 	protected static final String EVENTSTREAM_NOSYNC = "EVENTSTREAM_NOSYNC";
 
@@ -26,9 +30,12 @@ public class EventStreamActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Cursor c = managedQuery(EventStreamContentProvider.content_uri, null, null, null, null);		 
-		setListAdapter(new EventStreamAdapter(this,c));
-		startManagingCursor(c);
+		mCursor = managedQuery(EventStreamContentProvider.content_uri, null, null, null, null);
+		
+		this.mAdapter = new EventStreamAdapter(this,mCursor);
+		
+		startManagingCursor(mCursor);
+		setListAdapter(mAdapter);
 
 		setContentView(R.layout.activity_eventstream);
 		

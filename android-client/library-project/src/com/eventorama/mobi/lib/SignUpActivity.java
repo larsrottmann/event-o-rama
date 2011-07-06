@@ -225,7 +225,7 @@ public class SignUpActivity extends Activity{
 				Gson gson = new Gson();
 				Map<String, String> data = new HashMap<String, String>();
 				data.put("name", username);
-				data.put("device-id", "798983987298347");			//TODO: get real device-id
+				data.put("registration-id", "798983987298347");			//TODO: get real device-id
 				EventORamaApplication eora = (EventORamaApplication) getApplication();
 				HTTPResponse resp = eora.doHttpRequest("/users", gson.toJson(data), EventORamaApplication.HTTP_METHOD_POST);
 				if(resp == null)

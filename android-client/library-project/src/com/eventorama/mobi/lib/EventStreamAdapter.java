@@ -13,7 +13,7 @@ import android.widget.TextView;
 public class EventStreamAdapter extends CursorAdapter {
 
 	private LayoutInflater mInflater;
-
+	
 	public EventStreamAdapter(Context context, Cursor c) {
 		super(context, c);
 		this.mInflater = LayoutInflater.from(context);
@@ -25,15 +25,6 @@ public class EventStreamAdapter extends CursorAdapter {
 		holder.fillView(cursor, context);
 	};
 
-
-	@Override
-	public long getItemId(int position) {
-		if (getCursor().moveToPosition(position)) {
-			int index = getCursor().getColumnIndex(EventStreamContentProvider.Columns.ID);
-			return getCursor().getLong(index);
-		}
-		return -1;
-	}
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {

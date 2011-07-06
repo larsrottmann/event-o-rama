@@ -45,7 +45,7 @@ public class EventStreamContentProvider extends ContentProvider {
         private static final String TABLE_NAME = "eventstream";
         private static final int DATABASE_VERSION = 6;
         
-        private static final String DATABASE_NAME = "eventorama";
+        private static final String DATABASE_NAME = "eventorama-eventstream";
         
         private static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME + " (" +
         Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
