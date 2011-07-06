@@ -47,7 +47,7 @@ public class UsersControllerTest extends ControllerTestCase {
         user2 = new User();
         user2.setName("Arwen");
         user2.getApplicationRef().setModel(app);
-        user2.setDeviceId("iw9eijd2rolrjo3jr0ufbbk888");
+        user2.setRegistrationId("iw9eijd2rolrjo3jr0ufbbk888");
         user2.setLocation(new GeoPt(6.213211f, 51.4344453f));
         user2.setLocationUpdated(new Date(1309350829));
         user2.setAccuracy(4.3f);
@@ -58,7 +58,7 @@ public class UsersControllerTest extends ControllerTestCase {
     @Test
     public void testCreateUser() throws Exception {
         tester.request.setMethod("post");
-        tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Legolas\", \"device-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
+        tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Legolas\", \"registration-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
 
         tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
         UsersController controller = tester.getController();
@@ -70,7 +70,7 @@ public class UsersControllerTest extends ControllerTestCase {
     @Test
     public void testCreateUserMissingUserName() throws Exception {
         tester.request.setMethod("post");
-        tester.request.setReader(new BufferedReader(new StringReader("{\"device-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
+        tester.request.setReader(new BufferedReader(new StringReader("{\"registration-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
 
         tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
         UsersController controller = tester.getController();
@@ -79,7 +79,7 @@ public class UsersControllerTest extends ControllerTestCase {
     }
 
     @Test
-    public void testCreateUserMissingDeviceId() throws Exception {
+    public void testCreateUserMissingRegistrationId() throws Exception {
         tester.request.setMethod("post");
         tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Boromir\"}")));
 
@@ -92,7 +92,7 @@ public class UsersControllerTest extends ControllerTestCase {
     @Test
     public void testCreateUserInvalidJson() throws Exception {
         tester.request.setMethod("post");
-        tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Legolas\", \"device-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"")));
+        tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Legolas\", \"registration-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"")));
         
         tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
         UsersController controller = tester.getController();
@@ -103,7 +103,7 @@ public class UsersControllerTest extends ControllerTestCase {
     @Test
     public void testCreateUserNameAlreadyTaken() throws Exception {
         tester.request.setMethod("post");
-        tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Boromir\", \"device-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
+        tester.request.setReader(new BufferedReader(new StringReader("{\"name\": \"Boromir\", \"registration-id\": \"iw9eijd2rolrjo3jr0ufbbk888\"}")));
 
         tester.start("/app/" + KeyFactory.keyToString(app.getKey()) + "/users");
         UsersController controller = tester.getController();
@@ -135,7 +135,7 @@ public class UsersControllerTest extends ControllerTestCase {
         assertThat(tester.response.getContentType().contains("application/json"), is(true));
         
         JSONObject json = new JSONObject(new JSONTokener(tester.response.getOutputAsString()));
-        assertThat(Arrays.asList(JSONObject.getNames(json)), hasItems("id", "name", "device-id"));
+        assertThat(Arrays.asList(JSONObject.getNames(json)), hasItems("id", "name", "registration-id"));
         assertThat(json.getString("name"), is(user1.getName()));
     }
 
@@ -149,9 +149,9 @@ public class UsersControllerTest extends ControllerTestCase {
         assertThat(tester.response.getContentType().contains("application/json"), is(true));
         
         JSONObject json = new JSONObject(new JSONTokener(tester.response.getOutputAsString()));
-        assertThat(Arrays.asList(JSONObject.getNames(json)), hasItems("id", "name", "device-id", "lon", "lat", "location-update", "accuracy"));
+        assertThat(Arrays.asList(JSONObject.getNames(json)), hasItems("id", "name", "registration-id", "lon", "lat", "location-update", "accuracy"));
         assertThat(json.getString("name"), is(user2.getName()));
-        assertThat(json.getString("device-id"), is(user2.getDeviceId()));
+        assertThat(json.getString("registration-id"), is(user2.getRegistrationId()));
         assertThat(json.getLong("location-update"), is(user2.getLocationUpdated().getTime()));
         assertThat(json.getDouble("lon"), is(notNullValue()));
         assertThat(json.getDouble("lat"), is(notNullValue()));

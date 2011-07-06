@@ -24,7 +24,7 @@ public class User implements Serializable, IsSerializable {
 
     private ModelRef<Application> applicationRef = new ModelRef<Application>(Application.class);
     private String name;
-    private String deviceId;
+    private String registrationId;
     private GeoPt location;
     private Date locationUpdated;
     private Float accuracy;
@@ -84,18 +84,12 @@ public class User implements Serializable, IsSerializable {
         this.name = name;
     }
 
-    /**
-     * @return the deviceId
-     */
-    public String getDeviceId() {
-        return deviceId;
+    public void setRegistrationId(String registrationId) {
+        this.registrationId = registrationId;
     }
 
-    /**
-     * @param deviceId the deviceId to set
-     */
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
+    public String getRegistrationId() {
+        return registrationId;
     }
 
     /**
@@ -191,8 +185,8 @@ public class User implements Serializable, IsSerializable {
         builder.append(applicationRef);
         builder.append(", name=");
         builder.append(name);
-        builder.append(", deviceId=");
-        builder.append(deviceId);
+        builder.append(", registrationId=");
+        builder.append(getRegistrationId());
         builder.append(", location=");
         builder.append(location);
         builder.append(", locationUpdated=");
