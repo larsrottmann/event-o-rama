@@ -1,6 +1,6 @@
 package com.appspot.eventorama.server.meta;
 
-//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-07-05 13:24:25")
+//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2011-07-06 12:23:58")
 /** */
 public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.eventorama.shared.model.User> {
 
@@ -9,9 +9,6 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
 
     /** */
     public final org.slim3.datastore.ModelRefAttributeMeta<com.appspot.eventorama.shared.model.User, org.slim3.datastore.ModelRef<com.appspot.eventorama.shared.model.Application>, com.appspot.eventorama.shared.model.Application> applicationRef = new org.slim3.datastore.ModelRefAttributeMeta<com.appspot.eventorama.shared.model.User, org.slim3.datastore.ModelRef<com.appspot.eventorama.shared.model.Application>, com.appspot.eventorama.shared.model.Application>(this, "applicationRef", "applicationRef", org.slim3.datastore.ModelRef.class, com.appspot.eventorama.shared.model.Application.class);
-
-    /** */
-    public final org.slim3.datastore.StringAttributeMeta<com.appspot.eventorama.shared.model.User> deviceId = new org.slim3.datastore.StringAttributeMeta<com.appspot.eventorama.shared.model.User>(this, "deviceId", "deviceId");
 
     /** */
     public final org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.User, com.google.appengine.api.datastore.Key> key = new org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.User, com.google.appengine.api.datastore.Key>(this, "__key__", "key", com.google.appengine.api.datastore.Key.class);
@@ -24,6 +21,9 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
 
     /** */
     public final org.slim3.datastore.StringAttributeMeta<com.appspot.eventorama.shared.model.User> name = new org.slim3.datastore.StringAttributeMeta<com.appspot.eventorama.shared.model.User>(this, "name", "name");
+
+    /** */
+    public final org.slim3.datastore.StringAttributeMeta<com.appspot.eventorama.shared.model.User> registrationId = new org.slim3.datastore.StringAttributeMeta<com.appspot.eventorama.shared.model.User>(this, "registrationId", "registrationId");
 
     /** */
     public final org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.User, java.lang.Long> version = new org.slim3.datastore.CoreAttributeMeta<com.appspot.eventorama.shared.model.User, java.lang.Long>(this, "version", "version", java.lang.Long.class);
@@ -50,11 +50,11 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
             throw new NullPointerException("The property(applicationRef) is null.");
         }
         model.getApplicationRef().setKey((com.google.appengine.api.datastore.Key) entity.getProperty("applicationRef"));
-        model.setDeviceId((java.lang.String) entity.getProperty("deviceId"));
         model.setKey(entity.getKey());
         model.setLocation((com.google.appengine.api.datastore.GeoPt) entity.getProperty("location"));
         model.setLocationUpdated((java.util.Date) entity.getProperty("locationUpdated"));
         model.setName((java.lang.String) entity.getProperty("name"));
+        model.setRegistrationId((java.lang.String) entity.getProperty("registrationId"));
         model.setVersion((java.lang.Long) entity.getProperty("version"));
         return model;
     }
@@ -73,10 +73,10 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
             throw new NullPointerException("The property(applicationRef) must not be null.");
         }
         entity.setProperty("applicationRef", m.getApplicationRef().getKey());
-        entity.setProperty("deviceId", m.getDeviceId());
         entity.setProperty("location", m.getLocation());
         entity.setProperty("locationUpdated", m.getLocationUpdated());
         entity.setProperty("name", m.getName());
+        entity.setProperty("registrationId", m.getRegistrationId());
         entity.setProperty("version", m.getVersion());
         entity.setProperty("slim3.schemaVersion", 1);
         return entity;
@@ -149,10 +149,6 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
             writer.setNextPropertyName("applicationRef");
             encoder0.encode(writer, m.getApplicationRef(), maxDepth, currentDepth);
         }
-        if(m.getDeviceId() != null){
-            writer.setNextPropertyName("deviceId");
-            encoder0.encode(writer, m.getDeviceId());
-        }
         if(m.getKey() != null){
             writer.setNextPropertyName("key");
             encoder0.encode(writer, m.getKey());
@@ -168,6 +164,10 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
         if(m.getName() != null){
             writer.setNextPropertyName("name");
             encoder0.encode(writer, m.getName());
+        }
+        if(m.getRegistrationId() != null){
+            writer.setNextPropertyName("registrationId");
+            encoder0.encode(writer, m.getRegistrationId());
         }
         if(m.getVersion() != null){
             writer.setNextPropertyName("version");
@@ -185,8 +185,6 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
         m.setAccuracy(decoder0.decode(reader, m.getAccuracy()));
         reader = rootReader.newObjectReader("applicationRef");
         decoder0.decode(reader, m.getApplicationRef(), maxDepth, currentDepth);
-        reader = rootReader.newObjectReader("deviceId");
-        m.setDeviceId(decoder0.decode(reader, m.getDeviceId()));
         reader = rootReader.newObjectReader("key");
         m.setKey(decoder0.decode(reader, m.getKey()));
         reader = rootReader.newObjectReader("location");
@@ -195,6 +193,8 @@ public final class UserMeta extends org.slim3.datastore.ModelMeta<com.appspot.ev
         m.setLocationUpdated(decoder0.decode(reader, m.getLocationUpdated()));
         reader = rootReader.newObjectReader("name");
         m.setName(decoder0.decode(reader, m.getName()));
+        reader = rootReader.newObjectReader("registrationId");
+        m.setRegistrationId(decoder0.decode(reader, m.getRegistrationId()));
         reader = rootReader.newObjectReader("version");
         m.setVersion(decoder0.decode(reader, m.getVersion()));
         return m;

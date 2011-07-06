@@ -2,7 +2,6 @@ package com.appspot.eventorama.shared.model;
 
 import java.util.Date;
 
-import org.slim3.datastore.Datastore;
 import org.slim3.tester.AppEngineTestCase;
 import org.junit.Test;
 import static org.junit.Assert.*;

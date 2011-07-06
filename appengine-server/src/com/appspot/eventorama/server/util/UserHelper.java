@@ -17,7 +17,7 @@ public class UserHelper {
         Map<String, Object> values = new HashMap<String, Object>();
         values.put("id", user.getKey().getId());
         values.put("name", user.getName());
-        values.put("device-id", user.getDeviceId());
+        values.put("registration-id", user.getRegistrationId());
         if (user.getLocationUpdated() != null)
             values.put("location-update", user.getLocationUpdated().getTime());
         if (user.getLocation() != null) {
