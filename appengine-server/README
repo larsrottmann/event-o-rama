@@ -17,4 +17,20 @@ Getting Started:
 2.) Run the shell script 'scripts/get_c2dm_token.sh' to retrieve initial Google Auth Token
     for sending C2DM messages. You will be asked for the 3v3nt0rama user password
     The script stores the token in the file 'war/dataMessagingToken.txt'.
+
+
+Tests:
+------
+
+In order to run the command-line JUnit tests or to execute any other Ant task, create a build.properties file
+and ensure it has the paths correctly set for:
+
+# MUST SET THESE PROPERTIES TO POINT TO APPROPRIATE PATHS
+
+# Extracted GWT distribution location
+gwt.home=<path_to_gwt_installation>
+
+# App Engine SDK home
+appengine.home=<path_to_app_engine_sdk>
+
     
