@@ -134,13 +134,13 @@ public class UsersController extends Controller {
 
         Validators v = new Validators(request);
         v.add("name", v.required());
-        v.add("deviceId", v.required());
+        v.add("registrationId", v.required());
 
         JSONObject json;
         try {
             json = new JSONObject(new JSONTokener(request.getReader()));
             requestScope("name", json.getString("name"));
-            requestScope("deviceId", json.getString("device-id"));
+            requestScope("registrationId", json.getString("registration-id"));
         }
         catch (Exception e)
         {
@@ -165,7 +165,7 @@ public class UsersController extends Controller {
             return null;
         }
             
-        log.info(String.format("Creating new user '%s' for app '%s', device-id=%s", asString("name"), KeyFactory.keyToString(app.getKey()), asString("deviceId")));
+        log.info(String.format("Creating new user '%s' for app '%s', registration-id=%s", asString("name"), KeyFactory.keyToString(app.getKey()), asString("registrationId")));
         
         User user = new User();
         BeanUtil.copy(request, user);

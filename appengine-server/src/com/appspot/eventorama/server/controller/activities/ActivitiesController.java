@@ -151,15 +151,10 @@ public class ActivitiesController extends Controller {
         }
 
         
-        UserMeta userMeta = UserMeta.get();
-        User user = Datastore.query(userMeta)
-            .filter(userMeta.key.equal(Datastore.createKey(userMeta, asLong("userId"))),
-                    userMeta.applicationRef.equal(app.getKey()))
-            .asSingle();
-
-        
         boolean newActivityCreated = false;
+        User user = null;
         JSONArray jsonResponse = new JSONArray();
+        
         for (int i = 0; i < jsonArray.length(); i++)
         {
             JSONObject json = jsonArray.optJSONObject(i);
@@ -188,6 +183,12 @@ public class ActivitiesController extends Controller {
                 continue;
             }
             
+            UserMeta userMeta = UserMeta.get();
+            user = Datastore.query(userMeta)
+                .filter(userMeta.key.equal(Datastore.createKey(userMeta, asLong("userId"))),
+                        userMeta.applicationRef.equal(app.getKey()))
+                .asSingle();
+
             if (user == null) {
                 log.warning(String.format("User with id '%s' for app '%s' not found.", asString("userId"), KeyFactory.keyToString(app.getKey())));
                 jsonResponse.put(-1 * HttpURLConnection.HTTP_NOT_FOUND);
