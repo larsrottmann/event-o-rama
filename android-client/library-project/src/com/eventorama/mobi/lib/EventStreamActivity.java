@@ -43,7 +43,7 @@ public class EventStreamActivity extends ListActivity  {
 		if(!intent.hasExtra(EVENTSTREAM_NOSYNC))
 		{
 			final Intent service = new Intent(this, ActivitySyncService.class);
-//			startService(service);
+			startService(service);
 		}
 		
 		Button peopleButton = (Button) findViewById(R.id.button2);
