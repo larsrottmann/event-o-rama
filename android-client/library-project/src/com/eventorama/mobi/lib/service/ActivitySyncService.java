@@ -62,10 +62,12 @@ public class ActivitySyncService extends IntentService {
 					cv.put(EventStreamContentProvider.Columns.TYPE, serverElements[i].getType());
 					cv.put(EventStreamContentProvider.Columns.TYPE, EventStreamContentProvider.SAVE_STATE_SERVER);
 					mContentResolver.insert(uri, cv);
-					c.close();
+					
 				}
 				else
 					Log.v(TAG, "skipping server side activity due to timestamp: "+serverElements[i].toString());
+				if(c != null)
+					c.close();
 			}
 			
 		}
@@ -94,8 +96,7 @@ public class ActivitySyncService extends IntentService {
        														  c.getInt(typeCol),
        														  c.getInt(useridCol));       														  
        			} while(c.moveToNext());
-       			
-       			c.close();
+       			       			
        			
        			final String json = gson.toJson(activities);
        			Log.v(TAG, "Gonna post: "+json);
@@ -135,6 +136,8 @@ public class ActivitySyncService extends IntentService {
 				}
        		}
        	}
+       	if(c != null)
+       		c.close();
 
 	}
 }
