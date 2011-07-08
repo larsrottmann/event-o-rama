@@ -20,10 +20,13 @@
 	    <property name="com.appspot.eventorama.appmaker.url.production" 
 	              value="http://ec2-184-73-49-245.compute-1.amazonaws.com:8080/appmaker/"/>
 	</system-properties>
-	<resource-files>
-	    <include path="/**.xml" />
-	    <include path="/**.properties" />
-	</resource-files>
+
+    <static-files>
+        <exclude path="/**.xml" />
+        <exclude path="/**.properties" />
+        <exclude path="/dataMessagingToken.txt" />
+    </static-files>
+    
 	<sessions-enabled>false</sessions-enabled>
 	<threadsafe>true</threadsafe>
 	

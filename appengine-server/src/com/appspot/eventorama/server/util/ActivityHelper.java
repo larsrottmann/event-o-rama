@@ -75,8 +75,6 @@ public class ActivityHelper {
             if (user.getRegistrationId() == null || user.getRegistrationId().equals(sender.getRegistrationId()))
                 continue;
             
-            ++numDeviceMessages;
-        
             String collapseKey = C2DM_ACTION + ":" + C2DM_ACTIVITIES_SYNC;
         
             try {
@@ -86,12 +84,14 @@ public class ActivityHelper {
                     C2DM_ACTION,
                     C2DM_ACTIVITIES_SYNC,
                     null, null, null, null);
+                
+                ++numDeviceMessages;
             } catch (IOException ex) {
                 log.severe("Can't send C2DM message to " + user.getRegistrationId() + ", next manual sync will get the changes.");
             }
         }
 
-        log.info("Scheduled " + numDeviceMessages + " C2DM device messages for user " +
+        log.info("Scheduled " + numDeviceMessages + " C2DM device messages from user " +
                 sender.getName() + ".");
 
     }
