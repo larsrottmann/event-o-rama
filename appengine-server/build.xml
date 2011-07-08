@@ -1,6 +1,8 @@
 <project name="event-o-rama" default="gen-controller" basedir=".">
     <property file="build.properties" />
 	<property name="src.tests" value="test"/>
+	<property name="reports.tests" value="test-results"/>
+	
     <!-- Arguments to gwtc and devmode targets -->
     <property name="gwt.args" value="" />
 
@@ -158,15 +160,16 @@
     </target>
 	
     <target name="servertest" depends="compile-tests" description="Execute server-side unit tests">
+    	<mkdir dir="${reports.tests}"/>
         <junit printsummary="yes" showoutput="yes">
             <classpath>
                 <pathelement location="src" />
                 <pathelement location="test" />
                 <path refid="test.classpath" />
             </classpath>
-            <formatter type="plain" usefile="false"/>
+            <formatter type="xml"/>
             <jvmarg value="-Xmx256M" />
-            <batchtest fork="yes" haltonfailure="yes">
+            <batchtest fork="yes" haltonfailure="yes" todir="${reports.tests}">
                 <fileset dir="${src.tests}">
                     <include name="**/*Test*.java"/>
                     <exclude name="**/AllTests.java"/>
