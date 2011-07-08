@@ -17,10 +17,12 @@ import android.util.Log;
  */
 public class C2DMBroadcastReceiver extends BroadcastReceiver {
    
+	private static final String TAG = C2DMBroadcastReceiver.class.getName();
+	
     @Override
     public final void onReceive(Context context, Intent intent) {
         // To keep things in one place.
-    	Log.v("C2DMBroadcastReceiver", "recieve!"+intent);
+    	Log.v(TAG, "recieve! "+intent);
         C2DMBaseReceiver.runIntentInService(context, intent);
         setResult(Activity.RESULT_OK, null /* data */, null /* extra */);        
     }

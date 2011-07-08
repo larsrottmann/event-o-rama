@@ -39,6 +39,7 @@ import com.eventorama.mobi.lib.content.PeopleContentProvider;
 import com.eventorama.mobi.lib.data.HTTPResponse;
 import com.eventorama.mobi.lib.service.ActivityCreatorService;
 import com.eventorama.mobi.lib.service.PeopleSyncService;
+import com.google.android.c2dm.C2DMessaging;
 import com.google.gson.Gson;
 
 public class SignUpActivity extends Activity{
@@ -225,7 +226,7 @@ public class SignUpActivity extends Activity{
 				Gson gson = new Gson();
 				Map<String, String> data = new HashMap<String, String>();
 				data.put("name", username);
-				data.put("registration-id", "798983987298347");			//TODO: get real device-id
+				data.put("registration-id", C2DMessaging.getRegistrationId(mContext));
 				EventORamaApplication eora = (EventORamaApplication) getApplication();
 				HTTPResponse resp = eora.doHttpRequest("/users", gson.toJson(data), EventORamaApplication.HTTP_METHOD_POST);
 				if(resp == null)

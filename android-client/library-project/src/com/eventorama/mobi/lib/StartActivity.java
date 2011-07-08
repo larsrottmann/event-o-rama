@@ -3,6 +3,7 @@ package com.eventorama.mobi.lib;
 
 
 import com.eventorama.mobi.lib.c2dm.C2DMReceiver;
+import com.google.android.c2dm.C2DMessaging;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,6 +17,9 @@ import android.widget.Button;
 
 public class StartActivity extends Activity
 {
+	
+	private static final String TAG = StartActivity.class.getName();
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -24,10 +28,12 @@ public class StartActivity extends Activity
         
         //check preferences
 		SharedPreferences settings = getSharedPreferences(EventORamaApplication.PREFS_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		String device_id = settings.getString(EventORamaApplication.PREFS_DEVICE_ID, "");
+		String device_id = C2DMessaging.getRegistrationId(this);
 		if(device_id.length() == 0)
 		{
 			//TODO: fire registration service
+			Log.v(TAG, "device not yet registered, triggering service!");
+			C2DMReceiver.register(getApplicationContext());
 		}
 		String username = settings.getString(EventORamaApplication.PREFS_USERNAME, "");
 		if(username.length() > 0)
@@ -64,7 +70,7 @@ public class StartActivity extends Activity
 			@Override
 			public void onClick(View v) {
 				Log.v("!!", getApplicationContext().getPackageName());
-				C2DMReceiver.register(getApplicationContext());				
+				C2DMReceiver.register(getApplicationContext());	
 			}
 		});
     }

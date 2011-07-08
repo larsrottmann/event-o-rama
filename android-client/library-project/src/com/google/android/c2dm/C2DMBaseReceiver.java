@@ -98,7 +98,7 @@ public abstract class C2DMBaseReceiver extends IntentService {
 
    
     @Override
-    public final void onHandleIntent(Intent intent) {
+    public void onHandleIntent(Intent intent) {
         try {
             Context context = getApplicationContext();
             if (intent.getAction().equals(REGISTRATION_CALLBACK_INTENT)) {
@@ -171,10 +171,13 @@ public abstract class C2DMBaseReceiver extends IntentService {
                 long backoffTimeMs = C2DMessaging.getBackoff(context);
                
                 Log.d(TAG, "Scheduling registration retry, backoff = " + backoffTimeMs);
+                
                 Intent retryIntent = new Intent(C2DM_RETRY);
+                retryIntent.setClassName(context, "com.eventorama.mobi.lib.c2dm.C2DMReceiver");
                 PendingIntent retryPIntent = PendingIntent.getBroadcast(context,
                         0 /*requestCode*/, retryIntent, 0 /*flags*/);
                
+                
                 AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                 am.set(AlarmManager.ELAPSED_REALTIME,
                         backoffTimeMs, retryPIntent);
