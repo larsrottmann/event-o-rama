@@ -2,13 +2,19 @@ package com.eventorama.mobi.lib;
 
 
 import com.eventorama.mobi.lib.content.EventStreamContentProvider;
+import com.eventorama.mobi.lib.location.LastLocationFinder;
 import com.eventorama.mobi.lib.service.ActivitySyncService;
+import com.eventorama.mobi.lib.service.GetLocationService;
 import com.eventorama.mobi.lib.service.PeopleSyncService;
 
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,19 +24,19 @@ import android.widget.Button;
 
 public class EventStreamActivity extends ListActivity  {
 	
-	private Context mContext = this;
-	
+	private static final String TAG = EventStreamActivity.class.getName();
+	private Context mContext = this;	
 	private Cursor mCursor = null;
-
 	private EventStreamAdapter mAdapter;
+	
 
 	protected static final String EVENTSTREAM_NOSYNC = "EVENTSTREAM_NOSYNC";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		mCursor = managedQuery(EventStreamContentProvider.content_uri, null, null, null, null);
+		
+		mCursor = managedQuery(EventStreamContentProvider.content_uri, null, null, null, null);		
 		
 		this.mAdapter = new EventStreamAdapter(this,mCursor);
 		
@@ -39,6 +45,10 @@ public class EventStreamActivity extends ListActivity  {
 
 		setContentView(R.layout.activity_eventstream);
 		
+		Intent  newintent = new Intent(mContext, GetLocationService.class);
+		startService(newintent);
+
+		
 		final Intent intent = getIntent();
 		if(!intent.hasExtra(EVENTSTREAM_NOSYNC))
 		{
@@ -46,6 +56,7 @@ public class EventStreamActivity extends ListActivity  {
 			startService(service);
 		}
 		
+		//TEMP UI
 		Button peopleButton = (Button) findViewById(R.id.button2);
 		peopleButton.setOnClickListener(new OnClickListener() {			
 			@Override
@@ -84,6 +95,8 @@ public class EventStreamActivity extends ListActivity  {
 		});
 
 
+
 	}
+		
 
 }

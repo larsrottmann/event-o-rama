@@ -5,7 +5,6 @@ import com.eventorama.mobi.lib.content.PeopleContentProvider;
 import com.eventorama.mobi.lib.data.HTTPResponse;
 import com.eventorama.mobi.lib.data.PeopleEntry;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import android.app.IntentService;
 import android.content.ContentResolver;
@@ -40,7 +39,7 @@ public class PeopleSyncService extends IntentService {
 		
 		//read users from server, compare them, insert new ones, update location of existing ones
 		HTTPResponse resp = eora.doHttpRequest("/users", null, EventORamaApplication.HTTP_METHOD_GET);
-		if(resp.getRespCode() == 200)
+		if(resp != null && resp.getRespCode() == 200)
 		{
 			//create JSON
 			final Gson gson = new Gson();//new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();

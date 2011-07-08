@@ -9,12 +9,12 @@ public class PeopleEntry {
 	private final String name;
 	private final float lat;
 	private final float lon;
-	private final int accuracy;
+	private final float accuracy;
 	@SerializedName("location-upate")
 	private final long location_update;
 	
 	
-	public PeopleEntry(int server_id, String name, float lat, float lon, int accuracy,
+	public PeopleEntry(int server_id, String name, float lat, float lon, float accuracy,
 			long location_update) {
 		
 		this.server_id = server_id;
@@ -46,7 +46,7 @@ public class PeopleEntry {
 	}
 
 
-	public final int getAccuracy() {
+	public final float getAccuracy() {
 		return accuracy;
 	}
 

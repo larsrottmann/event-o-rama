@@ -4,7 +4,7 @@
 	package="com.eventorama.mobi.sowhatevernew"
 	android:versionCode="1"
 	android:versionName="1.0">
-	<application
+ 	<application
 		android:label="@string/app_name"
 		android:icon="@drawable/icon"
 		android:name="com.eventorama.mobi.lib.EventORamaApplication">
@@ -43,6 +43,9 @@
 		
 		<!-- Service for syncing the users with the server -->	
 		<service android:name="com.eventorama.mobi.lib.service.PeopleSyncService" />
+		
+		<!-- Service for getting location and syncing with the server -->	
+		<service android:name="com.eventorama.mobi.lib.service.GetLocationService" />
 		
 
 		<!-- Only C2DM servers can send messages for the app. If permission is 
@@ -92,6 +95,12 @@
 	<!-- Google's push2device service -->
 	<uses-permission
 		android:name="com.google.android.c2dm.permission.RECEIVE" />
+    
+    <uses-permission 
+    	android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    
+    <uses-permission 
+    	android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
 
 
 </manifest>
