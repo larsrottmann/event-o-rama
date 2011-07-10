@@ -1,4 +1,4 @@
-package com.eventorama.mobi.lib.service;
+ package com.eventorama.mobi.lib.service;
 
 import com.eventorama.mobi.lib.EventORamaApplication;
 import com.eventorama.mobi.lib.content.PeopleContentProvider;
@@ -8,6 +8,7 @@ import com.eventorama.mobi.lib.location.LastLocationFinder;
 import com.google.gson.Gson;
 
 import android.app.IntentService;
+import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -17,9 +18,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 
-public class GetLocationService extends IntentService {
+public class GetLocationService extends Service {
 
 	private static final String TAG = GetLocationService.class.getName();
 	private LocationManager locationManager;
@@ -28,42 +34,44 @@ public class GetLocationService extends IntentService {
 
 	private Location gpsLocation = null;
 	private Location bestEffortLocation = null;
-	
 	private final String QUERY = PeopleContentProvider.Columns.SERVER_ID+"= ?";
+	private Looper mServiceLooper;
 	
 	
-	public GetLocationService() {
-		super(TAG);
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		
 	}
 
 	@Override
-	protected void onHandleIntent(Intent intent) {
+	public int onStartCommand(Intent intent, int flags, int startId) {
 			
 		mApplication = (EventORamaApplication)getApplication();
 		
 		locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
 		
-		//fire up GPS
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100l, 10.0f, gpsLocationUpdateListener);
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, gpsLocationUpdateListener);
 
 		//request last known update in parallel
 		
 	    // Instantiate a LastLocationFinder class.
 	    // This will be used to find the last known location when the application starts.
-	    mlastLocationFinder = mApplication.getLastLocationFinder(this);
-	    mlastLocationFinder.setChangedLocationListener(oneShotLocationUpdateListener);
-	    mlastLocationFinder.getLastBestLocation(150, 15000*60);//150 meters / 15 minutes
+//	    mlastLocationFinder = mApplication.getLastLocationFinder(this);
+//	    mlastLocationFinder.setChangedLocationListener(oneShotLocationUpdateListener);
+//	    mlastLocationFinder.getLastBestLocation(150, 15000*60);//150 meters / 15 minutes
 
 	    //wait for 15 seconds, then remove the GPS thingy, take the last known location
-	    try {
-			Thread.sleep(15000);
+	    /*try {
+			Thread.sleep(55000);
 		} catch (InterruptedException e) {
 			Log.e(TAG, "Should not happen!");			
 		}
 	    finally
 	    {
+	    	Log.v(TAG, "Done waiting...");
 	    	locationManager.removeUpdates(gpsLocationUpdateListener);
-	    }
+	    }*/
 	    if(gpsLocation != null)
 	    {
 	    	Log.v(TAG, "using GPS location: "+gpsLocation);
@@ -82,6 +90,7 @@ public class GetLocationService extends IntentService {
 			//startService(serviceintent);
 	    }
 	    
+	    return START_NOT_STICKY;
 	    
 	}
 	
@@ -122,14 +131,18 @@ public class GetLocationService extends IntentService {
 			Log.v(TAG, "GPS recieved location update: "+l);
 			gpsLocation = l;
 			if(l.getAccuracy() <= 100)
+			{
+				Log.v(TAG, "Accuracy reached lesser then 100 meters, removing listener!");
 				locationManager.removeUpdates(this);
+			}
+			
 		}
 		public void onProviderDisabled(String provider) {}
 		public void onStatusChanged(String provider, int status, Bundle extras) {}
 		public void onProviderEnabled(String provider) {}
 	};
 	
-	protected LocationListener oneShotLocationUpdateListener = new LocationListener() {
+	/*protected LocationListener oneShotLocationUpdateListener = new LocationListener() {
 		public void onLocationChanged(Location l) {
 			Log.v(TAG, "One shot recieved location update from "+l.getProvider());
 			bestEffortLocation = l;
@@ -138,7 +151,12 @@ public class GetLocationService extends IntentService {
 		public void onProviderDisabled(String provider) {}
 		public void onStatusChanged(String provider, int status, Bundle extras) {}
 		public void onProviderEnabled(String provider) {}
-	};
+	};*/
 
+	@Override
+	public IBinder onBind(Intent intent) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
