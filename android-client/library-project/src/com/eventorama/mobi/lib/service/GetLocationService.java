@@ -1,6 +1,12 @@
 package com.eventorama.mobi.lib.service;
 
+import java.util.Calendar;
+
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +21,8 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.os.Process;
 import android.util.Log;
 
@@ -35,6 +43,7 @@ public class GetLocationService extends Service {
 
 	private static final String TAG = GetLocationService.class.getName();
 	private static LocationManager locationManager;
+	private static WakeLock wl;
 	private LastLocationFinder mlastLocationFinder;
 	private EventORamaApplication mApplication;
 
@@ -53,9 +62,6 @@ public class GetLocationService extends Service {
 		Log.v(TAG,"on Create");
 		locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
 		mApplication = (EventORamaApplication)getApplication();
-		//		this.looperThread = new LooperThread();
-		//		this.looperThread.start();
-		//		
 
 		// background priority so CPU-intensive work will not disrupt our UI.
 		HandlerThread thread = new HandlerThread("LocationGetter", Process.THREAD_PRIORITY_BACKGROUND);
@@ -91,15 +97,16 @@ public class GetLocationService extends Service {
 
 
 
-
 	// Handler that receives messages from the thread
 	private final class ServiceHandler extends Handler {
 		public ServiceHandler(Looper looper) {
 			super(looper);
 		}
+		
 		@Override
 		public void handleMessage(Message msg) {
 			
+			getLock(getBaseContext()).acquire();
 			//request last known update in parallel			
 			// Instantiate a LastLocationFinder class.
 			// This will be used to find the last known location when the application starts.
@@ -125,22 +132,29 @@ public class GetLocationService extends Service {
 			{
 				Log.v(TAG, "using GPS location: "+gpsLocation);
 				updateLocationToDBandServer(gpsLocation);
-				//trigger sync
-				//Intent serviceintent = new Intent(this, PeopleSyncService.class);
-				//startService(serviceintent);
 
 			}
 			else if(bestEffortLocation != null)
 			{
 				Log.v(TAG, "using best effort location: "+bestEffortLocation);
 				updateLocationToDBandServer(bestEffortLocation);
-				//trigger sync
-				//Intent serviceintent = new Intent(this, PeopleSyncService.class);
-				//startService(serviceintent);
 			}
 			isUpdating = false;
 
 			//TODO: re-schedule run of this service
+			
+			// get a Calendar object with current time
+			Calendar cal = Calendar.getInstance();
+			// add 5 minutes to the calendar object
+			cal.add(Calendar.SECOND, 60);
+			Intent intent = new Intent(getBaseContext(), AlarmReciever.class);		 
+			// In reality, you would want to have a static variable for the request code instead of 192837
+			PendingIntent sender = PendingIntent.getBroadcast(getBaseContext(), 192837, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+			//Get the AlarmManager service
+			AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+			am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
+			
+			getLock(getBaseContext()).release();
 			stopSelf();
 		}
 	}
@@ -212,5 +226,29 @@ public class GetLocationService extends Service {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	
+	public class AlarmReciever extends BroadcastReceiver
+	{
+		private final String TAG = AlarmReciever.class.getName();
+		
+		@Override 
+		 public void onReceive(final Context context, Intent intent) { 
+			Log.v(TAG, "onRecive, kick service");
+			Intent i = new Intent(context, GetLocationService.class);
+			context.startService(i);
+		 } 
+	}
 
+	
+	synchronized private static PowerManager.WakeLock getLock(Context context) {
+		if (wl==null) {
+			PowerManager mgr=(PowerManager)context.getSystemService(Context.POWER_SERVICE);
+
+			wl=mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+			wl.setReferenceCounted(true);
+		}
+
+		return(wl);
+	}
 }
