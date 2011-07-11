@@ -76,6 +76,7 @@
 		</receiver>
 		<uses-library android:name="com.google.android.maps"
 			android:required="true"></uses-library>
+		<receiver android:name="com.eventorama.mobi.lib.service.AlarmReciever"></receiver>
 
 	</application>
 	

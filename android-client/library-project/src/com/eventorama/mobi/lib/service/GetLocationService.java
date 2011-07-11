@@ -47,7 +47,6 @@ public class GetLocationService extends Service {
 	private LastLocationFinder mlastLocationFinder;
 	private EventORamaApplication mApplication;
 
-	private Location gpsLocation = null;
 	private Location bestEffortLocation = null;
 	private final String QUERY = PeopleContentProvider.Columns.SERVER_ID+"= ?";
 
@@ -55,6 +54,8 @@ public class GetLocationService extends Service {
 
 	private Looper mServiceLooper;
 	private ServiceHandler mServiceHandler;
+	
+	private boolean foundGPS = false;
 
 	@Override
 	public void onCreate() {
@@ -90,6 +91,7 @@ public class GetLocationService extends Service {
 		Message msg = mServiceHandler.obtainMessage();
 		msg.arg1 = startId;
 		mServiceHandler.sendMessage(msg);
+		
 
 		return START_STICKY;
 
@@ -99,63 +101,77 @@ public class GetLocationService extends Service {
 
 	// Handler that receives messages from the thread
 	private final class ServiceHandler extends Handler {
+		
+
 		public ServiceHandler(Looper looper) {
 			super(looper);
 		}
-		
+
 		@Override
 		public void handleMessage(Message msg) {
-			
+
 			getLock(getBaseContext()).acquire();
+			//TODO: check network status, if offline, quit but listen for network change events to re-activate
+			//TODO: check app active status, if inactive, quit and don't schedule further updates
+			//TODO: check battery status, if too low, quit but listen for charging events
+			
+			
+			foundGPS = false;
 			//request last known update in parallel			
 			// Instantiate a LastLocationFinder class.
 			// This will be used to find the last known location when the application starts.
 			mlastLocationFinder = mApplication.getLastLocationFinder(getBaseContext());
 			mlastLocationFinder.setChangedLocationListener(oneShotLocationUpdateListener);
-			bestEffortLocation = mlastLocationFinder.getLastBestLocation(10, 1000*60);//150 meters / 15 minutes
-			
+			bestEffortLocation = mlastLocationFinder.getLastBestLocation(10, System.currentTimeMillis()-15*1000);//150 meters / 15 minutes
+
 			//trigger location update
 			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, gpsLocationUpdateListener);
 
-			//check result in 20 Seconds
-			try {
-				Thread.sleep(20000);
-			} catch (InterruptedException e) {
-				Log.e(TAG, "Should not happen!");			
-			}
-			finally
-			{
-				Log.v(TAG, "Done waiting...");
-				locationManager.removeUpdates(gpsLocationUpdateListener);
-			}
-			if(gpsLocation != null)
-			{
-				Log.v(TAG, "using GPS location: "+gpsLocation);
-				updateLocationToDBandServer(gpsLocation);
-
-			}
-			else if(bestEffortLocation != null)
-			{
-				Log.v(TAG, "using best effort location: "+bestEffortLocation);
-				updateLocationToDBandServer(bestEffortLocation);
-			}
-			isUpdating = false;
-
-			//TODO: re-schedule run of this service
 			
-			// get a Calendar object with current time
-			Calendar cal = Calendar.getInstance();
-			// add 5 minutes to the calendar object
-			cal.add(Calendar.SECOND, 60);
-			Intent intent = new Intent(getBaseContext(), AlarmReciever.class);		 
-			// In reality, you would want to have a static variable for the request code instead of 192837
-			PendingIntent sender = PendingIntent.getBroadcast(getBaseContext(), 192837, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-			//Get the AlarmManager service
-			AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-			am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
+			postDelayed(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					
+					
+					Log.v(TAG, "Done waiting... updated in between?? "+foundGPS);
+					if(!foundGPS)
+					{
+						locationManager.removeUpdates(gpsLocationUpdateListener);
+
+						if(bestEffortLocation != null)
+						{
+							Log.v(TAG, "using best effort location: "+bestEffortLocation);
+							updateLocationToDBandServer(bestEffortLocation);
+						}
+					}
+					
+
+					//TODO: re-schedule run of this service
+
+					// get a Calendar object with current time
+					Calendar cal = Calendar.getInstance();
+					// add 45 minutes to the calendar object
+					cal.add(Calendar.MINUTE, 45);
+					Intent intent = new Intent(getApplicationContext(), AlarmReciever.class);
+					// In reality, you would want to have a static variable for the request code instead of 192837
+					PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), 192837, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+					//Get the AlarmManager service
+					AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+					am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
+
+					getLock(getBaseContext()).release();
+					
+					isUpdating = false;
+					stopSelf();
+
+					
+				}
+
 			
-			getLock(getBaseContext()).release();
-			stopSelf();
+			}, 40*1000);
+
 		}
 	}
 
@@ -197,11 +213,12 @@ public class GetLocationService extends Service {
 	protected LocationListener gpsLocationUpdateListener = new LocationListener() {
 		public void onLocationChanged(Location l) {
 			Log.v(TAG, "GPS recieved location update: "+l);
-			gpsLocation = l;
 			if(l.getAccuracy() <= 100)
 			{
-				Log.v(TAG, "Accuracy reached lesser then 100 meters, removing listener!");
+				Log.v(TAG, "Accuracy reached lesser then 100 meters, removing listener, posting GPS Update!");
 				locationManager.removeUpdates(this);
+				foundGPS = true;
+				updateLocationToDBandServer(l);
 			}
 
 		}
@@ -226,21 +243,8 @@ public class GetLocationService extends Service {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
-	public class AlarmReciever extends BroadcastReceiver
-	{
-		private final String TAG = AlarmReciever.class.getName();
-		
-		@Override 
-		 public void onReceive(final Context context, Intent intent) { 
-			Log.v(TAG, "onRecive, kick service");
-			Intent i = new Intent(context, GetLocationService.class);
-			context.startService(i);
-		 } 
-	}
 
-	
+
 	synchronized private static PowerManager.WakeLock getLock(Context context) {
 		if (wl==null) {
 			PowerManager mgr=(PowerManager)context.getSystemService(Context.POWER_SERVICE);
