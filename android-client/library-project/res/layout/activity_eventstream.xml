@@ -5,29 +5,27 @@
 	android:layout_height="match_parent"
 	android:orientation="vertical">
 	<RelativeLayout
+		android:gravity="top"
 		android:id="@+id/RelativeLayout1"
-		android:baselineAligned="false"
-		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
 		android:layout_weight="0">
 		<TextView
-			android:layout_alignParentLeft="true"
-			android:layout_alignParentTop="true"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:id="@+id/textView1"
+			android:layout_width="wrap_content"
 			android:text="TextView"
-			android:layout_width="wrap_content"
+			android:id="@+id/textView1"
 			android:layout_height="wrap_content"
-			android:layout_gravity="right"></TextView>
-
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_centerVertical="true"
+			android:layout_alignParentLeft="true"></TextView>
 		<Button
-			android:text="People View"
-			android:layout_toLeftOf="@+id/button1"
-			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:id="@+id/button2"
+			android:id="@+id/buttonP"
+			android:text="People View"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
 			android:layout_alignParentRight="true"></Button>
-
+		<Button android:layout_width="wrap_content" android:gravity="right" android:id="@+id/button6" android:text="MapView" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_centerHorizontal="true"></Button>
 	</RelativeLayout>
 
 
@@ -45,24 +43,30 @@
 		android:layout_alignParentBottom="true"
 		android:layout_weight="0">
 		<Button
-			android:layout_weight="1"
 			android:layout_height="wrap_content"
 			android:text="Refresh People"
-			android:layout_width="wrap_content"
-			android:id="@+id/button4"></Button>
-		<Button
+			android:id="@+id/button4"
 			android:layout_weight="1"
+			android:layout_width="0dp"></Button>
+		<Button
 			android:layout_height="wrap_content"
 			android:text="Refresh Activities"
-			android:layout_width="wrap_content"
-			android:id="@+id/button3"></Button>
+			android:id="@+id/button3"
+			android:layout_weight="1"
+			android:layout_width="0dp"></Button>
+		<Button
+			android:text="Send Location"
+			android:layout_height="wrap_content"
+			android:id="@+id/button5"
+			android:layout_weight="1"
+			android:layout_width="0dp"></Button>
 		<Button
 			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
 			android:text="What's app?"
 			android:id="@+id/button1"
 			android:layout_alignParentRight="true"
-			android:layout_weight="1"></Button>
+			android:layout_weight="1"
+			android:layout_width="0dp"></Button>
 
 	</LinearLayout>
 

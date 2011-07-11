@@ -34,7 +34,7 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-@ReportsCrashes(formKey = "dEZSMmVOTHR6dEcwbWlsWjR3SWZDOEE6MQ",
+@ReportsCrashes(formKey = "dFA3dE52U3hXTUU3OFRfajNGRDFfNHc6MQ",
 mode = ReportingInteractionMode.TOAST,
 resToastText=R.string.application_crash_toast)
 public class EventORamaApplication extends Application {

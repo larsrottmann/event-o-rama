@@ -27,6 +27,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.util.Log;
 
 
 /**
@@ -42,7 +43,7 @@ import android.location.LocationManager;
  */
 public class GingerBreadLocationFinder implements LastLocationFinder {
   
-  protected static String TAG = "LastLocationFinder";
+  private static final String TAG = GingerBreadLocationFinder.class.getName();
   protected static String SINGLE_LOCATION_UPDATE_ACTION = "com.radioactiveyak.places.SINGLE_LOCATION_UPDATE_ACTION";
   
   protected PendingIntent singleUpatePI;
@@ -80,6 +81,7 @@ public class GingerBreadLocationFinder implements LastLocationFinder {
    * @return The most accurate and / or timely previously detected location.
    */
   public Location getLastBestLocation(int minDistance, long minTime) {
+	Log.v(TAG, "getLastBestLocation for "+minDistance +" time: "+minTime);
     Location bestResult = null;
     float bestAccuracy = Float.MAX_VALUE;
     long bestTime = Long.MIN_VALUE;
@@ -105,12 +107,13 @@ public class GingerBreadLocationFinder implements LastLocationFinder {
         }
       }
     }
-    
+    Log.v(TAG, "result: "+bestResult);
     // If the best result is beyond the allowed time limit, or the accuracy of the
     // best result is wider than the acceptable maximum distance, request a single update.
     // This check simply implements the same conditions we set when requesting regular
     // location updates every [minTime] and [minDistance]. 
-    if (locationListener != null && (bestTime < minTime || bestAccuracy > minDistance)) { 
+    if (locationListener != null && (bestTime < minTime || bestAccuracy > minDistance)) {
+      Log.v(TAG, "Result not in requested values, shoot a request!" );
       IntentFilter locIntentFilter = new IntentFilter(SINGLE_LOCATION_UPDATE_ACTION);
       context.registerReceiver(singleUpdateReceiver, locIntentFilter);      
       locationManager.requestSingleUpdate(criteria, singleUpatePI);

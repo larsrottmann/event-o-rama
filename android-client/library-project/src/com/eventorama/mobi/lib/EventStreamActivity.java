@@ -57,7 +57,7 @@ public class EventStreamActivity extends ListActivity  {
 		}
 		
 		//TEMP UI
-		Button peopleButton = (Button) findViewById(R.id.button2);
+		Button peopleButton = (Button) findViewById(R.id.buttonP);
 		peopleButton.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View v) {
