@@ -155,5 +155,6 @@ public class GingerBreadLocationFinder implements LastLocationFinder {
    */
   public void cancel() {
     locationManager.removeUpdates(singleUpatePI);
+    context.unregisterReceiver(singleUpdateReceiver);
   }
 }

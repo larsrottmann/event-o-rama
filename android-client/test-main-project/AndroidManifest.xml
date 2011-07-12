@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.eventorama.mobi.sowhatevernew"
+	package="com.eventorama.mobi.whatevernew"
 	android:versionCode="1"
 	android:versionName="1.0">
- 	<application
+	<application
 		android:label="@string/app_name"
 		android:icon="@drawable/icon"
 		android:name="com.eventorama.mobi.lib.EventORamaApplication">
@@ -21,32 +21,33 @@
 		</activity>
 
 		<activity
+			android:name="com.eventorama.mobi.lib.EventCreationActivity"></activity>
+			
+		<activity
 			android:name="com.eventorama.mobi.lib.PeopleActivity"></activity>
 
-		<activity  android:noHistory="true"
+		<activity android:noHistory="true"
 			android:name="com.eventorama.mobi.lib.SignUpActivity"></activity>
 
 		<activity
 			android:name="com.eventorama.mobi.lib.EventStreamActivity"></activity>
-			
-		<activity
-			android:name="com.eventorama.mobi.lib.EventCreationActivity"></activity>
 
-		<provider android:name="com.eventorama.mobi.lib.content.EventStreamContentProvider" android:authorities="com.eventorama.mobi.sowhatevernew.events" android:exported="false" />
-		<provider android:name="com.eventorama.mobi.lib.content.PeopleContentProvider" android:authorities="com.eventorama.mobi.sowhatevernew.people" android:exported="false" />
+		<provider android:name="com.eventorama.mobi.lib.content.EventStreamContentProvider" android:authorities="com.eventorama.mobi.whatevernew.events" android:exported="false" />
+		<provider android:name="com.eventorama.mobi.lib.content.PeopleContentProvider" android:authorities="com.eventorama.mobi.whatevernew.people" android:exported="false" />
+
 
 		<!-- Service for creating new activities -->	
 		<service android:name="com.eventorama.mobi.lib.service.ActivityCreatorService" />
 
 		<!-- Service for syncing the activities with the server -->	
 		<service android:name="com.eventorama.mobi.lib.service.ActivitySyncService" />
-		
+
 		<!-- Service for syncing the users with the server -->	
 		<service android:name="com.eventorama.mobi.lib.service.PeopleSyncService" />
-		
+
 		<!-- Service for getting location and syncing with the server -->	
 		<service android:name="com.eventorama.mobi.lib.service.GetLocationService" />
-		
+
 
 		<!-- Only C2DM servers can send messages for the app. If permission is 
 			not set - any other app can generate it -->
@@ -64,29 +65,36 @@
 				<action
 					android:name="com.google.android.c2dm.intent.RECEIVE" />
 				<category
-					android:name="com.eventorama.mobi.sowhatevernew" />
+					android:name="com.eventorama.mobi.whatevernew" />
 			</intent-filter>
 			<!-- Receive the registration id -->
 			<intent-filter>
 				<action
 					android:name="com.google.android.c2dm.intent.REGISTRATION" />
 				<category
-					android:name="com.eventorama.mobi.sowhatevernew" />
+					android:name="com.eventorama.mobi.whatevernew" />
 			</intent-filter>
 		</receiver>
+
 		<uses-library android:name="com.google.android.maps"
 			android:required="true"></uses-library>
 		<receiver android:name="com.eventorama.mobi.lib.service.AlarmReciever"></receiver>
+		
+		<receiver android:name="com.eventorama.mobi.lib.service.BootUpReciever">
+			<intent-filter>
+				<action android:name="android.intent.action.BOOT_COMPLETED" />
+			</intent-filter>
+		</receiver>	
 
 	</application>
 	
 		<!-- Only this application can receive the messages and registration result -->
 		<permission
-			android:name="com.eventorama.mobi.sowhatevernew.permission.C2D_MESSAGE"
+			android:name="com.eventorama.mobi.whatevernew.permission.C2D_MESSAGE"
 			android:protectionLevel="signature" />
 
 		<uses-permission
-			android:name="com.eventorama.mobi.sowhatevernew.permission.C2D_MESSAGE" />
+			android:name="com.eventorama.mobi.whatevernew.permission.C2D_MESSAGE" />
 	
 	<uses-permission
 		android:name="android.permission.GET_ACCOUNTS" />
@@ -98,12 +106,13 @@
 	<!-- Google's push2device service -->
 	<uses-permission
 		android:name="com.google.android.c2dm.permission.RECEIVE" />
-    
+
     <uses-permission 
     	android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
     
     <uses-permission 
     	android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
-
-
+    	
+    <uses-permission 
+    	android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 </manifest>

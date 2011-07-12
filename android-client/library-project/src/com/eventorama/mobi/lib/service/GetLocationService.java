@@ -6,7 +6,6 @@ import java.util.Calendar;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -107,6 +106,7 @@ public class GetLocationService extends Service {
 			super(looper);
 		}
 
+
 		@Override
 		public void handleMessage(Message msg) {
 
@@ -117,7 +117,7 @@ public class GetLocationService extends Service {
 			
 			
 			foundGPS = false;
-			//request last known update in parallel			
+			// request last known update in parallel			
 			// Instantiate a LastLocationFinder class.
 			// This will be used to find the last known location when the application starts.
 			mlastLocationFinder = mApplication.getLastLocationFinder(getBaseContext());
@@ -132,12 +132,11 @@ public class GetLocationService extends Service {
 				
 				@Override
 				public void run() {
-					// TODO Auto-generated method stub
-					
-					
-					Log.v(TAG, "Done waiting... updated in between?? "+foundGPS);
+
+					Log.v(TAG, "Done waiting... updated via GPS in between?? "+foundGPS);
 					if(!foundGPS)
 					{
+						//nope, stop GPS and hope for a network location update
 						locationManager.removeUpdates(gpsLocationUpdateListener);
 
 						if(bestEffortLocation != null)
@@ -145,11 +144,10 @@ public class GetLocationService extends Service {
 							Log.v(TAG, "using best effort location: "+bestEffortLocation);
 							updateLocationToDBandServer(bestEffortLocation);
 						}
+						else //still no result, cancel!
+							mlastLocationFinder.cancel();
 					}
 					
-
-					//TODO: re-schedule run of this service
-
 					// get a Calendar object with current time
 					Calendar cal = Calendar.getInstance();
 					// add 45 minutes to the calendar object
@@ -165,18 +163,17 @@ public class GetLocationService extends Service {
 					
 					isUpdating = false;
 					stopSelf();
-
-					
-				}
-
-			
-			}, 40*1000);
-
+				}			
+			}, 40*1000); // 40 seconds
 		}
 	}
 
 
-
+	/**
+	 * Writes location to the local DB and sends it to the server 
+	 * 
+	 * @param location
+	 */
 	private void updateLocationToDBandServer(Location location) {
 		final Uri uri = PeopleContentProvider.content_uri;
 
@@ -197,10 +194,11 @@ public class GetLocationService extends Service {
 
 		Gson gson = new Gson();
 		PeopleEntry pe = new PeopleEntry(-1, null, (float)location.getLatitude(), (float)location.getLongitude(), (float)location.getAccuracy(), location.getTime());
-		Log.v(TAG, "gonna post: "+gson.toJson(pe));
+		if(Log.isLoggable(TAG, Log.VERBOSE))
+			Log.v(TAG, "gonna post: "+gson.toJson(pe));
 		HTTPResponse resp = mApplication.doHttpRequest("/users/"+uid, gson.toJson(pe), EventORamaApplication.HTTP_METHOD_PUT);
 		if(resp != null && resp.getRespCode() == 200)
-			Log.v(TAG, "Location post to server successfull!");
+			Log.w(TAG, "Location post to server successfull!");
 	}
 
 	@Override
@@ -240,7 +238,6 @@ public class GetLocationService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

@@ -36,6 +36,8 @@ public class ActivitySyncService extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 
+		//TODO: I guess we need a wakelock here in case we run via push
+		
 		//TODO: check last sync, drop if done seconds before...
 
 		final EventORamaApplication eora = (EventORamaApplication) getApplication();

@@ -171,7 +171,7 @@ public class SignUpActivity extends Activity{
 		else
 		{
 			//no google accounts on this device, just enter a username
-
+			//TODO: show warning that you don't get push events without google account
 			//hide the radiogroups / Textviews / deviders
 			RadioGroup rg = (RadioGroup) findViewById(R.id.signup_radiogroup);
 			rg.setVisibility(View.GONE);
@@ -226,7 +226,8 @@ public class SignUpActivity extends Activity{
 				Gson gson = new Gson();
 				Map<String, String> data = new HashMap<String, String>();
 				data.put("name", username);
-				data.put("registration-id", C2DMessaging.getRegistrationId(mContext));
+				if(C2DMessaging.getRegistrationId(mContext).trim().length() != 0)
+					data.put("registration-id", C2DMessaging.getRegistrationId(mContext));
 				EventORamaApplication eora = (EventORamaApplication) getApplication();
 				HTTPResponse resp = eora.doHttpRequest("/users", gson.toJson(data), EventORamaApplication.HTTP_METHOD_POST);
 				if(resp == null)

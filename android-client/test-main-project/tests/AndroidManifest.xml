@@ -16,6 +16,6 @@
     "adb shell am instrument -w com.eventorama.mobi.whatever.tests/android.test.InstrumentationTestRunner"
     -->
     <instrumentation android:name="android.test.InstrumentationTestRunner"
-                     android:targetPackage="com.eventorama.mobi.sowhatevernew"
+                     android:targetPackage="com.eventorama.mobi.whatevernew"
                      android:label="Tests for com.eventorama.mobi.whatever"/>
 </manifest>

@@ -31,7 +31,7 @@ public class PeopleSyncService extends IntentService {
 
 	
 	@Override
-	protected void onHandleIntent(Intent intent) {
+	public void onHandleIntent(Intent intent) {
 		
 		final EventORamaApplication eora = (EventORamaApplication) getApplication();
 		
