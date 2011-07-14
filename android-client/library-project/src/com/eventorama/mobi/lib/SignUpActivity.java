@@ -152,7 +152,8 @@ public class SignUpActivity extends Activity{
 			int idcounter = 0;
 			for (String account : accounts) {
 				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				RadioButton rb = (RadioButton) vi.inflate(R.layout.signup_radiobutton, null);
+//				RadioButton rb = (RadioButton) vi.inflate(R.layout.signup_radiobutton, null); 
+				RadioButton rb = new RadioButton(this); //this is more efficient until we need to style the radio button
 				rb.setText(account);
 				rb.setId(idcounter);
 				rg.addView(rb);

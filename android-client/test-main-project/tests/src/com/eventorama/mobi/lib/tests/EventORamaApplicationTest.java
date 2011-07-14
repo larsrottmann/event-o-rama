@@ -47,7 +47,7 @@ public class EventORamaApplicationTest extends ApplicationTestCase<EventORamaApp
 	
 		resp = mApplication.doHttpRequest("/puttest", null, EventORamaApplication.HTTP_METHOD_PUT);
 		assertNotNull(resp);
-		assertEquals(404, resp.getRespCode());
+		assertEquals(405, resp.getRespCode());
 		
 	}
 

@@ -57,6 +57,17 @@ public class EventStreamActivity extends ListActivity  {
 		}
 		
 		//TEMP UI
+		
+		Button mapButton = (Button) findViewById(R.id.button6);
+		mapButton.setOnClickListener(new OnClickListener() {			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new  Intent(mContext, LocationActivity.class);
+				startActivity(intent);
+			}
+		});
+
+		
 		Button peopleButton = (Button) findViewById(R.id.buttonP);
 		peopleButton.setOnClickListener(new OnClickListener() {			
 			@Override
@@ -93,6 +104,8 @@ public class EventStreamActivity extends ListActivity  {
 
 			}
 		});
+		
+		
 
 
 
