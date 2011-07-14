@@ -30,7 +30,12 @@
 			android:name="com.eventorama.mobi.lib.SignUpActivity"></activity>
 
 		<activity
-			android:name="com.eventorama.mobi.lib.EventStreamActivity"></activity>
+			android:name="com.eventorama.mobi.lib.EventStreamActivity"
+			android:theme="@android:style/Theme.NoTitleBar"></activity>
+			
+		<activity
+			android:name="com.eventorama.mobi.lib.LocationActivity"></activity>
+			
 
 		<provider android:name="com.eventorama.mobi.lib.content.EventStreamContentProvider" android:authorities="com.eventorama.mobi.whatevernew.events" android:exported="false" />
 		<provider android:name="com.eventorama.mobi.lib.content.PeopleContentProvider" android:authorities="com.eventorama.mobi.whatevernew.people" android:exported="false" />
@@ -115,4 +120,9 @@
     	
     <uses-permission 
     	android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!--  only for testing, comment out before release !!!!!!!!!!!!! -->
+	<uses-permission 
+		android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    	
 </manifest>
