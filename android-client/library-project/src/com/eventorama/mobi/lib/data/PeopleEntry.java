@@ -10,7 +10,7 @@ public class PeopleEntry {
 	private final float lat;
 	private final float lon;
 	private final float accuracy;
-	@SerializedName("location-upate")
+	@SerializedName("location-update")
 	private final long location_update;
 	
 	

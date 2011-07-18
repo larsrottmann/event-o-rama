@@ -1,15 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent">
-  
-   <TextView 
-    	android:id="@+id/eventstream_list_item_text_message" 
-    	android:layout_width="match_parent" 
-    	android:layout_height="wrap_content">
-   </TextView>
-  
-    
-</LinearLayout>
+<RelativeLayout
+	android:id="@+id/event_list_item1_layout"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="horizontal"
+	android:background="@color/generic_bg_color">
+
+	<TextView
+		android:text="Username"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/eventstream_list_item_text_username"
+		android:layout_alignParentTop="true"
+		android:layout_alignLeft="@+id/eventstream_list_item_text_message"
+		android:textColor="@color/generic_text_color"></TextView>
+	<TextView
+		android:layout_margin="@dimen/margin_list_item"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/eventstream_list_item_text_message"
+		android:background="@color/generic_bg_color"
+		android:textColor="@color/generic_text_color"
+		android:layout_below="@+id/eventstream_list_item_text_username"
+		android:layout_toRightOf="@+id/eventstream_list_item_image_user"></TextView>
+	<ImageView
+		android:id="@+id/eventstream_list_item_image_user"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:src="@drawable/icon"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentLeft="true"></ImageView>
+
+
+</RelativeLayout>

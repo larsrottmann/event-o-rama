@@ -54,7 +54,7 @@ public class PeopleSyncService extends IntentService {
 					//the guy exist, check if we need to update the location data
 					long timestamp = c.getLong(c.getColumnIndex(PeopleContentProvider.Columns.UPDATED));
 					
-					if(timestamp != 0 && timestamp < peoples[i].getLocation_update())
+					if(timestamp < peoples[i].getLocation_update())
 					{
 						Log.v(TAG, "Recieved newer values from server, update location for: "+peoples[i]);
 						ContentValues cv = new ContentValues();

@@ -24,7 +24,8 @@
 			android:name="com.eventorama.mobi.lib.EventCreationActivity"></activity>
 			
 		<activity
-			android:name="com.eventorama.mobi.lib.PeopleActivity"></activity>
+			android:name="com.eventorama.mobi.lib.PeopleActivity"
+			android:theme="@android:style/Theme.NoTitleBar"></activity>
 
 		<activity android:noHistory="true"
 			android:name="com.eventorama.mobi.lib.SignUpActivity"></activity>
@@ -34,7 +35,8 @@
 			android:theme="@android:style/Theme.NoTitleBar"></activity>
 
 		<activity
-			android:name="com.eventorama.mobi.lib.LocationActivity"></activity>
+			android:name="com.eventorama.mobi.lib.LocationActivity"
+			android:theme="@android:style/Theme.NoTitleBar"></activity>
 			
 
 		<provider android:name="com.eventorama.mobi.lib.content.EventStreamContentProvider" android:authorities="_TARGET_PACKAGE_.events" android:exported="false" />

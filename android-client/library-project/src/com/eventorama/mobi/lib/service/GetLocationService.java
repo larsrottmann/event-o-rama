@@ -40,7 +40,7 @@ import com.google.gson.Gson;
  */
 public class GetLocationService extends Service {
 
-	private static final String TAG = GetLocationService.class.getName();
+	private static final String TAG = "GetLocationService";
 	private static LocationManager locationManager;
 	private static WakeLock wl;
 	private LastLocationFinder mlastLocationFinder;

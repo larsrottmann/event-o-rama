@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="margins_default">5dip</dimen>
+    <dimen name="margin_list_item">5dip</dimen>
 </resources>
