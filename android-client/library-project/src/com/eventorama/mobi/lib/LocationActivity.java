@@ -154,7 +154,8 @@ public class LocationActivity extends MapActivity {
 			mUserOverlay.addOverlay(oi);
 			} while(c.moveToNext());
 		}
-		c.close();
+		if(c != null)
+			c.close();
 		
 	}
 
