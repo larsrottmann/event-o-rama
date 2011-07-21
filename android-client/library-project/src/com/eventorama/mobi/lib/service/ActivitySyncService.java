@@ -118,11 +118,12 @@ public class ActivitySyncService extends IntentService {
 						for (int i = 0; i < idsfromserver.length; i++) {
 							if(idsfromserver[i] > 0)
 							{
-								sb.append(activities[i].getInternal_id());	
+								sb.append(activities[i].getInternal_id());
+								sb.append(',');
 							}
 							else
 								Log.e(TAG, "could not put activity on server, returncode: "+idsfromserver[i]);
-							sb.append(',');
+							
 						}
 						//remove final ,
 						sb.deleteCharAt(sb.length()-1);
@@ -135,8 +136,6 @@ public class ActivitySyncService extends IntentService {
 						Log.v(TAG, "updated "+updates+" entries as synced");
 						break;
 
-						//				default:
-						//					break;
 					}
 				}
 			}

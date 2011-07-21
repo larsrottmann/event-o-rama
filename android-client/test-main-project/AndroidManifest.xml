@@ -21,14 +21,20 @@
 		</activity>
 
 		<activity
-			android:name="com.eventorama.mobi.lib.EventCreationActivity"></activity>
+			android:name="com.eventorama.mobi.lib.EventCreationActivity"
+			android:theme="@android:style/Theme.NoTitleBar"></activity>
 			
 		<activity
 			android:name="com.eventorama.mobi.lib.PeopleActivity"
 			android:theme="@android:style/Theme.NoTitleBar"></activity>
 
 		<activity android:noHistory="true"
-			android:name="com.eventorama.mobi.lib.SignUpActivity"></activity>
+			android:name="com.eventorama.mobi.lib.SignUpActivity"
+			android:theme="@android:style/Theme.NoTitleBar"></activity>
+
+		<activity android:noHistory="true"
+			android:name="com.eventorama.mobi.lib.SelectProfilePicActivity"
+			android:theme="@android:style/Theme.NoTitleBar"></activity>
 
 		<activity
 			android:name="com.eventorama.mobi.lib.EventStreamActivity"
@@ -36,7 +42,7 @@
 
 		<activity
 			android:name="com.eventorama.mobi.lib.LocationActivity"
-			android:theme="@android:style/Theme.NoTitleBar"></activity>		
+			android:theme="@android:style/Theme.NoTitleBar"></activity>
 
 		<provider android:name="com.eventorama.mobi.lib.content.EventStreamContentProvider" android:authorities="com.eventorama.mobi.whatevernew.events" android:exported="false" />
 		<provider android:name="com.eventorama.mobi.lib.content.PeopleContentProvider" android:authorities="com.eventorama.mobi.whatevernew.people" android:exported="false" />
@@ -118,7 +124,10 @@
     
     <uses-permission 
     	android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
-    	
+
+    <uses-permission 
+    	android:name="android.permission.READ_CONTACTS" />
+    	    	
     <uses-permission 
     	android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 

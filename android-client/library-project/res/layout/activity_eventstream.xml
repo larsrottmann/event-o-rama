@@ -18,7 +18,9 @@
 		android:id="@android:id/list"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_weight="1" android:background="@color/generic_bg_color"/>
+		android:layout_weight="1" android:background="@color/generic_bg_color"
+		android:cacheColorHint="@color/generic_bg_color"		
+		/>
 
 	<LinearLayout
 		android:layout_height="wrap_content"

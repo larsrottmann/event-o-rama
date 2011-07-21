@@ -298,7 +298,7 @@ public class SignUpActivity extends Activity{
 					mDialog.dismiss();
 				Intent i = new Intent();
 				i.putExtra(EventStreamActivity.EVENTSTREAM_NOSYNC, true);
-				i.setClass(getApplicationContext(), EventStreamActivity.class);
+				i.setClass(getApplicationContext(), SelectProfilePicActivity.class);
 				startActivity(i);
 				break;
 			case RESULT_TAKEN:

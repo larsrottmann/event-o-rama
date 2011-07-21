@@ -59,7 +59,7 @@ public class PeopleAdapter extends CursorAdapter {
 //			long created = c.getLong(index);
 //			CharSequence formattedDate = DateFormat.format("MMM dd, yyyy h:mmaa",  new Date(created));
 			
-			index = c.getColumnIndex(PeopleContentProvider.Columns.PROFILE_PIC);
+			index = c.getColumnIndex(PeopleContentProvider.Columns.PROFILE_PIC_URL);
 			String uriString = c.getString(index);
 
 			BitmapDrawable drawable = (BitmapDrawable) mImageView.getDrawable();

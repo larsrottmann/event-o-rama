@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:background="@color/generic_bg_color">
+	<include layout="@layout/nav_bar_simple" android:id="@+id/nav_bar_relative_layout_ref"  android:layout_width="match_parent" android:layout_height="wrap_content"/>
+	<TextView
+		android:text="@string/select_profile_pic_header"
+		android:id="@+id/textView1"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_margin="@dimen/margins_default"
+		android:textSize="@dimen/text_size_headline"
+		android:textColor="@color/generic_text_color"
+		android:background="@color/generic_bg_color"></TextView>
+
+	<GridView
+		android:id="@+id/select_profile_pic_grid"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:numColumns="auto_fit"
+		android:verticalSpacing="10dp"
+		android:horizontalSpacing="10dp"
+		android:columnWidth="90dp"
+		android:stretchMode="none"
+		android:gravity="center"
+		android:background="@color/generic_bg_color" />
+</LinearLayout>

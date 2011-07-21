@@ -9,6 +9,7 @@
     <string name="signup_login_text">Joining the party...</string>
     <string name="signup_username_length_error">too short / long!</string>
     <string name="signup_username_taken_error">This name is already taken.</string>
+    <string name="select_profile_pic_header">Please select your profile picture for this event!</string>
     <string name="generic_connection_error">Connection Error! Autsch...</string>
     <string name="activity_text_joindedparty">%s joined the party!</string>
     <string name="activity_text_shout">%1$s: %2$s</string>

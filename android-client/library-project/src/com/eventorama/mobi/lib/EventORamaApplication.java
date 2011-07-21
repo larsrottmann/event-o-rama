@@ -1,6 +1,8 @@
 package com.eventorama.mobi.lib;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
@@ -96,14 +98,8 @@ public class EventORamaApplication extends Application {
 		return sb.toString();
 	}
 
-	/**
-	 * Use to initiate a HTTP Request to the appengine server
-	 * @param method the remote method like "/users"
-	 * @param body	the body you would like to POST
-	 * @param http_method	the method you'd like to use, see {@link EventORamaApplication}HTTP_METHOD_* constants
-	 * @return a {@link HTTPResponse} object
-	 */
-	public HTTPResponse doHttpRequest(String method, String body, int http_method)
+	
+	public HTTPResponse doGenericHttpRequest(String url, String body, int method)
 	{
 		synchronized (this) {
 			if(this.httpclient == null)
@@ -112,9 +108,9 @@ public class EventORamaApplication extends Application {
 		try 
 		{
 			HttpUriRequest httpMessage = null;
-			switch (http_method) {
+			switch (method) {
 			case HTTP_METHOD_POST:
-				HttpPost post = new HttpPost(getServerUrl(method));
+				HttpPost post = new HttpPost(url);
 				if(body != null)
 				{
 					StringEntity postBody = new StringEntity(body, CHARSET);
@@ -123,7 +119,7 @@ public class EventORamaApplication extends Application {
 				httpMessage = post;				
 				break;
 			case HTTP_METHOD_PUT:
-				HttpPut put = new HttpPut(getServerUrl(method));
+				HttpPut put = new HttpPut(url);
 				if(body != null)
 				{
 					StringEntity putBody = new StringEntity(body, CHARSET);
@@ -133,7 +129,7 @@ public class EventORamaApplication extends Application {
 				break;
 
 			default:
-				HttpGet get = new HttpGet(getServerUrl(method));
+				HttpGet get = new HttpGet(url);
 				httpMessage = get;
 				break;
 			}
@@ -163,8 +159,62 @@ public class EventORamaApplication extends Application {
 		{
 			//TODO: re-throw exception might make sense
 			e.printStackTrace();
+			Log.e(TAG, "Error fecthing Httprequest: "+method, e);
 		}
 
+		return null;
+
+	}
+	
+	/**
+	 * Use to initiate a HTTP Request to the appengine server
+	 * @param method the remote method like "/users"
+	 * @param body	the body you would like to POST
+	 * @param http_method	the method you'd like to use, see {@link EventORamaApplication}HTTP_METHOD_* constants
+	 * @return a {@link HTTPResponse} object
+	 */
+	public HTTPResponse doHttpRequest(String method, String body, int http_method)
+	{
+		return doGenericHttpRequest(getServerUrl(method), body, http_method);
+	}
+	
+	public HTTPResponse doBinaryHttpGet(String URL)
+	{
+		synchronized (this) {
+			if(this.httpclient == null)
+				this.httpclient = initHttpClient();
+		}
+		try 
+		{
+		
+			HttpGet get = new HttpGet(URL);
+			Log.v(TAG, "Executing http request to: "+get.getURI());
+			
+
+			long now = System.currentTimeMillis();			
+			HttpResponse response = this.httpclient.execute(get);
+			Log.v(TAG, "HTTP request finished in: "+(System.currentTimeMillis()-now)+" ms");
+			
+			HttpEntity responseEntity = response.getEntity();
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			BufferedInputStream bis = new BufferedInputStream(responseEntity.getContent());
+			int nRead;
+			byte[] data = new byte[16384];
+
+			while ((nRead = bis.read(data, 0, data.length)) != -1) {
+			  bos.write(data, 0, nRead);
+			}
+			bos.flush();			
+			
+			return  new HTTPResponse(response.getStatusLine().getStatusCode(), bos.toByteArray(), response.getAllHeaders());
+			
+		}
+		catch(Exception e)
+		{
+			//TODO: re-throw exception might make sense
+			e.printStackTrace();
+			Log.e(TAG, "Error fecthing Httprequest: "+URL, e);
+		}
 		return null;
 	}
 
