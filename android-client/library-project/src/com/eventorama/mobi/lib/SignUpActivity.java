@@ -261,20 +261,6 @@ public class SignUpActivity extends Activity{
 							cv.put(PeopleContentProvider.Columns.NAME, username);
 							cv.put(PeopleContentProvider.Columns.SERVER_ID, userid);
 							resolver.insert(uri, cv);
-						
-							//create activity via ActivityCreatorService
-							Intent service = new Intent(mContext, ActivityCreatorService.class);
-							StringBuilder sb = new StringBuilder();
-							Formatter formatter = new Formatter(sb);
-							formatter.format(getText(R.string.activity_text_joindedparty).toString(), username);
-							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TEXT, sb.toString());
-							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_USER_ID, userid);
-							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TYPE, EventStreamContentProvider.TYPE_TEXT);
-							startService(service);
-														
-							//trigger people sync service
-							service = new Intent(mContext, PeopleSyncService.class);
-							startService(service);
 							
 							return RESULT_SUCCESS;
 						}
@@ -297,7 +283,6 @@ public class SignUpActivity extends Activity{
 				if(mDialog != null)
 					mDialog.dismiss();
 				Intent i = new Intent();
-				i.putExtra(EventStreamActivity.EVENTSTREAM_NOSYNC, true);
 				i.setClass(getApplicationContext(), SelectProfilePicActivity.class);
 				startActivity(i);
 				break;

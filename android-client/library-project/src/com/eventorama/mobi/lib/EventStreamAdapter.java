@@ -6,11 +6,14 @@ import com.eventorama.mobi.lib.content.PeopleContentProvider;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class EventStreamAdapter extends CursorAdapter {
@@ -62,11 +65,13 @@ public class EventStreamAdapter extends CursorAdapter {
 	{
 		private TextView mMessageTextView;
 		private TextView mUsernameTextView;
+		private ImageView mUserPicView;
 		private ContentResolver mResolver = null;
 
 		public EventStreamViewHolder(View v) {
 			this.mMessageTextView = (TextView) v.findViewById(R.id.eventstream_list_item_text_message);
 			this.mUsernameTextView = (TextView) v.findViewById(R.id.eventstream_list_item_text_username);
+			this.mUserPicView = (ImageView) v.findViewById(R.id.eventstream_list_item_image_user);
 		}
 		
 		
@@ -83,6 +88,14 @@ public class EventStreamAdapter extends CursorAdapter {
 			if(pc != null && pc.moveToFirst())
 			{
 				username = pc.getString(pc.getColumnIndex(PeopleContentProvider.Columns.NAME));
+				byte[]img = pc.getBlob(pc.getColumnIndex(PeopleContentProvider.Columns.PROFILE_PIC));
+				if(img != null && img.length > 0)
+				{
+					Bitmap b = BitmapFactory.decodeByteArray(img, 0, img.length);
+					this.mUserPicView.setImageBitmap(b);
+				}
+				else
+					this.mUserPicView.setImageBitmap(null);
 				pc.close();
 			}			
 			if(username != null && username.length() > 0)

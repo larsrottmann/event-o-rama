@@ -1,17 +1,26 @@
 package com.eventorama.mobi.lib;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
 
+import com.eventorama.mobi.lib.content.EventStreamContentProvider;
+import com.eventorama.mobi.lib.content.PeopleContentProvider;
 import com.eventorama.mobi.lib.data.HTTPResponse;
+import com.eventorama.mobi.lib.service.ActivityCreatorService;
+import com.eventorama.mobi.lib.service.PeopleSyncService;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,6 +34,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -59,6 +70,66 @@ public class SelectProfilePicActivity extends Activity {
 		this.mGrepTask = new GrepProfilePicsTask();
 		mGrepTask.execute("");
 
+		
+		mGridView.setOnItemClickListener(new OnItemClickListener() {
+	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+	            
+	        	//get user-id
+	        	SharedPreferences settings = getSharedPreferences(EventORamaApplication.PREFS_PREFERENCES_NAME, Context.MODE_PRIVATE);
+				int userId = settings.getInt(EventORamaApplication.PREFS_USERID, -1);
+				String username = settings.getString(EventORamaApplication.PREFS_USERNAME, "");
+				if(userId != -1 && username.length() > 0)
+				{
+					//pick image, put it into local SQL
+					BitmapDrawable bd = (BitmapDrawable) mAdapter.getItem(position);
+					if(bd != null)
+					{
+						ByteArrayOutputStream out = new ByteArrayOutputStream();
+						bd.getBitmap().compress(Bitmap.CompressFormat.PNG, 70, out);
+						ContentValues cv = new ContentValues();
+						cv.put(PeopleContentProvider.Columns.PROFILE_PIC,out.toByteArray());
+						
+						getContentResolver().update(PeopleContentProvider.content_uri, cv, 
+													PeopleContentProvider.Columns.SERVER_ID+" = ?", 
+													new String[]{Integer.toString(userId)});
+					}
+					
+					//TODO: Upload to server
+					
+					//create activity via ActivityCreatorService
+					Intent service = new Intent(mContext, ActivityCreatorService.class);
+					StringBuilder sb = new StringBuilder();
+					Formatter formatter = new Formatter(sb);
+					formatter.format(getText(R.string.activity_text_joindedparty).toString(), username);
+					service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TEXT, sb.toString());
+					service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_USER_ID, userId);
+					service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TYPE, EventStreamContentProvider.TYPE_TEXT);
+					startService(service);
+												
+					//trigger people sync service
+					service = new Intent(mContext, PeopleSyncService.class);
+					startService(service);
+				
+					Intent i = new Intent();
+					i.putExtra(EventStreamActivity.EVENTSTREAM_NOSYNC, true);
+					i.setClass(getApplicationContext(), EventStreamActivity.class);
+					startActivity(i);
+
+				}
+	        }
+	    });
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		
+		if(mGrepTask != null)
+			mGrepTask.cancel(false);
+		
+		//recycle images in adapter
+		if(mAdapter != null)
+			mAdapter.recycle();
 	}
 
 	public void searchDone()
@@ -94,8 +165,17 @@ public class SelectProfilePicActivity extends Activity {
 			rotation = AnimationUtils.loadAnimation(mContext, R.anim.rotate_animation);
 			rotation.setRepeatCount(Animation.INFINITE);
 			pb.startAnimation(rotation);
-		   
 
+		}
+
+		public void recycle() {
+			for (int i = 0; i < pics.size(); i++) {
+				BitmapDrawable bp = pics.get(i);
+				if(bp != null)
+					bp.getBitmap().recycle();
+				pics.set(i, null);
+			}
+			pics = null;
 		}
 
 		public void searchDone() {
