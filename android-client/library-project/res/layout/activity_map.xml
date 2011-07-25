@@ -19,7 +19,8 @@
 		android:layout_height="match_parent"
 		
 		android:clickable="true"
+		android:apiKey="0_TJoFsNZL52lYdkkPr9OuuG2dRHEUFB-P82TlA"/>
+<!-- 		android:apiKey="0_TJoFsNZL53kx2e0TcvQcj3ISHjEDVNrsEHtsA" />    developer cert dell-->
 		
-		android:apiKey="0_TJoFsNZL53kx2e0TcvQcj3ISHjEDVNrsEHtsA" />   <!-- developer cert -->
 		<!--  android:apiKey="0wKeEJnsZleEt7KEuAtS6xj5g9BdReRFzyu5t7g" />--> <!-- Final cert -->
 </LinearLayout>
