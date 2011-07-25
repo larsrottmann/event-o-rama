@@ -157,7 +157,7 @@ public class SelectProfilePicActivity extends Activity {
 
 		public ProfilePicAdapter() {
 			//fill position 1 with default pic
-			pics.add((BitmapDrawable) getResources().getDrawable(R.drawable.icon));
+			pics.add((BitmapDrawable) getResources().getDrawable(R.drawable.default_profile));
 
 			LayoutInflater li = getLayoutInflater();
 			pb = (ImageView) li.inflate(R.layout.indeterminate_progress, null);		
