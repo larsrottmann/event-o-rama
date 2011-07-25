@@ -100,12 +100,16 @@ public class EventStreamAdapter extends CursorAdapter {
 			}			
 			if(username != null && username.length() > 0)
 				mUsernameTextView.setText(username);
+			else
+				mUsernameTextView.setText("?");
 			
 			//set main text			
 			final String title = c.getString(c.getColumnIndex(EventStreamContentProvider.Columns.TEXT));
 			if (title != null && title.length() > 0) {
 				mMessageTextView.setText(title);
 			}
+			else
+				mMessageTextView.setText("?");
 		}
 	}
 }
