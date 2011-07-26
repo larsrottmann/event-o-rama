@@ -75,7 +75,7 @@ public class LocationActivity extends MapActivity {
 
 		List<Overlay> mapOverlays = mMapView.getOverlays();
 
-		this.mUserOverlay = new UsersOverlay(getResources().getDrawable(R.drawable.cross));
+		this.mUserOverlay = new UsersOverlay(getResources().getDrawable(R.drawable.map_marker));
 		mapOverlays.add(mUserOverlay);
 
 		//we don't have settings, zoom to roughly current pos
@@ -268,6 +268,8 @@ public class LocationActivity extends MapActivity {
 			else
 				canvas.drawBitmap(userImage, BORDER, BORDER, mPaint);
 
+			userImage.recycle();
+			
 			BitmapDrawable bmd = new BitmapDrawable(blankImage);
 
 			return bmd;
