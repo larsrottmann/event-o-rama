@@ -6,7 +6,9 @@ import com.eventorama.mobi.lib.location.LastLocationFinder;
 import com.eventorama.mobi.lib.service.ActivitySyncService;
 import com.eventorama.mobi.lib.service.GetLocationService;
 import com.eventorama.mobi.lib.service.PeopleSyncService;
+import com.eventorama.mobi.lib.views.EventStreamListView;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -23,12 +25,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 
-public class EventStreamActivity extends ListActivity  {
+public class EventStreamActivity extends Activity  {
 	
 	private static final String TAG = EventStreamActivity.class.getName();
 	private Context mContext = this;	
 	private Cursor mCursor = null;
 	private EventStreamAdapter mAdapter;
+	private EventStreamListView mListView;
 	
 
 	protected static final String EVENTSTREAM_NOSYNC = "EVENTSTREAM_NOSYNC";
@@ -42,9 +45,13 @@ public class EventStreamActivity extends ListActivity  {
 		this.mAdapter = new EventStreamAdapter(this,mCursor);
 		
 		startManagingCursor(mCursor);
-		setListAdapter(mAdapter);
 
 		setContentView(R.layout.activity_eventstream);
+
+		View w = findViewById(R.id.tempoeventlistview);
+		this.mListView = (EventStreamListView) findViewById(R.id.tempoeventlistview);
+		this.mListView.setAdapter(mAdapter);
+
 		
 		Intent  newintent = new Intent(mContext, GetLocationService.class);
 		startService(newintent);
