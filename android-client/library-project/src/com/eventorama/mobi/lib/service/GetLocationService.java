@@ -4,6 +4,8 @@ import java.util.Calendar;
 
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentValues;
@@ -26,6 +28,8 @@ import android.os.Process;
 import android.util.Log;
 
 import com.eventorama.mobi.lib.EventORamaApplication;
+import com.eventorama.mobi.lib.LocationActivity;
+import com.eventorama.mobi.lib.R;
 import com.eventorama.mobi.lib.content.PeopleContentProvider;
 import com.eventorama.mobi.lib.data.HTTPResponse;
 import com.eventorama.mobi.lib.data.PeopleEntry;
@@ -55,6 +59,9 @@ public class GetLocationService extends Service {
 	private ServiceHandler mServiceHandler;
 	
 	private boolean foundGPS = false;
+	private NotificationManager mNotificationManager;
+	
+	private static final int NOTIFICATION_LOC_UPDATE_ID = 0x01;
 
 	@Override
 	public void onCreate() {
@@ -70,6 +77,9 @@ public class GetLocationService extends Service {
 		// Get the HandlerThread's Looper and use it for our Handler 
 		mServiceLooper = thread.getLooper();
 		mServiceHandler = new ServiceHandler(mServiceLooper);
+		
+		//get handle on the notification service
+	    mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
 	}
 
@@ -91,7 +101,6 @@ public class GetLocationService extends Service {
 		msg.arg1 = startId;
 		mServiceHandler.sendMessage(msg);
 		
-
 		return START_STICKY;
 
 	}
@@ -114,6 +123,14 @@ public class GetLocationService extends Service {
 			//TODO: check network status, if offline, quit but listen for network change events to re-activate
 			//TODO: check app active status, if inactive, quit and don't schedule further updates
 			//TODO: check battery status, if too low, quit but listen for charging events
+			
+			//show notification in status bar
+			Notification notification = new Notification(R.drawable.icon, "Test", System.currentTimeMillis());
+			Intent notificationIntent = new Intent(getBaseContext(), LocationActivity.class);
+			PendingIntent contentIntent = PendingIntent.getActivity(getBaseContext(), 0, notificationIntent, 0);
+			notification.setLatestEventInfo(getBaseContext(), "TestTitle", "testctext", contentIntent);
+			
+			mNotificationManager.notify(NOTIFICATION_LOC_UPDATE_ID, notification);
 			
 			
 			foundGPS = false;
@@ -159,6 +176,9 @@ public class GetLocationService extends Service {
 					AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 					am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
 
+					//clear notfication
+					mNotificationManager.cancel(NOTIFICATION_LOC_UPDATE_ID);
+					
 					getLock(getBaseContext()).release();
 					
 					isUpdating = false;

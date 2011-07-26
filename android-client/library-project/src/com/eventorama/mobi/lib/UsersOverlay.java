@@ -13,14 +13,15 @@ import com.google.android.maps.OverlayItem;
 public class UsersOverlay extends ItemizedOverlay<OverlayItem>{
 
 	private List<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
-	
+
 	public UsersOverlay(Drawable defaultMarker) {
 		super(boundCenterBottom(defaultMarker));
+		populate();
 	}
-	
+
 	public void addEntry(OverlayItem overlay) {
-	    mOverlays.add(overlay);
-	    populate();
+		mOverlays.add(overlay);
+		populate();
 	}
 
 	@Override
@@ -35,9 +36,9 @@ public class UsersOverlay extends ItemizedOverlay<OverlayItem>{
 
 	public void addEntry(GeoPoint geoPoint, String name, String string,
 			BitmapDrawable bd) {
-		
+
 		OverlayItem oi = new OverlayItem(geoPoint, name, string);
-		if(bd != null);
+		if(bd != null)
 			oi.setMarker(boundCenterBottom(bd));
 		mOverlays.add(oi);
 		populate();

@@ -165,7 +165,7 @@ public class LocationActivity extends MapActivity {
 				Log.v(TAG, "adding: "+pe+" to the map!");
 				//for now we just create a simple item
 				mUserOverlay.addEntry(new GeoPoint((int)(pe.getLat()*1E6), (int)(pe.getLon()*1E6)), pe.getName(), pe.getAccuracy()+"", bd);
-				
+
 			} while(c.moveToNext());
 		}
 		if(c != null)
@@ -269,7 +269,7 @@ public class LocationActivity extends MapActivity {
 				canvas.drawBitmap(userImage, BORDER, BORDER, mPaint);
 
 			userImage.recycle();
-			
+
 			BitmapDrawable bmd = new BitmapDrawable(blankImage);
 
 			return bmd;
