@@ -21,6 +21,7 @@ import com.appspot.eventorama.server.meta.ActivityMeta;
 import com.appspot.eventorama.server.meta.ApplicationMeta;
 import com.appspot.eventorama.server.meta.UserMeta;
 import com.appspot.eventorama.server.util.ActivityHelper;
+import com.appspot.eventorama.server.util.C2DMPusher;
 import com.appspot.eventorama.shared.model.Activity;
 import com.appspot.eventorama.shared.model.Application;
 import com.appspot.eventorama.shared.model.User;
@@ -220,7 +221,7 @@ public class ActivitiesController extends Controller {
         writer.flush();
         
         if (newActivityCreated)
-            ActivityHelper.enqueueDeviceMessage(servletContext, app, user);
+            C2DMPusher.enqueueDeviceMessage(servletContext, app, user, C2DMPusher.C2DM_ACTIVITIES_SYNC);
 
         return null;
     }
