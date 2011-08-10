@@ -65,6 +65,12 @@ public class UsersControllerTest extends ControllerTestCase {
         assertThat(controller, is(notNullValue()));
         assertThat(tester.response.getStatus(), is(HttpURLConnection.HTTP_CREATED));
         assertThat(tester.response.containsHeader("location"), is(true));
+        
+        String locationHeader = tester.response.getHeader("location");
+        String userId = locationHeader.substring(locationHeader.lastIndexOf("/") + 1, locationHeader.length());
+        User createdUser = Datastore.get(UserMeta.get(), KeyFactory.createKey(User.class.getSimpleName(), Long.parseLong(userId)));
+        assertThat(createdUser.getName(), is("Legolas"));
+        assertThat(createdUser.getRegistrationId(), is("iw9eijd2rolrjo3jr0ufbbk888"));
     }
 
     @Test
