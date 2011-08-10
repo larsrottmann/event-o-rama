@@ -18,6 +18,11 @@ public class AppRouter extends RouterImpl {
         
         // Android Client
         
+        // Application Data: GET
+        addRouting(
+            "/applications/{id}",
+            "/applications/applications?id={id}");
+        
         // User Management: POST / GET (list)
         addRouting(
             "/app/{app_id}/users",
