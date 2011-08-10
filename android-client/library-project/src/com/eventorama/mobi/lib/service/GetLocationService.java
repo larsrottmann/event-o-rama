@@ -1,13 +1,13 @@
 package com.eventorama.mobi.lib.service;
 
-import com.eventorama.mobi.lib.EventORamaApplication;
-import com.eventorama.mobi.lib.content.PeopleContentProvider;
-import com.eventorama.mobi.lib.data.HTTPResponse;
-import com.eventorama.mobi.lib.data.PeopleEntry;
-import com.eventorama.mobi.lib.location.LastLocationFinder;
-import com.google.gson.Gson;
+import java.util.Calendar;
 
-import android.app.IntentService;
+
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -17,77 +17,186 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
+import android.os.Process;
 import android.util.Log;
 
-public class GetLocationService extends IntentService {
+import com.eventorama.mobi.lib.EventORamaApplication;
+import com.eventorama.mobi.lib.LocationActivity;
+import com.eventorama.mobi.lib.R;
+import com.eventorama.mobi.lib.content.PeopleContentProvider;
+import com.eventorama.mobi.lib.data.HTTPResponse;
+import com.eventorama.mobi.lib.data.PeopleEntry;
+import com.eventorama.mobi.lib.location.LastLocationFinder;
+import com.google.gson.Gson;
 
-	private static final String TAG = GetLocationService.class.getName();
-	private LocationManager locationManager;
+/**
+ * This service requests the user's location frequently and posts it to the server 
+ * 
+ * @author cirrus
+ *
+ */
+public class GetLocationService extends Service {
+
+	private static final String TAG = "GetLocationService";
+	private static LocationManager locationManager;
+	private static WakeLock wl;
 	private LastLocationFinder mlastLocationFinder;
 	private EventORamaApplication mApplication;
 
-	private Location gpsLocation = null;
 	private Location bestEffortLocation = null;
-	
 	private final String QUERY = PeopleContentProvider.Columns.SERVER_ID+"= ?";
+
+	private boolean isUpdating = false;
+
+	private Looper mServiceLooper;
+	private ServiceHandler mServiceHandler;
 	
+	private boolean foundGPS = false;
+	private NotificationManager mNotificationManager;
 	
-	public GetLocationService() {
-		super(TAG);
+	private static final int NOTIFICATION_LOC_UPDATE_ID = 0x01;
+
+	@Override
+	public void onCreate() {
+
+		Log.v(TAG,"on Create");
+		locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+		mApplication = (EventORamaApplication)getApplication();
+
+		// background priority so CPU-intensive work will not disrupt our UI.
+		HandlerThread thread = new HandlerThread("LocationGetter", Process.THREAD_PRIORITY_BACKGROUND);
+		thread.start();
+
+		// Get the HandlerThread's Looper and use it for our Handler 
+		mServiceLooper = thread.getLooper();
+		mServiceHandler = new ServiceHandler(mServiceLooper);
+		
+		//get handle on the notification service
+	    mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
 	}
 
 	@Override
-	protected void onHandleIntent(Intent intent) {
-			
-		mApplication = (EventORamaApplication)getApplication();
-		
-		locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
-		
-		//fire up GPS
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100l, 10.0f, gpsLocationUpdateListener);
+	public int onStartCommand(Intent intent, int flags, int startId) {
 
-		//request last known update in parallel
-		
-	    // Instantiate a LastLocationFinder class.
-	    // This will be used to find the last known location when the application starts.
-	    mlastLocationFinder = mApplication.getLastLocationFinder(this);
-	    mlastLocationFinder.setChangedLocationListener(oneShotLocationUpdateListener);
-	    mlastLocationFinder.getLastBestLocation(150, 15000*60);//150 meters / 15 minutes
-
-	    //wait for 15 seconds, then remove the GPS thingy, take the last known location
-	    try {
-			Thread.sleep(15000);
-		} catch (InterruptedException e) {
-			Log.e(TAG, "Should not happen!");			
+		synchronized (this) {
+			Log.v(TAG," start command: " +startId + " isUpdateing: "+isUpdating);
+			if(isUpdating)
+			{
+				return START_NOT_STICKY;
+			}
+			isUpdating = true;
 		}
-	    finally
-	    {
-	    	locationManager.removeUpdates(gpsLocationUpdateListener);
-	    }
-	    if(gpsLocation != null)
-	    {
-	    	Log.v(TAG, "using GPS location: "+gpsLocation);
-	    	updateLocationToDBandServer(gpsLocation);
-	    	//trigger sync
-			//Intent serviceintent = new Intent(this, PeopleSyncService.class);
-			//startService(serviceintent);
 
-	    }
-	    else if(bestEffortLocation != null)
-	    {
-	    	Log.v(TAG, "using best effort location: "+bestEffortLocation);
-	    	updateLocationToDBandServer(bestEffortLocation);
-	    	//trigger sync
-			//Intent serviceintent = new Intent(this, PeopleSyncService.class);
-			//startService(serviceintent);
-	    }
-	    
-	    
+		// For each start request, send a message to start a job and deliver the
+		// start ID so we know which request we're stopping when we finish the job
+		Message msg = mServiceHandler.obtainMessage();
+		msg.arg1 = startId;
+		mServiceHandler.sendMessage(msg);
+		
+		return START_STICKY;
+
 	}
-	
+
+
+
+	// Handler that receives messages from the thread
+	private final class ServiceHandler extends Handler {
+		
+
+		public ServiceHandler(Looper looper) {
+			super(looper);
+		}
+
+
+		@Override
+		public void handleMessage(Message msg) {
+
+			getLock(getBaseContext()).acquire();
+			//TODO: check network status, if offline, quit but listen for network change events to re-activate
+			//TODO: check app active status, if inactive, quit and don't schedule further updates
+			//TODO: check battery status, if too low, quit but listen for charging events
+			
+			//show notification in status bar
+			Notification notification = new Notification(R.drawable.icon, "Test", System.currentTimeMillis());
+			Intent notificationIntent = new Intent(getBaseContext(), LocationActivity.class);
+			PendingIntent contentIntent = PendingIntent.getActivity(getBaseContext(), 0, notificationIntent, 0);
+			notification.setLatestEventInfo(getBaseContext(), "TestTitle", "testctext", contentIntent);
+			
+			mNotificationManager.notify(NOTIFICATION_LOC_UPDATE_ID, notification);
+			
+			
+			foundGPS = false;
+			// request last known update in parallel			
+			// Instantiate a LastLocationFinder class.
+			// This will be used to find the last known location when the application starts.
+			mlastLocationFinder = mApplication.getLastLocationFinder(getBaseContext());
+			mlastLocationFinder.setChangedLocationListener(oneShotLocationUpdateListener);
+			bestEffortLocation = mlastLocationFinder.getLastBestLocation(10, System.currentTimeMillis()-15*1000);//150 meters / 15 minutes
+
+			//trigger location update
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, gpsLocationUpdateListener);
+
+			
+			postDelayed(new Runnable() {
+				
+				@Override
+				public void run() {
+
+					Log.v(TAG, "Done waiting... updated via GPS in between?? "+foundGPS);
+					if(!foundGPS)
+					{
+						//nope, stop GPS and hope for a network location update
+						locationManager.removeUpdates(gpsLocationUpdateListener);
+
+						if(bestEffortLocation != null)
+						{
+							Log.v(TAG, "using best effort location: "+bestEffortLocation);
+							updateLocationToDBandServer(bestEffortLocation);
+						}
+						else //still no result, cancel!
+							mlastLocationFinder.cancel();
+					}
+					
+					// get a Calendar object with current time
+					Calendar cal = Calendar.getInstance();
+					// add 45 minutes to the calendar object
+					cal.add(Calendar.MINUTE, 45);
+					Intent intent = new Intent(getApplicationContext(), AlarmReciever.class);
+					// In reality, you would want to have a static variable for the request code instead of 192837
+					PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), 192837, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+					//Get the AlarmManager service
+					AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+					am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
+
+					//clear notfication
+					mNotificationManager.cancel(NOTIFICATION_LOC_UPDATE_ID);
+					
+					getLock(getBaseContext()).release();
+					
+					isUpdating = false;
+					stopSelf();
+				}			
+			}, 40*1000); // 40 seconds
+		}
+	}
+
+
+	/**
+	 * Writes location to the local DB and sends it to the server 
+	 * 
+	 * @param location
+	 */
 	private void updateLocationToDBandServer(Location location) {
 		final Uri uri = PeopleContentProvider.content_uri;
-		
+
 		SharedPreferences prefs = getSharedPreferences(EventORamaApplication.PREFS_PREFERENCES_NAME, MODE_PRIVATE);
 		int uid = prefs.getInt(EventORamaApplication.PREFS_USERID, -1);
 		if(uid == -1)
@@ -100,35 +209,42 @@ public class GetLocationService extends IntentService {
 		cv.put(PeopleContentProvider.Columns.LONG, location.getLongitude());
 		cv.put(PeopleContentProvider.Columns.ACCURACY, location.getAccuracy());
 		cv.put(PeopleContentProvider.Columns.UPDATED, location.getTime());
-		 
+
 		getContentResolver().update(uri, cv, QUERY, new String[]{Integer.toString(uid)});	
-		
+
 		Gson gson = new Gson();
 		PeopleEntry pe = new PeopleEntry(-1, null, (float)location.getLatitude(), (float)location.getLongitude(), (float)location.getAccuracy(), location.getTime());
-		Log.v(TAG, "gonna post: "+gson.toJson(pe));
+		if(Log.isLoggable(TAG, Log.VERBOSE))
+			Log.v(TAG, "gonna post: "+gson.toJson(pe));
 		HTTPResponse resp = mApplication.doHttpRequest("/users/"+uid, gson.toJson(pe), EventORamaApplication.HTTP_METHOD_PUT);
 		if(resp != null && resp.getRespCode() == 200)
-			Log.v(TAG, "Location post to server successfull!");
+			Log.w(TAG, "Location post to server successfull!");
 	}
 
 	@Override
 	public void onDestroy() {	
 		super.onDestroy();
+		Log.v(TAG,"on destroy");
 		locationManager.removeUpdates(gpsLocationUpdateListener);		
 	}
 
 	protected LocationListener gpsLocationUpdateListener = new LocationListener() {
 		public void onLocationChanged(Location l) {
 			Log.v(TAG, "GPS recieved location update: "+l);
-			gpsLocation = l;
 			if(l.getAccuracy() <= 100)
+			{
+				Log.v(TAG, "Accuracy reached lesser then 100 meters, removing listener, posting GPS Update!");
 				locationManager.removeUpdates(this);
+				foundGPS = true;
+				updateLocationToDBandServer(l);
+			}
+
 		}
 		public void onProviderDisabled(String provider) {}
 		public void onStatusChanged(String provider, int status, Bundle extras) {}
 		public void onProviderEnabled(String provider) {}
 	};
-	
+
 	protected LocationListener oneShotLocationUpdateListener = new LocationListener() {
 		public void onLocationChanged(Location l) {
 			Log.v(TAG, "One shot recieved location update from "+l.getProvider());
@@ -140,5 +256,20 @@ public class GetLocationService extends IntentService {
 		public void onProviderEnabled(String provider) {}
 	};
 
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
+	}
 
+
+	synchronized private static PowerManager.WakeLock getLock(Context context) {
+		if (wl==null) {
+			PowerManager mgr=(PowerManager)context.getSystemService(Context.POWER_SERVICE);
+
+			wl=mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+			wl.setReferenceCounted(true);
+		}
+
+		return(wl);
+	}
 }

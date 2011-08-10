@@ -59,8 +59,8 @@ public class PeopleAdapter extends CursorAdapter {
 //			long created = c.getLong(index);
 //			CharSequence formattedDate = DateFormat.format("MMM dd, yyyy h:mmaa",  new Date(created));
 			
-			index = c.getColumnIndex(PeopleContentProvider.Columns.PROFILE_PIC);
-			String uriString = c.getString(index);
+//			index = c.getColumnIndex(PeopleContentProvider.Columns.PROFILE_PIC_URL);
+//			String uriString = c.getString(index);
 
 			BitmapDrawable drawable = (BitmapDrawable) mImageView.getDrawable();
 			if (drawable != null) {
@@ -73,9 +73,12 @@ public class PeopleAdapter extends CursorAdapter {
 			String status = getLastStatusText(c, context);
 			mStatusTextView.setText(status);
 			
-			if (uriString != null) {
-				Bitmap thumb = getImageThumbnail(Uri.parse(uriString), context);
-				mImageView.setImageBitmap(thumb);
+			byte[] picturedata = c.getBlob(c.getColumnIndex(PeopleContentProvider.Columns.PROFILE_PIC));
+			if (picturedata != null) {
+//				Bitmap thumb = getImageThumbnail(Uri.parse(uriString), context);
+				
+				Bitmap pic = BitmapFactory.decodeByteArray(picturedata, 0, picturedata.length);
+				mImageView.setImageBitmap(pic);
 			} else {
 				mImageView.setImageBitmap(null);
 			}

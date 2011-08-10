@@ -31,6 +31,7 @@ public class PeopleContentProvider extends ContentProvider {
 		public static final String LAT = "lat";
 		public static final String LONG = "long";
 		public static final String ACCURACY = "accuracy";
+		public static final String PROFILE_PIC_URL = "profile_pic_url";
 		public static final String PROFILE_PIC = "profile_pic";
 		public static final String SERVER_ID = "server_id";
 
@@ -45,7 +46,7 @@ public class PeopleContentProvider extends ContentProvider {
 	private static class DBHelper extends SQLiteOpenHelper {
 
 		private static final String TABLE_NAME = "PEOPLE";
-		private static final int DATABASE_VERSION = 6;
+		private static final int DATABASE_VERSION = 7;
 
 		private static final String DATABASE_NAME = "eventorama-people";
 
@@ -55,7 +56,8 @@ public class PeopleContentProvider extends ContentProvider {
 			Columns.UPDATED + " INTEGER, " + 
 			Columns.LAT + " REAL, " + 
 			Columns.LONG + " REAL, " + 
-			Columns.PROFILE_PIC + " TEXT, " +
+			Columns.PROFILE_PIC_URL + " TEXT, " +
+			Columns.PROFILE_PIC + " BLOB, " +
 			Columns.LAST_STATUS_ID + " INTEGER DEFAULT -1 NOT NULL, " + 
 			Columns.NAME + " TEXT, "+
 			Columns.ACCURACY + " REAL, "+

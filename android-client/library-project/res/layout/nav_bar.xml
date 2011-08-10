@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	android:gravity="top"
+	android:id="@+id/nav_bar_relative_layout"
+	android:layout_height="wrap_content"
+	android:layout_width="match_parent"
+	android:padding="0px"
+	android:background="@drawable/bg_top_nav" xmlns:android="http://schemas.android.com/apk/res/android">
+	<ImageView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:padding="0px"
+		android:layout_margin="0px"			
+		android:src="@drawable/nav_people_selector"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentRight="true"
+		android:id="@+id/nav_people"					
+		android:clickable="true"></ImageView>
+	<ImageView
+		android:id="@+id/nav_location"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:src="@drawable/nav_location_selector"
+		android:layout_alignParentTop="true"
+		android:layout_toLeftOf="@+id/nav_people"
+		android:clickable="true"></ImageView>
+	<ImageView
+		android:id="@+id/nav_events"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:src="@drawable/nav_events_selector"
+		android:layout_alignParentTop="true"
+		android:layout_toLeftOf="@+id/nav_location"
+		android:clickable="true"></ImageView>
+	<TextView
+		android:text="Even-O-Rama"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/nav_title_text"
+		android:layout_centerVertical="true"
+		android:layout_alignParentLeft="true" android:layout_margin="8dip"
+		android:textColor="@color/generic_text_color"></TextView>
+	
+</RelativeLayout>
+

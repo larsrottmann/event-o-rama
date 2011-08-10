@@ -6,3 +6,5 @@ local.properties
 gen/
 coverage/
 .DS_Store
+coverage.em
+instrumented/

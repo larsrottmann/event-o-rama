@@ -152,7 +152,8 @@ public class SignUpActivity extends Activity{
 			int idcounter = 0;
 			for (String account : accounts) {
 				LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				RadioButton rb = (RadioButton) vi.inflate(R.layout.signup_radiobutton, null);
+//				RadioButton rb = (RadioButton) vi.inflate(R.layout.signup_radiobutton, null); 
+				RadioButton rb = new RadioButton(this); //this is more efficient until we need to style the radio button
 				rb.setText(account);
 				rb.setId(idcounter);
 				rg.addView(rb);
@@ -171,7 +172,7 @@ public class SignUpActivity extends Activity{
 		else
 		{
 			//no google accounts on this device, just enter a username
-
+			//TODO: show warning that you don't get push events without google account
 			//hide the radiogroups / Textviews / deviders
 			RadioGroup rg = (RadioGroup) findViewById(R.id.signup_radiogroup);
 			rg.setVisibility(View.GONE);
@@ -226,7 +227,8 @@ public class SignUpActivity extends Activity{
 				Gson gson = new Gson();
 				Map<String, String> data = new HashMap<String, String>();
 				data.put("name", username);
-				data.put("registration-id", C2DMessaging.getRegistrationId(mContext));
+				if(C2DMessaging.getRegistrationId(mContext).trim().length() != 0)
+					data.put("registration-id", C2DMessaging.getRegistrationId(mContext));
 				EventORamaApplication eora = (EventORamaApplication) getApplication();
 				HTTPResponse resp = eora.doHttpRequest("/users", gson.toJson(data), EventORamaApplication.HTTP_METHOD_POST);
 				if(resp == null)
@@ -259,20 +261,6 @@ public class SignUpActivity extends Activity{
 							cv.put(PeopleContentProvider.Columns.NAME, username);
 							cv.put(PeopleContentProvider.Columns.SERVER_ID, userid);
 							resolver.insert(uri, cv);
-						
-							//create activity via ActivityCreatorService
-							Intent service = new Intent(mContext, ActivityCreatorService.class);
-							StringBuilder sb = new StringBuilder();
-							Formatter formatter = new Formatter(sb);
-							formatter.format(getText(R.string.activity_text_joindedparty).toString(), username);
-							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TEXT, sb.toString());
-							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_USER_ID, userid);
-							service.putExtra(ActivityCreatorService.ACTIVITY_EXTRA_TYPE, EventStreamContentProvider.TYPE_TEXT);
-							startService(service);
-														
-							//trigger people sync service
-							service = new Intent(mContext, PeopleSyncService.class);
-							startService(service);
 							
 							return RESULT_SUCCESS;
 						}
@@ -295,8 +283,7 @@ public class SignUpActivity extends Activity{
 				if(mDialog != null)
 					mDialog.dismiss();
 				Intent i = new Intent();
-				i.putExtra(EventStreamActivity.EVENTSTREAM_NOSYNC, true);
-				i.setClass(getApplicationContext(), EventStreamActivity.class);
+				i.setClass(getApplicationContext(), SelectProfilePicActivity.class);
 				startActivity(i);
 				break;
 			case RESULT_TAKEN:

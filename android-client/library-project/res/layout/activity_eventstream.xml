@@ -1,70 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:orientation="vertical">
-	<RelativeLayout
-		android:id="@+id/RelativeLayout1"
-		android:baselineAligned="false"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent" android:layout_height="match_parent"
+	android:orientation="vertical" android:background="@color/generic_bg_color"
+	android:gravity="top">
+
+
+	<com.eventorama.mobi.lib.views.EventStreamListView
+		android:layout_height="match_parent" android:background="@color/generic_bg_color"
+		android:id="@+id/tempoeventlistview" android:tag="ListView"
+		android:layout_below="@+id/nav_bar_include" android:layout_width="match_parent"></com.eventorama.mobi.lib.views.EventStreamListView>
+
+	<include layout="@layout/nav_bar" android:id="@+id/nav_bar_include"
+		android:layout_width="match_parent" android:layout_height="wrap_content"
+		android:layout_margin="0px" android:layout_weight="0" />
+
+	<TextView android:text="HALLO!" android:layout_height="60dip"
+		android:id="@+id/simpleText" android:layout_width="fill_parent"
+		android:layout_marginTop="0px"></TextView>
+
+
+	<LinearLayout android:layout_height="wrap_content"
+		android:layout_width="match_parent" android:id="@+id/TMPrelativeLayout2"
+		android:layout_gravity="bottom" android:layout_alignParentBottom="true"
 		android:layout_weight="0">
-		<TextView
-			android:layout_alignParentLeft="true"
-			android:layout_alignParentTop="true"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:id="@+id/textView1"
-			android:text="TextView"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="right"></TextView>
-
-		<Button
-			android:text="People View"
-			android:layout_toLeftOf="@+id/button1"
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:id="@+id/button2"
-			android:layout_alignParentRight="true"></Button>
-
-	</RelativeLayout>
-
-
-	<ListView
-		android:id="@android:id/list"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_weight="1" />
-
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:layout_width="match_parent"
-		android:id="@+id/relativeLayout2"
-		android:layout_gravity="bottom"
-		android:layout_alignParentBottom="true"
-		android:layout_weight="0">
-		<Button
-			android:layout_weight="1"
-			android:layout_height="wrap_content"
-			android:text="Refresh People"
-			android:layout_width="wrap_content"
-			android:id="@+id/button4"></Button>
-		<Button
-			android:layout_weight="1"
-			android:layout_height="wrap_content"
-			android:text="Refresh Activities"
-			android:layout_width="wrap_content"
-			android:id="@+id/button3"></Button>
-		<Button
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:text="What's app?"
-			android:id="@+id/button1"
-			android:layout_alignParentRight="true"
-			android:layout_weight="1"></Button>
+		<Button android:layout_height="wrap_content" android:text="Refresh People"
+			android:id="@+id/button4" android:layout_weight="1"
+			android:layout_width="0dp"></Button>
+		<Button android:layout_height="wrap_content" android:text="Refresh Activities"
+			android:id="@+id/button3" android:layout_weight="1"
+			android:layout_width="0dp"></Button>
+		<Button android:text="Send Location" android:layout_height="wrap_content"
+			android:id="@+id/button5" android:layout_weight="1"
+			android:layout_width="0dp"></Button>
+		<Button android:layout_height="wrap_content" android:text="What's app?"
+			android:id="@+id/button1" android:layout_alignParentRight="true"
+			android:layout_weight="1" android:layout_width="0dp"></Button>
 
 	</LinearLayout>
 
-
-</LinearLayout>
+</RelativeLayout>

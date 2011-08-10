@@ -6,7 +6,9 @@ import com.eventorama.mobi.lib.location.LastLocationFinder;
 import com.eventorama.mobi.lib.service.ActivitySyncService;
 import com.eventorama.mobi.lib.service.GetLocationService;
 import com.eventorama.mobi.lib.service.PeopleSyncService;
+import com.eventorama.mobi.lib.views.EventStreamListView;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -20,30 +22,36 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 
 
-public class EventStreamActivity extends ListActivity  {
+public class EventStreamActivity extends Activity  {
 	
 	private static final String TAG = EventStreamActivity.class.getName();
 	private Context mContext = this;	
 	private Cursor mCursor = null;
 	private EventStreamAdapter mAdapter;
+	private EventStreamListView mListView;
 	
 
 	protected static final String EVENTSTREAM_NOSYNC = "EVENTSTREAM_NOSYNC";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);		
 		
 		mCursor = managedQuery(EventStreamContentProvider.content_uri, null, null, null, null);		
 		
 		this.mAdapter = new EventStreamAdapter(this,mCursor);
 		
 		startManagingCursor(mCursor);
-		setListAdapter(mAdapter);
 
 		setContentView(R.layout.activity_eventstream);
+
+		View w = findViewById(R.id.tempoeventlistview);
+		this.mListView = (EventStreamListView) findViewById(R.id.tempoeventlistview);
+		this.mListView.setAdapter(mAdapter);
+
 		
 		Intent  newintent = new Intent(mContext, GetLocationService.class);
 		startService(newintent);
@@ -56,16 +64,43 @@ public class EventStreamActivity extends ListActivity  {
 			startService(service);
 		}
 		
-		//TEMP UI
-		Button peopleButton = (Button) findViewById(R.id.button2);
-		peopleButton.setOnClickListener(new OnClickListener() {			
+		
+		ImageView nav_events = (ImageView) findViewById(R.id.nav_events);
+		nav_events.setSelected(true);
+		nav_events.setOnClickListener(new OnClickListener() {
+			
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(mContext, PeopleActivity.class);
-				startActivity(intent);
+				// TODO Auto-generated method stub
+				
 			}
 		});
 		
+		ImageView nav_people = (ImageView) findViewById(R.id.nav_people);		
+		nav_people.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(mContext, PeopleActivity.class);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+				startActivity(intent);
+			}
+		});
+
+		ImageView nav_location = (ImageView) findViewById(R.id.nav_location);
+		nav_location.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new  Intent(mContext, LocationActivity.class);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+				startActivity(intent);
+			}
+		});
+
+		
+		//TEMP UI
+				
 		Button refreshpeopleButton = (Button) findViewById(R.id.button4);
 		refreshpeopleButton.setOnClickListener(new OnClickListener() {			
 			@Override
@@ -93,6 +128,8 @@ public class EventStreamActivity extends ListActivity  {
 
 			}
 		});
+		
+		
 
 
 

@@ -11,9 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
+
 
 public class StartActivity extends Activity
 {
@@ -31,7 +29,6 @@ public class StartActivity extends Activity
 		String device_id = C2DMessaging.getRegistrationId(this);
 		if(device_id.length() == 0)
 		{
-			//TODO: fire registration service
 			Log.v(TAG, "device not yet registered, triggering service!");
 			C2DMReceiver.register(getApplicationContext());
 		}
@@ -49,29 +46,6 @@ public class StartActivity extends Activity
 			Intent i = new Intent();
 			i.setClass(getApplicationContext(), SignUpActivity.class);
 			startActivity(i);
-		}
-        
-        setContentView(R.layout.main);
-        
-        Button b = (Button) findViewById(R.id.button1);
-        b.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent i = new Intent();
-				i.setClass(getApplicationContext(), SignUpActivity.class);
-				startActivity(i);
-			}
-		});
-        
-        b = (Button) findViewById(R.id.button2);
-        b.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Log.v("!!", getApplicationContext().getPackageName());
-				C2DMReceiver.register(getApplicationContext());	
-			}
-		});
+		}        
     }
 }

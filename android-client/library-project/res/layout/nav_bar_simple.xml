@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	android:gravity="top"
+	android:id="@+id/nav_bar_relative_layout"
+	android:layout_height="wrap_content"
+	android:layout_width="match_parent"
+	android:padding="0px"
+	android:background="@drawable/bg_top_nav"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<TextView
+		android:text="Even-O-Rama"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/nav_title_text"
+		android:layout_centerVertical="true"
+		android:layout_alignParentLeft="true"
+		android:layout_margin="8dip"
+		android:textColor="@color/generic_text_color"></TextView>
+
+</LinearLayout>
+
