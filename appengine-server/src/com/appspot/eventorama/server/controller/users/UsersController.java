@@ -15,6 +15,7 @@ import org.slim3.controller.validator.Validators;
 import org.slim3.datastore.Datastore;
 import org.slim3.datastore.EntityNotFoundRuntimeException;
 import org.slim3.util.BeanUtil;
+import org.slim3.util.StringUtil;
 
 import com.appspot.eventorama.server.meta.ApplicationMeta;
 import com.appspot.eventorama.server.meta.UserMeta;
@@ -23,7 +24,6 @@ import com.appspot.eventorama.shared.model.Application;
 import com.appspot.eventorama.shared.model.User;
 import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.repackaged.com.google.common.base.StringUtil;
 
 public class UsersController extends Controller {
 
