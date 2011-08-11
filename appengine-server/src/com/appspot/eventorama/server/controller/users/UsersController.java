@@ -14,6 +14,7 @@ import org.slim3.controller.validator.Errors;
 import org.slim3.controller.validator.Validators;
 import org.slim3.datastore.Datastore;
 import org.slim3.datastore.EntityNotFoundRuntimeException;
+import org.slim3.util.AppEngineUtil;
 import org.slim3.util.BeanUtil;
 import org.slim3.util.StringUtil;
 
@@ -177,7 +178,8 @@ public class UsersController extends Controller {
         response.setStatus(HttpURLConnection.HTTP_CREATED);
         response.setHeader("location", UserHelper.getLocationHeaderForUser(user));
         
-        C2DMPusher.enqueueDeviceMessage(servletContext, app, user, C2DMPusher.C2DM_USERS_SYNC);
+        if (AppEngineUtil.isServer())
+            C2DMPusher.enqueueDeviceMessage(servletContext, app, user, C2DMPusher.C2DM_USERS_SYNC);
 
         return null;
     }
@@ -236,7 +238,8 @@ public class UsersController extends Controller {
         
         Datastore.put(user);
 
-        C2DMPusher.enqueueDeviceMessage(servletContext, app, user, C2DMPusher.C2DM_USERS_SYNC);
+        if (AppEngineUtil.isServer()) 
+            C2DMPusher.enqueueDeviceMessage(servletContext, app, user, C2DMPusher.C2DM_USERS_SYNC);
 
         return null;
     }
