@@ -16,11 +16,13 @@ import org.slim3.controller.validator.Validators;
 import org.slim3.datastore.Datastore;
 import org.slim3.datastore.EntityNotFoundRuntimeException;
 import org.slim3.datastore.ModelQuery;
+import org.slim3.util.AppEngineUtil;
 
 import com.appspot.eventorama.server.meta.ActivityMeta;
 import com.appspot.eventorama.server.meta.ApplicationMeta;
 import com.appspot.eventorama.server.meta.UserMeta;
 import com.appspot.eventorama.server.util.ActivityHelper;
+import com.appspot.eventorama.server.util.C2DMPusher;
 import com.appspot.eventorama.shared.model.Activity;
 import com.appspot.eventorama.shared.model.Application;
 import com.appspot.eventorama.shared.model.User;
@@ -219,8 +221,8 @@ public class ActivitiesController extends Controller {
         writer.write(jsonResponse.toString());
         writer.flush();
         
-        if (newActivityCreated)
-            ActivityHelper.enqueueDeviceMessage(servletContext, app, user);
+        if (newActivityCreated && AppEngineUtil.isServer())
+            C2DMPusher.enqueueDeviceMessage(servletContext, app, user, C2DMPusher.C2DM_ACTIVITIES_SYNC);
 
         return null;
     }

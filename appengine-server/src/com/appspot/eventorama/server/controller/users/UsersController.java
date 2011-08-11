@@ -14,16 +14,18 @@ import org.slim3.controller.validator.Errors;
 import org.slim3.controller.validator.Validators;
 import org.slim3.datastore.Datastore;
 import org.slim3.datastore.EntityNotFoundRuntimeException;
+import org.slim3.util.AppEngineUtil;
 import org.slim3.util.BeanUtil;
+import org.slim3.util.StringUtil;
 
 import com.appspot.eventorama.server.meta.ApplicationMeta;
 import com.appspot.eventorama.server.meta.UserMeta;
+import com.appspot.eventorama.server.util.C2DMPusher;
 import com.appspot.eventorama.server.util.UserHelper;
 import com.appspot.eventorama.shared.model.Application;
 import com.appspot.eventorama.shared.model.User;
 import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.repackaged.com.google.common.base.StringUtil;
 
 public class UsersController extends Controller {
 
@@ -175,6 +177,10 @@ public class UsersController extends Controller {
         
         response.setStatus(HttpURLConnection.HTTP_CREATED);
         response.setHeader("location", UserHelper.getLocationHeaderForUser(user));
+        
+        if (AppEngineUtil.isServer())
+            C2DMPusher.enqueueDeviceMessage(servletContext, app, user, C2DMPusher.C2DM_USERS_SYNC);
+
         return null;
     }
 
@@ -231,6 +237,9 @@ public class UsersController extends Controller {
         user.setAccuracy(asFloat("accuracy"));
         
         Datastore.put(user);
+
+        if (AppEngineUtil.isServer()) 
+            C2DMPusher.enqueueDeviceMessage(servletContext, app, user, C2DMPusher.C2DM_USERS_SYNC);
 
         return null;
     }

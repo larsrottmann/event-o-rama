@@ -163,7 +163,6 @@
     	<mkdir dir="${reports.tests}"/>
         <junit printsummary="yes" showoutput="yes">
             <classpath>
-                <pathelement location="src" />
                 <pathelement location="test" />
                 <path refid="test.classpath" />
             </classpath>
