@@ -47,7 +47,7 @@ public class ActivitySyncService extends IntentService {
 		final Uri uri = EventStreamContentProvider.content_uri;
 
 		//read activities from server, compare them and insert new ones
-		HTTPResponse resp = eora.doHttpRequest("/activities", null, EventORamaApplication.HTTP_METHOD_GET);
+		HTTPResponse resp = eora.doHttpRequest("/activities", "", EventORamaApplication.HTTP_METHOD_GET);
 		if(resp != null && resp.getRespCode() == 200)
 		{
 			ActivityElement[] serverElements = gson.fromJson(resp.getBody(), ActivityElement[].class);

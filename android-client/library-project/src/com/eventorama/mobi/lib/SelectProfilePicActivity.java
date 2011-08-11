@@ -309,7 +309,7 @@ public class SelectProfilePicActivity extends Activity {
 					{
 						//fetch profile pic from twitter
 						String userpicURL = String.format(TWITTER_PROFILE_URL, account_social.name);
-						HTTPResponse response = mApp.doBinaryHttpGet(userpicURL);
+						HTTPResponse response = mApp.doGenericBinaryHttpGet(userpicURL);
 						if(response.getRespCode() == 200)
 						{
 							BitmapDrawable bd = new BitmapDrawable(BitmapFactory.decodeByteArray(response.getBinaryBody(), 0, response.getBinaryBody().length));
@@ -322,13 +322,13 @@ public class SelectProfilePicActivity extends Activity {
 					if(!account_social.name.contains(ADD_CHAR))//no email address but username
 					{
 						String userProfileUrl = String.format(LASTFM_USER_URL, account_social.name);
-						HTTPResponse resposne = mApp.doGenericHttpRequest(userProfileUrl, null, EventORamaApplication.HTTP_METHOD_GET);
+						HTTPResponse resposne = mApp.doGenericHttpRequest(userProfileUrl, "", EventORamaApplication.HTTP_METHOD_GET);
 						if(resposne.getRespCode() == 200)
 						{
 							//extract final image url 
 							int index_start_tag = resposne.getBody().indexOf(LASTFM_IMAGE_START_TAG)+LASTFM_IMAGE_START_TAG.length();
 							String imgUrl = resposne.getBody().substring(index_start_tag, resposne.getBody().indexOf(LASTFM_IMAGE_END_TAG, index_start_tag));
-							HTTPResponse response = mApp.doBinaryHttpGet(imgUrl);
+							HTTPResponse response = mApp.doGenericBinaryHttpGet(imgUrl);
 							if(response.getRespCode() == 200)
 							{
 								BitmapDrawable bd = new BitmapDrawable(BitmapFactory.decodeByteArray(response.getBinaryBody(), 0, response.getBinaryBody().length));

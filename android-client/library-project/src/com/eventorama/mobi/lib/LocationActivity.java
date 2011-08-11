@@ -235,7 +235,6 @@ public class LocationActivity extends MapActivity {
 			this.bitMapBG = BitmapFactory.decodeResource(getResources(), R.drawable.map_marker);
 			this.MAX_WIDTH = bitMapBG.getWidth()-(BORDER*2);
 			this.MAX_HEIGHT = MAX_WIDTH;
-			this.blankImage = Bitmap.createBitmap(bitMapBG.getWidth(), bitMapBG.getHeight(), this.bitMapBG.getConfig());
 			mPaint = new Paint();
 			mPaint.setDither(true);
 			mPaint.setAntiAlias(true);
@@ -243,6 +242,8 @@ public class LocationActivity extends MapActivity {
 
 		private BitmapDrawable getMarker(int userId, byte[] image)
 		{
+			this.blankImage = Bitmap.createBitmap(bitMapBG.getWidth(), bitMapBG.getHeight(), this.bitMapBG.getConfig());
+			
 			//TODO: caching of course!
 			Canvas canvas = new Canvas(blankImage);
 			canvas.drawBitmap(bitMapBG, 0, 0, mPaint);

@@ -3,6 +3,7 @@ package com.eventorama.mobi.lib;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
@@ -11,6 +12,7 @@ import org.acra.annotation.ReportsCrashes;
 import org.acra.ReportingInteractionMode;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -20,6 +22,7 @@ import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
@@ -134,26 +137,7 @@ public class EventORamaApplication extends Application {
 				break;
 			}
 
-			Log.v(TAG, "Executing http request to: "+httpMessage.getURI());			
-
-			long now = System.currentTimeMillis();
-			HttpResponse response = this.httpclient.execute(httpMessage);
-			Log.v(TAG, "HTTP request finished in: "+(System.currentTimeMillis()-now)+" ms");
-
-			HttpEntity responseEntity = response.getEntity();
-
-			BufferedReader in = new BufferedReader(new InputStreamReader(responseEntity.getContent(), Charset.forName("UTF-8")), DEFAULT_BUFFER);
-			String inputLine;
-			StringBuilder sb = new StringBuilder();
-			while ((inputLine = in.readLine()) != null)
-			{
-				sb.append(inputLine);
-			}
-			int respCode = response.getStatusLine().getStatusCode();			
-
-			Log.v(TAG, "response body: "+sb.toString()+" code: "+respCode);
-
-			return  new HTTPResponse(respCode, sb.toString(), response.getAllHeaders());
+			return doRequest(httpMessage);
 		}
 		catch(Exception e)
 		{
@@ -164,6 +148,79 @@ public class EventORamaApplication extends Application {
 
 		return null;
 
+	}
+
+	public HTTPResponse doGenericHttpRequest(String url, byte[] body, int method)
+	{
+		synchronized (this) {
+			if(this.httpclient == null)
+				this.httpclient = initHttpClient();
+		}
+		try 
+		{
+			HttpUriRequest httpMessage = null;
+			switch (method) {
+			case HTTP_METHOD_POST:
+				HttpPost post = new HttpPost(url);
+				if(body != null)
+				{
+					ByteArrayEntity bae = new ByteArrayEntity(body);
+					post.setEntity(bae);
+				}
+				httpMessage = post;				
+				break;
+			case HTTP_METHOD_PUT:
+				HttpPut put = new HttpPut(url);
+				if(body != null)
+				{
+					ByteArrayEntity bae = new ByteArrayEntity(body);
+					put.setEntity(bae);
+				}
+				httpMessage = put;
+				break;
+
+			default:
+				HttpGet get = new HttpGet(url);
+				httpMessage = get;
+				break;
+			}
+
+			return doRequest(httpMessage);
+		}
+		catch(Exception e)
+		{
+			//TODO: re-throw exception might make sense
+			e.printStackTrace();
+			Log.e(TAG, "Error fecthing Httprequest: "+method, e);
+		}
+
+		return null;
+
+	}
+
+	
+	private HTTPResponse doRequest(HttpUriRequest httpMessage)
+			throws IOException, ClientProtocolException {
+		Log.v(TAG, "Executing http request to: "+httpMessage.getURI());			
+
+		long now = System.currentTimeMillis();
+		HttpResponse response = this.httpclient.execute(httpMessage);
+		Log.v(TAG, "HTTP request finished in: "+(System.currentTimeMillis()-now)+" ms");
+
+		HttpEntity responseEntity = response.getEntity();
+
+		BufferedReader in = new BufferedReader(new InputStreamReader(responseEntity.getContent(), Charset.forName("UTF-8")), DEFAULT_BUFFER);
+		String inputLine;
+		StringBuilder sb = new StringBuilder();
+		while ((inputLine = in.readLine()) != null)
+		{
+			sb.append(inputLine);
+		}
+		int respCode = response.getStatusLine().getStatusCode();			
+
+		Log.v(TAG, "response body: "+sb.toString()+" code: "+respCode);
+
+		return  new HTTPResponse(respCode, sb.toString(), response.getAllHeaders());
 	}
 	
 	/**
@@ -177,8 +234,26 @@ public class EventORamaApplication extends Application {
 	{
 		return doGenericHttpRequest(getServerUrl(method), body, http_method);
 	}
+
+	/**
+	 * Use to initiate a HTTP Request to the appengine server
+	 * @param method the remote method like "/users"
+	 * @param body	the body you would like to POST
+	 * @param http_method	the method you'd like to use, see {@link EventORamaApplication}HTTP_METHOD_* constants
+	 * @return a {@link HTTPResponse} object
+	 */
+	public HTTPResponse doHttpRequest(String method, byte[] body, int http_method)
+	{
+		return doGenericHttpRequest(getServerUrl(method), body, http_method);
+	}
+
+	public HTTPResponse doBinaryHttpRequest(String method)
+	{
+		return doGenericBinaryHttpGet(getServerUrl(method));
+	}
+
 	
-	public HTTPResponse doBinaryHttpGet(String URL)
+	public HTTPResponse doGenericBinaryHttpGet(String URL)
 	{
 		synchronized (this) {
 			if(this.httpclient == null)

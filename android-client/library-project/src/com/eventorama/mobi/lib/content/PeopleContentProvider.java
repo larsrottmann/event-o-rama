@@ -21,6 +21,10 @@ public class PeopleContentProvider extends ContentProvider {
 	// TODO: check for concurrent applications / packages
 	
 	public static Uri content_uri = null;
+	
+	public static final int SAVE_STATE_LOCAL = 1;
+	public static final int SAVE_STATE_SERVER = 2;
+
 
 	public static class Columns {
 		public static final String ID = "_id";
@@ -34,6 +38,7 @@ public class PeopleContentProvider extends ContentProvider {
 		public static final String PROFILE_PIC_URL = "profile_pic_url";
 		public static final String PROFILE_PIC = "profile_pic";
 		public static final String SERVER_ID = "server_id";
+		public static final String SAVE_STATE ="save_state";
 
 	}
 
@@ -61,7 +66,8 @@ public class PeopleContentProvider extends ContentProvider {
 			Columns.LAST_STATUS_ID + " INTEGER DEFAULT -1 NOT NULL, " + 
 			Columns.NAME + " TEXT, "+
 			Columns.ACCURACY + " REAL, "+
-			Columns.SERVER_ID + " INTEGER NOT NULL );";
+			Columns.SERVER_ID + " INTEGER NOT NULL," +
+			Columns.SAVE_STATE+" INTEGER );";
 
 		DBHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);

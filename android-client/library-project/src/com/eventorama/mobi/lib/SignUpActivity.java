@@ -260,6 +260,7 @@ public class SignUpActivity extends Activity{
 							ContentValues cv = new ContentValues();
 							cv.put(PeopleContentProvider.Columns.NAME, username);
 							cv.put(PeopleContentProvider.Columns.SERVER_ID, userid);
+							cv.put(PeopleContentProvider.Columns.SAVE_STATE, PeopleContentProvider.SAVE_STATE_LOCAL);
 							resolver.insert(uri, cv);
 							
 							return RESULT_SUCCESS;
