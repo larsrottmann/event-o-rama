@@ -142,6 +142,9 @@ public class PeopleSyncService extends IntentService {
 					c.close();
 			}
 		}
+		//done, send brodcast
+		Intent intent_complete = new Intent(EventORamaApplication.PEOPLE_SYNC_COMPLETE);
+		sendBroadcast(intent_complete);
 		
 	}
 	

@@ -142,6 +142,9 @@ public class ActivitySyncService extends IntentService {
 		}
 		if(c != null)
 			c.close();
+		
+		Intent synComplete = new Intent(EventORamaApplication.ACTIVITY_SYNC_COMPLETE);
+		sendBroadcast(synComplete);
 
 	}
 }

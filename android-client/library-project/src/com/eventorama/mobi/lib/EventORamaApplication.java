@@ -65,6 +65,10 @@ public class EventORamaApplication extends Application {
 	public static boolean SUPPORTS_FROYO = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.FROYO;
 	public static boolean SUPPORTS_ECLAIR = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ECLAIR;
 
+	
+	public static final String PEOPLE_SYNC_COMPLETE = "com.eventorama.mobi.lib.service.PeopleSyncService.COMPLETE";
+	public static final String ACTIVITY_SYNC_COMPLETE = "com.eventorama.mobi.lib.service.ActivitySyncService.COMPLETE";
+
 
 	/*
 	 * Private stuff
