@@ -31,24 +31,23 @@ public class EventORamaApplicationTest extends ApplicationTestCase<EventORamaApp
 	
 	public void testDoHttpRequest()
 	{
-		HTTPResponse resp = mApplication.doHttpRequest("/users", null, EventORamaApplication.HTTP_METHOD_GET);
-		assertNotNull(resp);
-		assertEquals(200, resp.getRespCode());
-		assertNotNull(resp.getBody());
-		assertTrue(resp.getBody().length() > 0);
+		HTTPResponse resp = mApplication.doHttpRequest("/users", "", EventORamaApplication.HTTP_METHOD_GET);
+		assertNotNull("http-response should not be null", resp);
+		assertEquals("response code should be 200", 200, resp.getRespCode());
+		assertNotNull("http-response body should not be null", resp.getBody());
+		assertTrue("response body length should be > 0",resp.getBody().length() > 0);
 		
-		resp = mApplication.doHttpRequest("/unknown", null, EventORamaApplication.HTTP_METHOD_GET);
-		assertNotNull(resp);
-		assertEquals(404, resp.getRespCode());
+		resp = mApplication.doHttpRequest("/unknown", "", EventORamaApplication.HTTP_METHOD_GET);
+		assertNotNull("http-response should not be null",resp);
+		assertEquals("response code should be 404",404, resp.getRespCode());
 		
-		resp = mApplication.doHttpRequest("/posttest", null, EventORamaApplication.HTTP_METHOD_POST);
-		assertNotNull(resp);
-		assertEquals(404, resp.getRespCode());
+		resp = mApplication.doHttpRequest("/posttest", "", EventORamaApplication.HTTP_METHOD_POST);
+		assertNotNull("http-response should not be null",resp);
+		assertEquals("response code should be 404",404, resp.getRespCode());
 	
-		resp = mApplication.doHttpRequest("/puttest", null, EventORamaApplication.HTTP_METHOD_PUT);
-		assertNotNull(resp);
-		assertEquals(405, resp.getRespCode());
-		
+		resp = mApplication.doHttpRequest("/puttest", "", EventORamaApplication.HTTP_METHOD_PUT);
+		assertNotNull("http-response should not be null",resp);
+		assertEquals("response code should be 405",405, resp.getRespCode());		
 	}
 
 }
